@@ -1,0 +1,8 @@
+habitat=3000
+colony=5000
+food=5000
+habitat=3000
+colony=5000
+food=3000
+colony=5000
+food=3000
