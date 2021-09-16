@@ -1,0 +1,1 @@
+print(input().encode('utf-8'))

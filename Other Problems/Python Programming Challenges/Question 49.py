@@ -1,0 +1,1 @@
+print(list(map(lambda x: x * x, range(1, 20 + 1))))

@@ -1,0 +1,1 @@
+print([[[0] * 8 for i in range(5)] for j in range(3)])
