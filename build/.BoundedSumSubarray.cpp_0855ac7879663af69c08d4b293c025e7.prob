@@ -1,0 +1,1 @@
+{"name":"Local: BoundedSumSubarray","url":"d:\\Downloads\\BoundedSumSubarray.cpp","tests":[{"id":1617535358194,"input":"15 666\n101 42 -132 17 404 -13 55 222 89 11 -66 91 -9 21 4","output":"10 2"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Downloads\\BoundedSumSubarray.cpp","group":"local","local":true}

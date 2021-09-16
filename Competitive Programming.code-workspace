@@ -1,0 +1,105 @@
+{
+	"folders": [
+		{
+			"name": "Algorithms",
+			"path": "Algorithms"
+		},
+		{
+			"name": "Data Structures",
+			"path": "Data Structures"
+		},
+		{
+			"name": "Theory",
+			"path": "Theory"
+		},
+		{
+			"name": "Syntax",
+			"path": "..\\..\\Programming\\C++\\Programs\\Syntax"
+		},
+		{
+			"name": "Other Problems",
+			"path": "Other Problems"
+		},
+		{
+			"name": "ICO",
+			"path": "ICO"
+		},
+		{
+			"name": "Informatics Olympiad",
+			"path": "G:\\My Drive\\Competitions & Exams\\Informatics Olympiad"
+		},
+		{
+			"name": "CodeChef Contests",
+			"path": "CodeChef Contests"
+		},
+		{
+			"name": "Codeforces Contests",
+			"path": "Codeforces Contests"
+		},
+		{
+			"name": "Other Contests",
+			"path": "Other Contests"
+		},
+		{
+			"name": "CSES Problem Set",
+			"path": "CSES Problem Set"
+		},
+		{
+			"name": "Templates",
+			"path": "Templates"
+		},
+		{
+			"name": "Downloads",
+			"path": "..\\..\\Downloads"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"limits": "cpp",
+			"iostream": "cpp",
+			"array": "cpp",
+			"chrono": "cpp",
+			"functional": "cpp",
+			"istream": "cpp",
+			"ostream": "cpp",
+			"ratio": "cpp",
+			"scoped_allocator": "cpp",
+			"tuple": "cpp",
+			"type_traits": "cpp",
+			"utility": "cpp",
+			"new": "cpp",
+			"atomic": "cpp",
+			"bitset": "cpp",
+			"complex": "cpp",
+			"condition_variable": "cpp",
+			"cwchar": "cpp",
+			"deque": "cpp",
+			"list": "cpp",
+			"exception": "cpp",
+			"fstream": "cpp",
+			"future": "cpp",
+			"initializer_list": "cpp",
+			"iosfwd": "cpp",
+			"mutex": "cpp",
+			"shared_mutex": "cpp",
+			"sstream": "cpp",
+			"stdexcept": "cpp",
+			"streambuf": "cpp",
+			"thread": "cpp",
+			"typeindex": "cpp",
+			"valarray": "cpp",
+			"forward_list": "cpp",
+			"vector": "cpp",
+			"string_view": "cpp",
+			"rope": "cpp",
+			"regex": "cpp",
+			"*.tcc": "cpp",
+			"string": "cpp",
+			"unordered_map": "cpp",
+			"unordered_set": "cpp",
+			"cstddef": "cpp",
+			"random": "cpp"
+		},
+		"jupyter.jupyterServerType": "local"
+	}
+}

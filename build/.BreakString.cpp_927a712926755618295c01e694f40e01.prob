@@ -1,0 +1,1 @@
+{"name":"Local: BreakString","url":"d:\\Competitions\\Competitive Programming\\ICO\\BreakString.cpp","tests":[{"id":1615794071865,"input":"3\n5 1\n10011\n7 2\n1111011\n8 2\n00000000","output":"10000\n1010100\n10101010"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive Programming\\ICO\\BreakString.cpp","group":"local","local":true}

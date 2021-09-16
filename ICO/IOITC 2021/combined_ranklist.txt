@@ -1,0 +1,42 @@
+ 1 pranjal           686   100    80     6   100   100   100     0   100   100
+ 2 kshitij           617   100   100    47   100   100    16    30    24   100
+ 3 udit              605   100    30    63   100    33   100   100    24    55
+ 4 aditya_jain       516   100     0     6   100   100   100    10   100     0
+ 5 schandra          459   100    30    27   100   100    43    30    24     5
+ 6 mohit             412   100     0    27   100    61   100    10     9     5
+ 7 shiven_sinha      392   100    20    47   100    33    63     0    24     5
+ 8 sahil             332   100    10    47   100    22    29     0    24     0
+ 9 ritul_k_singh     302   100    20    47    21     7     0    10    92     5
+10 paras             275     0     0    47    21     7     0   100   100     0
+11 siddhant_attava   271    31    10    14    21    33    63    10    84     5
+12 soumyaditya       204    13    30    63    21    22    16    10    24     5
+13 ronnith_nandy     183    31     0    47   100     0     5     0     0     0
+14 a_j_dsilva        180   100    10    27    21    22     0     0     0     0
+15 aryan_raina       177     0    20    27    21     7    63    10    24     5
+16 satyam_chakravo   172     0     0    27    21    22    63    10    24     5
+17 vishesh_saraswa   159    13     0    27    21    22     0     0    71     5
+18 m_shandilya       136    31     0     0     0     0     5     0   100     0
+19 utkarsh           128   100     0     0    21     7     0     0     0     0
+20 aryanmaskara      124     0     0    27    21    22     0     0    54     0
+21 sarthak_mangla    115    13    10    14    16    33     0     0    24     5
+22 megha_hedge       104    72     0     0     0    22     0    10     0     0
+23 adhish_kanchari   104     0     0    27    21    22     0    10    24     0
+24 neel_lodha        101     0     0    14     0     0    63     0    24     0
+25 ritam             100   100     0     0     0     0     0     0     0     0
+26 saarang_s          93    13    20    27    21     7     0     0     0     5
+27 divyansh_garg      78     0     0    14    21     0    43     0     0     0
+28 kristopher         70     0     0    27    21    22     0     0     0     0
+29 mukundan           69    31     0    14     0     0     0     0    24     0
+30 vatsalya_jaiswa    59     0    10    14    21     0     0     0     9     5
+31 soham_jog          46     0     0     0     0    22     0     0    24     0
+32 tanmay_garg        35     0     0    14     0     7     5     0     9     0
+33 vipin_mishra        9     0     0     0     0     0     0     0     9     0
+34 naveen_kulkarni     0     0     0     0     0     0     0     0     0     0
+35 luv_singhal         0     0     0     0     0     0     0     0     0     0
+36 swastik_agarwal     0     0     0     0     0     0     0     0     0     0
+37 aditya_arsh         0     0     0     0     0     0     0     0     0     0
+38 vansh               0     0     0     0     0     0     0     0     0     0
+39 harshin_posina      0     0     0     0     0     0     0     0     0     0
+40 navjeet_bharti      0     0     0     0     0     0     0     0     0     0
+41 bharat_sahlot       0     0     0     0     0     0     0     0     0     0
+42 aditya_padiyar      0     0     0     0     0     0     0     0     0     0
