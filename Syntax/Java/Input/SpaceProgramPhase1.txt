@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 building tools=2000
 building tools=2000
 building tools=2000
@@ -12,4 +13,20 @@ construction equipment=5000
 plants=1000
 steel=8000
 books=1000
+=======
+building tools=2000
+building tools=2000
+building tools=2000
+building tools=5000
+building tools=5000
+building tools=2000
+building tools=1000
+building tools=5000
+building tools=6000
+shelter equipment=5000
+construction equipment=5000
+plants=1000
+steel=8000
+books=1000
+>>>>>>> f6f46ae63ca36b9fa6e961ce3b0edb092483751d
 water=5000
