@@ -1,12 +1,5 @@
-<<<<<<< HEAD
 4
 secret secretary
 bisect trisect
 bisect secret
-=======
-4
-secret secretary
-bisect trisect
-bisect secret
->>>>>>> f6f46ae63ca36b9fa6e961ce3b0edb092483751d
 director secretary

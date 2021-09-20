@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 habitat=3000
 colony=5000
 food=5000
@@ -6,13 +5,4 @@ habitat=3000
 colony=5000
 food=3000
 colony=5000
-=======
-habitat=3000
-colony=5000
-food=5000
-habitat=3000
-colony=5000
-food=3000
-colony=5000
->>>>>>> f6f46ae63ca36b9fa6e961ce3b0edb092483751d
 food=3000
