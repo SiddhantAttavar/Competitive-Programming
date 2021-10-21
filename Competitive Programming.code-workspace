@@ -13,10 +13,6 @@
 			"path": "Theory"
 		},
 		{
-			"name": "Syntax",
-			"path": "..\\..\\Programming\\C++\\Programs\\Syntax"
-		},
-		{
 			"name": "Other Problems",
 			"path": "Other Problems"
 		},

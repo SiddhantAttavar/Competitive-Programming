@@ -8,10 +8,32 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
 #define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << endl
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define int long long
+typedef long long ll;
 
-int32_t main() {
+int main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int n; input(n);
+		pair<int, int>b[n];
+		range(i, 0, n) {
+			b[i].second = i;
+			input(b[i].first);
+		}
+
+		sort(b, b + n);
+		reverse(b, b + n);
+
+		int a[n];
+		int curr = b[0].first - 1;
+		for (pair<int, int> p : b) {
+			if (curr >= p.first) {
+				curr = p.first - 1;
+			}
+			a[p.second] = curr;
+			if (curr > 0) {
+				curr--;
+			}
+		}
+
+		arrPrint(a);
 	}
 }

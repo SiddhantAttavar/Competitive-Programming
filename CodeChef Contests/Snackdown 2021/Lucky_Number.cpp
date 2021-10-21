@@ -8,10 +8,15 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
 #define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << endl
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define int long long
+typedef long long ll;
 
-int32_t main() {
+int main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int a, b, c; input(a, b, c);
+		if (a == 7 || b == 7 || c == 7) {
+			print("YES");
+		} else {
+			print("NO");
+		}
 	}
 }
