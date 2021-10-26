@@ -1,0 +1,1 @@
+{"name":"Local: Climbing_Numbers","url":"d:\\Slingshot\\Climbing_Numbers.py","tests":[{"id":1635144580382,"input":"10 9 2 5 3 7 101 18 ","output":"4"},{"id":1635144592743,"input":"0 1 0 3 2 3","output":"4"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Slingshot\\Climbing_Numbers.py","group":"local","local":true}
