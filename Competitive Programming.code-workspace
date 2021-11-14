@@ -43,6 +43,9 @@
 		{
 			"name": "Downloads",
 			"path": "..\\..\\Downloads"
+		},
+		{
+			"path": "Google Contests"
 		}
 	],
 	"settings": {
