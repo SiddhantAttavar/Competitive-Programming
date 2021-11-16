@@ -10,87 +10,41 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-int n, q;
-
-void solve1() {
-	vector<pair<int, int>> m(n);
+int32_t main() {
+	setup();
+	int n, q; input(n, q);
+	int i = 0;
 	stack<int> s;
-	range(i, 0, n) {
+	map<int, pair<int, int>> m;
+	while (n--) {
 		int t; input(t);
 		if (t == 1) {
 			int x; input(x);
-			m[i] = {1, x};
 			s.push(x);
+			m[x] = {i, i};
+			i++;
 		}
 		else {
-			m[i] = {2, s.top()};
+			int x = s.top();
 			s.pop();
+			m[x].second = i;
 		}
 	}
-	while (q--) {
-		int a, b;
-		input(a, b);
-		int ad = 0, bd = 0;
-		int res = 0;
-		for (pair<int, int> p : m) {
-			if (p.first == 1) {
-				if (p.second == a) {
-					ad++;
-				}
-				else if (p.second == b) {
-					bd++;
-				}
-				if (ad > 0 and bd > 0) {
-					res++;
-				}
-			}
-			else {
-				if (p.second == a) {
-					ad--;
-				}
-				else if (p.second == b) {
-					bd--;
-				}
-			}
-		}
-		print(res);
-	}
-}
-
-void solve2() {
-	stack<int> s;
-	map<int, int> m;
-	range(i, 0, n) {
-		int t, x; input(t);
-		if (t == 1) {
-			input(x);
-			s.push(x);
-			if (m.find(x) == m.end()) {
-				m[x] = i;
-			}
-		}		
-		else {
-			s.pop();
-		}
+	while (!s.empty()) {
+		int x = s.top();
+		s.pop();
+		m[x].second = i;
 	}
 	while (q--) {
 		int a, b; input(a, b);
-		if (m.find(a) != m.end() and m.find(b) != m.end()) {
-			print(n - max(m[a], m[b]));
-		}
-		else {
+		if (m.find(a) == m.end() or m.find(b) == m.end()) {
 			print(0);
+			continue;
 		}
-	}
-}
-
-int32_t main() {
-	setup();
-	input(n, q);
-	if (n * q <= 10000000) {
-		solve1();
-	}
-	else {
-		solve2();
+		//print(m[a].first, m[a].second, m[b].first, m[b].second);
+		print(max(0ll, 
+			min(m[a].second, m[b].second) - 
+			max(m[a].first, m[b].first)
+		));
 	}
 }
