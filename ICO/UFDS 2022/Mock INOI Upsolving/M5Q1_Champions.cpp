@@ -11,7 +11,32 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	setup();
+	int n, q; input(n, q);
+	priority_queue<int, vector<int>, greater<int>> pq;
+	range(i, 0, n) {
+		int x;
+		input(x);
+		pq.push(x);
 	}
+	int curr = 0;
+	while (q--) {
+		string o;
+		int k;
+		input(o, k);
+		if (o == "A") {
+			curr += k;
+			while (!pq.empty() && pq.top() <= curr) {
+				pq.pop();
+			}
+		}
+		else {
+			if (!pq.empty()) {
+				int x = pq.top();
+				pq.pop();
+				pq.push(x + k);
+			}
+		}
+	}
+	print(n - pq.size());
 }
