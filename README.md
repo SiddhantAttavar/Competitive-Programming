@@ -14,6 +14,7 @@ A repository where I store all my competitive programming related code. This inc
 	 - INOI Past Problems: my solutions for [past INOI problems](https://www.codechef.com/INOIPRAC/)
 	 - IOITC 2021: problems and solutions from IOITC 2021 TSTs and mock TSTs
 	 - Other: other practice problems
+	 - UFDS 2022: my solutions from mock contests and practice problems during the [UFDS Mentoring Program 2022](https://ufds.cc/)
  - Other Contests: Other contests I have participated in (mostly interschool contests)
  - Other Problems: practice problems that I couldn't classify elsewhere
  - Syntax: Some programs I created while learning C++ and Java
