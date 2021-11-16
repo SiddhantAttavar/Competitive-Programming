@@ -13,11 +13,11 @@ A repository where I store all my competitive programming related code. This inc
 	 - ICO20MCK: a [mock ZCO contest](https://www.codechef.com/ICO20MCK)
 	 - INOI Past Problems: my solutions for [past INOI problems](https://www.codechef.com/INOIPRAC/)
 	 - IOITC 2021: problems and solutions from IOITC 2021 TSTs and mock TSTs
-	 - Other: other practice problems
 	 - UFDS 2022: my solutions from mock contests and practice problems during the [UFDS Mentoring Program 2022](https://ufds.cc/)
- - Other Contests: Other contests I have participated in (mostly interschool contests)
- - Other Problems: practice problems that I couldn't classify elsewhere
+	 - Other: other practice problems
  - Syntax: Some programs I created while learning C++ and Java
  - Templates: My Python, C++, and Java competitive programming templates
  - Theory: Some more algorithms I have learnt (mostly during IOITC)
  - build: A collection of test cases for the various problems to be used with the [Competitive Programming Helper extension](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper) for Visual Studio Code
+ - Other Contests: Other contests I have participated in (mostly interschool contests)
+ - Other Problems: practice problems that I couldn't classify elsewhere
