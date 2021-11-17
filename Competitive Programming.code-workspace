@@ -41,11 +41,12 @@
 			"path": "Templates"
 		},
 		{
-			"name": "Downloads",
-			"path": "..\\..\\Downloads"
+			"name": "Google Contests",
+			"path": "Google Contests"
 		},
 		{
-			"path": "Google Contests"
+			"name": "Downloads",
+			"path": "..\\..\\Downloads"
 		}
 	],
 	"settings": {
