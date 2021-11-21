@@ -12,6 +12,27 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n; input(n);
+		vector<int> a(n); arrPut(a);
 		
+		int res = 0;
+		range(i, 0, n) {
+			range(j, i + 2, n) {
+				int k = lower_bound(a.begin() + i, a.begin() + j, (a[i] + a[j]) / 2) - a.begin();
+				if (k == n) {
+					res += (a[j] - a[k - 1]) * (a[k - 1] - a[i]);
+				}
+				else if (k == 0) {
+					res += (a[j] - a[k]) * (a[k] - a[i]);
+				}
+				else {
+					res += max(
+						(a[j] - a[k - 1]) * (a[k - 1] - a[i]),
+						(a[j] - a[k]) * (a[k] - a[i])
+					);
+				}
+			}
+		}
+		print(res);
 	}
 }
