@@ -10,83 +10,57 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-bool checkCycle(vector<vector<int>> &graph, vector<bool> &visited, vector<bool> &curr, int u) {
-	visited[u] = true;
-	curr[u] = true;
-	for (int v : graph[u]) {
-		if (!visited[v]) {
-			if (checkCycle(graph, visited, curr, v)) {
-				return true;
-			}
-		} 
-		else if (curr[v]) {
-			return true;
-		}
-	}
-	curr[u] = false;
-	return false;
-}
+vector<int> segTree;
+bool flag = true;
+int n, q;
 
-void dfs(vector<vector<int>> &graph, vector<bool> &visited, int u, vector<int> &ans) {
-	visited[u] = true;
-	for (int v : graph[u]) {
-		if (!visited[v]) {
-			dfs(graph, visited, v, ans);
-		}
+void update(int x, int l, int r, int i, int s, int e) {
+	if (i < s or e < i) {
+		return;
 	}
-	ans.push_back(u);
-}
+	if (l <= s and e <= r) {
+		if (segTree[x] != -1 and segTree[x] != i) {
+			flag = false;
+			return;
+		}
+		segTree[x] = i;
+	}
+	if (x > n) {
+		return;
+	}
 
+	int mid = (s + e) / 2;
+	update(2 * x, l, r, i, s, mid);
+	update(2 * x + 1, l, r, i, mid + 1, e);
+}
 
 int32_t main() {
 	setup();
-	int n, q; input(n, q);
-	vector<vector<int>> graph(q);
-	vector<bool> visited(q, false);
-	vector<bool> curr(q, false);
-	vector<tuple<int, int, int, int>> queries(q);
+	input(n, q);
+	segTree.resize(4 * n + 1, -1);
+	range(i, 0, n) {
+		update(1, i, i, i, 0, n - 1);
+	}
+	arrPrint(segTree);
 	range(i, 0, q) {
 		int a, b, c; input(a, b, c);
-		queries[i] = {a - 1, b - 1, c - 1, i};
+		a--; b--; c--;
+		update(1, a, b, c, 0, n - 1);
 	}
-
-	sort(queries.begin(), queries.end(), [](auto &a, auto &b) {
-		return get<1>(a) < get<1>(b);
-	});
-
-	
-
-	range(u, 0, q) {
-		if (!visited[u]) {
-			if (checkCycle(graph, visited, curr, u)) {
-				print(-1);
-				return 0;
-			}
-		}
+	if (!flag) {
+		print(-1);
+		return 0;
 	}
-	
-	vector<int> ans;
-	visited = vector<bool>(q, false);
-	range(u, 0, q) {
-		if (!visited[u]) {
-			dfs(graph, visited, u, ans);
-		}
-	}
-	reverse(ans.begin(), ans.end());
-
-	vector<int> res(n, -1);
+	//arrPrint(segTree);
 	int c = 1;
-	for (int i : ans) {
-		if (res[get<2>(queries[i])] == -1) {
-			res[get<2>(queries[i])] = c;
+	set<int> s;
+	vector<int> b(n);
+	range(i, 1, 4 * n + 1) {
+		if (segTree[i] != -1 and s.find(segTree[i]) == s.end()) {
+			b[segTree[i]] = c;
 			c++;
+			s.insert(segTree[i]);
 		}
 	}
-	range(i, 0, n) {
-		if (res[i] == -1) {
-			res[i] = c;
-			c++;
-		}
-	}
-	arrPrint(res);
+	arrPrint(b);
 }
