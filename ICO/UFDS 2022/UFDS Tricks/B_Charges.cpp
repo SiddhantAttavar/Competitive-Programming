@@ -10,6 +10,33 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
+struct DSU {
+	vector<int> p, a, b;
+
+	DSU(int n) {
+		p.resize(n);
+		a.resize(n, -1);
+		b.resize(n, 0);
+		for (int i = 0; i < n; i++) {
+			p[i] = i;
+		}
+	}
+
+	int find(int u, int x) {
+		if (a[x] == 1) {
+			a[u] *= -1;
+		}
+
+		if (p[x] == x) {
+			return x;
+		}
+
+		return p[x] = find(u, p[x]);
+	}
+
+
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
 		
