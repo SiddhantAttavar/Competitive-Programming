@@ -7,3 +7,4 @@ for i in range(3, len(l)):
 	if n > s:
 		res += 1
 print(res)
+inputFile.close()

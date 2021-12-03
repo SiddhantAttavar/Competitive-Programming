@@ -12,3 +12,4 @@ for line in inputFile.read().splitlines():
 	elif a[0] == 'd':
 		aim += int(b)
 print(x * y)
+inputfile.close()

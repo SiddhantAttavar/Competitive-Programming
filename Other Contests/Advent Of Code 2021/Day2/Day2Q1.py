@@ -10,3 +10,4 @@ for line in inputFile.read().splitlines():
 	elif a[0] == 'd':
 		y += int(b)
 print(x * y)
+inputFile.close()
