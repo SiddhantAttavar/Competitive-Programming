@@ -19,5 +19,5 @@ A repository where I store all my competitive programming related code. This inc
  - Templates: My Python, C++, and Java competitive programming templates
  - Theory: Some more algorithms I have learnt (mostly during IOITC)
  - build: A collection of test cases for the various problems to be used with the [Competitive Programming Helper extension](https://marketplace.visualstudio.com/items?itemName=DivyanshuAgrawal.competitive-programming-helper) for Visual Studio Code
- - Other Contests: Other contests I have participated in (mostly interschool contests)
+ - Other Contests: Other contests I have participated in (mostly interschool contests and [Advent of Code](https://adventofcode.com/))
  - Other Problems: practice problems that I couldn't classify elsewhere
