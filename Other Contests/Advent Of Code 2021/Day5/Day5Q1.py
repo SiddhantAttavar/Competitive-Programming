@@ -34,6 +34,7 @@ for line in lines:
 res = 0
 for i in grid:
 	for j in i:
+    
 		if j > 1:
 			res += 1
 print(res)	
