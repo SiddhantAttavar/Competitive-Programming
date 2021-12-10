@@ -1,5 +1,6 @@
-inputFile = inputFile = open('input.txt', 'r')
-data = inputFile.read().splitlines()
+from aocd import get_data, submit
+data = get_data(day = 8, year = 2021).splitlines()
+
 d = {
 	0: 6,
 	1: 2,
@@ -66,5 +67,4 @@ for line in data:
 	res += int(c)
 
 print(res)
-
-inputFile.close()
+#submit(res, part = 'b', day = 8, year = 2021)

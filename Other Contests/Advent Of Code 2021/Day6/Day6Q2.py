@@ -1,3 +1,6 @@
+from aocd import get_data, submit
+data = get_data(day = 6, year = 2021).splitlines()
+
 from sys import setrecursionlimit
 setrecursionlimit(int(1e9))
 
@@ -13,10 +16,10 @@ def solve(i, n):
 	memo[(i, n)] = solve(i - 1, n - 1)
 	return memo[(i, n)]
 
-inputFile = open('input.txt', 'r')
-l = list(map(int, inputFile.read().splitlines()[0].split(',')))
+l = list(map(int, data[0].split(',')))
 res = 0
 for i in l:
 	res += solve(i, 256)
+	
 print(res)
-inputFile.close()
+#submit(res, part = 'b', day = 6, year = 2021)

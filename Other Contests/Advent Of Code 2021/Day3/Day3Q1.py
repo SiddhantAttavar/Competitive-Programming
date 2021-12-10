@@ -1,5 +1,7 @@
-inputFile = open('input.txt', 'r')
-l = inputFile.read().splitlines()
+from aocd import get_data, submit
+data = get_data(day = 3, year = 2021).splitlines()
+
+l = data
 gamma = [0] * len(l[0])
 epsilon = [0] * len(l[0])
 for i in range(len(l[0])):
@@ -20,5 +22,6 @@ for i in range(len(l[0])):
 		print('Error')
 finGamma = int(''.join(gamma), 2)
 finEpsilon = int(''.join(epsilon), 2)
+
 print(finGamma * finEpsilon)
-inputFile.close()
+#submit(finGamma * finEpsilon, part = 'a', day = 3, year = 2021)

@@ -1,5 +1,6 @@
-inputFile = open('input.txt', 'r')
-data = inputFile.read().splitlines()
+from aocd import get_data, submit
+data = get_data(day = 5, year = 2021).splitlines()
+
 lines = []
 minX = int(1e10)
 minY = int(1e10)
@@ -24,19 +25,13 @@ for line in lines:
 		for x in range(x1, x2 + 1):
 			for y in range(y1, y2 + 1):
 				grid[x - minX][y - minY] += 1
-	else:
-		if x1 <= x2 and y1 <= y2:
-			for j in range(x2 - x1 + 1):
-				grid[x1 + j - minX][y1 + j - minY] += 1
-		else:
-			for j in range(x2 - x1 + 1):
-				grid[x1 + j - minX][y1 - j - minY] += 1
+				
 res = 0
 for i in grid:
 	for j in i:
     
 		if j > 1:
 			res += 1
-print(res)	
 
-inputFile.close()
+print(res)
+#submit(res, part = 'a', day = 5, year = 2021)

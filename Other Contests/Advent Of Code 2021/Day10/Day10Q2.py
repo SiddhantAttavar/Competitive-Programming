@@ -1,5 +1,5 @@
-inputFile = inputFile = open('input.txt', 'r')
-data = inputFile.read().splitlines()
+from aocd import get_data, submit
+data = get_data(day = 10, year = 2021).splitlines()
 
 score = {
 	'(': 1,
@@ -33,7 +33,7 @@ for l in data:
 res.sort()
 if len(res) % 2 == 0:
 	print((res[len(res) // 2] + res[len(res) // 2 - 1]) // 2)
+	#submit((res[len(res) // 2] + res[len(res) // 2 - 1]) // 2, part = 'b', day = 10, year = 2021)
 else:
 	print(res[len(res) // 2])
-
-inputFile.close()
+	#submit(res[len(res) // 2], part = 'b', day = 10, year = 2021)

@@ -1,5 +1,7 @@
-inputFile = open('input.txt', 'r')
-l = list(map(int, inputFile.read().splitlines()[0].split(',')))
+from aocd import get_data, submit
+data = get_data(day = 6, year = 2021).splitlines()
+
+l = list(map(int, data[0].split(',')))
 for _ in range(80):
 	a = []
 	for i in l:
@@ -9,5 +11,6 @@ for _ in range(80):
 		else:
 			a.append(i - 1)
 	l = a
+
 print(len(l))
-inputFile.close()
+#submit(len(l), part = 'a', day = 6, year = 2021)

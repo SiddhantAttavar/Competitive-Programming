@@ -1,6 +1,7 @@
-inputFile = open('input.txt', 'r')
+from aocd import get_data, submit
+data = get_data(day = 3, year = 2021).splitlines()
 
-l = inputFile.read().splitlines()
+l = data
 m = l.copy()
 
 for i in range(len(l[0])):
@@ -42,5 +43,6 @@ for i in range(len(l[0])):
 
 finO2 = int(l[0], 2)
 finCO2 = int(m[0], 2)
+
 print(finO2 * finCO2)
-inputFile.close()
+#submit(finO2 * finCO2, part = 'b', day = 3, year = 2021)

@@ -1,5 +1,5 @@
-inputFile = inputFile = open('input.txt', 'r')
-data = inputFile.read().splitlines()
+from aocd import get_data, submit
+data = get_data(day = 9, year = 2021).splitlines()
 
 def dfs(i, j):
 	if a[i][j] == 100 or a[i][j] == 9:
@@ -28,6 +28,6 @@ for i in range(len(a)):
 			x = dfs(i, j)
 			res.append(x)
 res.sort()
-print(res[-3] * res[-2] * res[-1])
 
-inputFile.close()
+print(res[-3] * res[-2] * res[-1])
+#submit(res[-3] * res[-2] * res[-1], part = 'b', day = 9, year = 2021)

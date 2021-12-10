@@ -1,5 +1,5 @@
-inputFile = inputFile = open('input.txt', 'r')
-data = inputFile.read().splitlines()
+from aocd import get_data, submit
+data = get_data(day = 10, year = 2021).splitlines()
 
 score = {
 	')': 3,
@@ -27,5 +27,4 @@ for j, l in enumerate(data):
 			curr.append(c)
 
 print(res)
-
-inputFile.close()
+#submit(res, part = 'a', day = 10, year = 2021)
