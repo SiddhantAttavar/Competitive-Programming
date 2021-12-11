@@ -15,4 +15,4 @@ for line in data:
 		aim += int(b)
 
 print(x * y)
-#submit(x * y, part = 'b', day = 2, year = 2021)
+# submit(x * y, part = 'b', day = 2, year = 2021)

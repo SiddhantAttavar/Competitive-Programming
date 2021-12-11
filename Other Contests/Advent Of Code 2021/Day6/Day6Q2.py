@@ -22,4 +22,4 @@ for i in l:
 	res += solve(i, 256)
 	
 print(res)
-#submit(res, part = 'b', day = 6, year = 2021)
+# submit(res, part = 'b', day = 6, year = 2021)

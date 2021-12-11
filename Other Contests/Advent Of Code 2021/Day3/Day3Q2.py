@@ -45,4 +45,4 @@ finO2 = int(l[0], 2)
 finCO2 = int(m[0], 2)
 
 print(finO2 * finCO2)
-#submit(finO2 * finCO2, part = 'b', day = 3, year = 2021)
+# submit(finO2 * finCO2, part = 'b', day = 3, year = 2021)

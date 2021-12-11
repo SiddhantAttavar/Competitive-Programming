@@ -13,4 +13,4 @@ for i in range(1, len(a) - 1):
 			res += a[i][j] + 1
 
 print(res)
-#submit(res, part = 'a', day = 9, year = 2021)
+# submit(res, part = 'a', day = 9, year = 2021)

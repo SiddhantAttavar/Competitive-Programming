@@ -13,5 +13,5 @@ for line in data:
 		y += int(b)
 
 print(x * y)
-#submit(x * y, part = 'a', day = 2, year = 2021)
+# submit(x * y, part = 'a', day = 2, year = 2021)
 

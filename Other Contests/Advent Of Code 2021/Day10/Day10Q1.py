@@ -27,4 +27,4 @@ for j, l in enumerate(data):
 			curr.append(c)
 
 print(res)
-#submit(res, part = 'a', day = 10, year = 2021)
+# submit(res, part = 'a', day = 10, year = 2021)

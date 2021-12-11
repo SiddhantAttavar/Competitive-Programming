@@ -12,4 +12,4 @@ for line in data:
 			res += 1
 
 print(res)
-#submit(res, part = 'a', day = 8, year = 2021)
+# submit(res, part = 'a', day = 8, year = 2021)

@@ -10,4 +10,4 @@ for i in range(max(l) + 1):
 	res = min(res, c)
 
 print(res)
-#submit(res, part = 'b', day = 7, year = 2021)
+# submit(res, part = 'b', day = 7, year = 2021)

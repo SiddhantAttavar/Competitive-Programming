@@ -35,4 +35,4 @@ for _ in range(100):
 				a[i][j] = 0
 
 print(res)
-#submit(res, part = 'a', day = 11, year = 2021)
+# submit(res, part = 'a', day = 11, year = 2021)

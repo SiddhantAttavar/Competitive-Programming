@@ -10,4 +10,4 @@ for i in range(3, len(l)):
 		res += 1
 
 print(res)
-#submit(res, part = 'b', day = 1, year = 2021)
+# submit(res, part = 'b', day = 1, year = 2021)

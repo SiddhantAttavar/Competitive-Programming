@@ -40,4 +40,4 @@ for i in grid:
 			res += 1
 
 print(res)
-#submit(res, part = 'b', day = 5, year = 2021)
+# submit(res, part = 'b', day = 5, year = 2021)

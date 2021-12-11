@@ -67,4 +67,4 @@ for line in data:
 	res += int(c)
 
 print(res)
-#submit(res, part = 'b', day = 8, year = 2021)
+# submit(res, part = 'b', day = 8, year = 2021)

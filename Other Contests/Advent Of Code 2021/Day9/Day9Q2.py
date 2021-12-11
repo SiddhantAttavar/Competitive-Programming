@@ -30,4 +30,4 @@ for i in range(len(a)):
 res.sort()
 
 print(res[-3] * res[-2] * res[-1])
-#submit(res[-3] * res[-2] * res[-1], part = 'b', day = 9, year = 2021)
+# submit(res[-3] * res[-2] * res[-1], part = 'b', day = 9, year = 2021)

@@ -35,4 +35,4 @@ for move in moves:
 		break
 
 print(res)
-#submit(res, part = 'a', day = 4, year = 2021)
+# submit(res, part = 'a', day = 4, year = 2021)

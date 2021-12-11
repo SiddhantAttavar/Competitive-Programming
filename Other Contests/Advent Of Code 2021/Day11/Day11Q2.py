@@ -37,7 +37,7 @@ while True:
 				flag = False
 	
 	if flag:
-		#submit(res, part = 'b', day = 11, year = 2021)
+		# submit(res, part = 'b', day = 11, year = 2021)
 		break
 
 	res += 1

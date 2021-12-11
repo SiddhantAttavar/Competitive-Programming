@@ -24,4 +24,4 @@ finGamma = int(''.join(gamma), 2)
 finEpsilon = int(''.join(epsilon), 2)
 
 print(finGamma * finEpsilon)
-#submit(finGamma * finEpsilon, part = 'a', day = 3, year = 2021)
+# submit(finGamma * finEpsilon, part = 'a', day = 3, year = 2021)

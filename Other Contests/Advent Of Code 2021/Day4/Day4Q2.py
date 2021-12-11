@@ -36,4 +36,4 @@ for move in moves:
 	boards = nextBoards
 
 print(res)
-#submit(res, part = 'b', day = 4, year = 2021)
+# submit(res, part = 'b', day = 4, year = 2021)
