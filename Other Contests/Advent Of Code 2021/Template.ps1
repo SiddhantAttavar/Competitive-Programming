@@ -7,7 +7,7 @@ from aocd import get_data, submit
 data = get_data(day = ${day}, year = ${year}).splitlines()
 
 print(res)
-# submit(res, part = ${part}, day = ${day}, year = ${year})
+# submit(res, part = '${part}', day = ${day}, year = ${year})
 '@
 
 for ($i = 1; $i -le 25; $i++) {

@@ -2,4 +2,4 @@ from aocd import get_data, submit
 data = get_data(day = 19, year = 2021).splitlines()
 
 print(res)
-# submit(res, part = a, day = 19, year = 2021)
+# submit(res, part = 'a', day = 19, year = 2021)
