@@ -4,25 +4,8 @@ data = get_data(day = 12, year = 2021).splitlines()
 from sys import setrecursionlimit
 setrecursionlimit(int(1e9))
 
-def dfs(u, b):
-	global res
-	if u == 'end':
-		res += 1
-		return
-	
-	visited[u] += 1
-
-	for v in graph[u]:
-		if v.isupper():
-			dfs(v, b)
-		elif visited[v] == 0:
-			dfs(v, b)
-		elif visited[v] == 1 and not b:
-			dfs(v, True)
-	
-	visited[u] -= 1
-
 graph = {}
+edges = []
 
 for l in data:
 	u, v = l.split('-')
@@ -34,10 +17,22 @@ for l in data:
 	graph[u].append(v)
 	graph[v].append(u)
 
-visited = {i: 0 for i in graph.keys()}
-visited['start'] = 2
+	edges.append((u, v))
+
 res = 0
-dfs('start', False)
+n = len(graph)
+nodes = list(graph.keys())
+for i in range(1 << n):
+	s = set()
+	for j in range(n):
+		if i & (1 << j):
+			s.add(nodes[j])
+	
+	for u, v in edges:
+		if u in s and v in s:
+			break
+	else:
+		res += 1
 
 print(res)
 # submit(res, part = 'b', day = 12, year = 2021)
