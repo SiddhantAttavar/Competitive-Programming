@@ -1,5 +1,6 @@
 from aocd import get_data, submit
 data = get_data(day = 6, year = 2021).splitlines()
+# data = '''3,4,3,1,2'''.splitlines()
 
 l = list(map(int, data[0].split(',')))
 for _ in range(80):

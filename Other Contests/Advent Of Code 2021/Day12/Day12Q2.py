@@ -1,5 +1,12 @@
 from aocd import get_data, submit
 data = get_data(day = 12, year = 2021).splitlines()
+# data = '''start-A
+# start-b
+# A-c
+# A-b
+# b-d
+# A-end
+# b-end'''.splitlines()
 
 from sys import setrecursionlimit
 setrecursionlimit(int(1e9))

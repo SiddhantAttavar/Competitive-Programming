@@ -1,5 +1,17 @@
 from aocd import get_data, submit
 data = get_data(day = 3, year = 2021).splitlines()
+# data = '''00100
+# 11110
+# 10110
+# 10111
+# 10101
+# 01111
+# 00111
+# 11100
+# 10000
+# 11001
+# 00010
+# 01010'''.splitlines()
 
 l = data
 gamma = [0] * len(l[0])
