@@ -5,6 +5,7 @@
 $template = @'
 from aocd import get_data, submit
 data = get_data(day = ${day}, year = ${year}).splitlines()
+# data = ''''''.splitlines()
 
 print(res)
 # submit(res, part = '${part}', day = ${day}, year = ${year})
