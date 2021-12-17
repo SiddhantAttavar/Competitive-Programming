@@ -1,5 +1,5 @@
 from aocd import get_data, submit
-data = get_data(day = 16, year = 2021).splitlines()
+# data = get_data(day = 16, year = 2021).splitlines()
 # data = '''EE00D40C823060'''.splitlines()
 # data = '''38006F45291200'''.splitlines()
 # data = '''04005AC33890'''.splitlines()
@@ -8,7 +8,7 @@ data = get_data(day = 16, year = 2021).splitlines()
 # data = '''D8005AC2A8F0'''.splitlines()
 # data = '''F600BC2D8F'''.splitlines()
 # data = '''9C005AC2F8F0'''.splitlines()
-# data = '''9C0141080250320F1802104A08'''.splitlines()
+data = '''9C0141080250320F1802104A08'''.splitlines()
 
 from collections import defaultdict
 from functools import reduce
@@ -72,16 +72,6 @@ while c < n and '1' in s[c:]:
 		
 		packets.append([v, t, l, num, c - o])
 
-for i in range(len(packets)):
-	if packets[i][1] == 4 or packets[i][2] == 1:
-		continue
-
-	s = 0
-	for j in range(i + 1, len(packets)):
-		s += packets[j][-1]
-		if s == packets[i][3]:
-			packets[i][3] = j - i
-			break
 
 graph = defaultdict(lambda: [0, []])
 curr = 0
@@ -102,6 +92,9 @@ for p in packets:
 	if stack[-1][1] == 0:
 		stack.pop()
 
+print(*packets, sep = '\n')
+print(s)
+print(graph)
 res = evaluate(0)
 print(res)
 # submit(res, part = 'b', day = 16, year = 2021)
