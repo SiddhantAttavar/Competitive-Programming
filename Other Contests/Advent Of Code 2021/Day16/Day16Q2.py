@@ -1,24 +1,18 @@
 from aocd import get_data, submit
-# data = get_data(day = 16, year = 2021).splitlines()
-# data = '''EE00D40C823060'''.splitlines()
-# data = '''38006F45291200'''.splitlines()
+data = get_data(day = 16, year = 2021).splitlines()
+# data = '''A0016C880162017C3686B18A3D4780'''.splitlines()
+# data = '''8A004A801A8002F478'''.splitlines()
+# data = '''38006F45291200'''.splitlines()d
+# data = '''C200B40A82'''.splitlines()
 # data = '''04005AC33890'''.splitlines()
 # data = '''880086C3E88112'''.splitlines()
 # data = '''CE00C43D881120'''.splitlines()
 # data = '''D8005AC2A8F0'''.splitlines()
 # data = '''F600BC2D8F'''.splitlines()
 # data = '''9C005AC2F8F0'''.splitlines()
-data = '''9C0141080250320F1802104A08'''.splitlines()
+# data = '''9C0141080250320F1802104A08'''.splitlines()
 
-from collections import defaultdict
 from functools import reduce
-
-def evaluate(u):
-	if len(graph[u][1]) == 0:
-		return graph[u][0]
-	
-	res = [evaluate(v) for v in graph[u][1]]
-	return funcDict[graph[u][0]](res)
 
 funcDict = {
 	0: sum,
@@ -30,12 +24,20 @@ funcDict = {
 	7: lambda a: int(a[0] == a[1])
 }
 
+def evaluate(u):
+	if packets[u][1] == 4:
+		return packets[u][2]
+
+	res = []
+	for v in graph[u]:
+		res.append(evaluate(v))
+	return funcDict[packets[u][1]](res)
+
 s = bin(int(data[0], 16))[2:]
 for i in data[0]:
 	if i != '0':
 		break
 	s = '0' * 4 + s
-
 n = len(s)
 if n % 4 != 0:
 	s = '0' * (4 - n % 4) + s
@@ -44,7 +46,6 @@ c = 0
 packets = []
 
 while c < n and '1' in s[c:]:
-	o = c
 	v = int(s[c: c + 3], 2)
 	c += 3
 	t = int(s[c: c + 3], 2)
@@ -58,8 +59,8 @@ while c < n and '1' in s[c:]:
 		num += s[c + 1: c + 5]
 		c += 5
 		num = int(num, 2)
-        
-		packets.append([v, t, num, c - o])
+
+		packets.append([v, t, num, c])
 	else:
 		l = int(s[c], 2)
 		c += 1
@@ -70,31 +71,28 @@ while c < n and '1' in s[c:]:
 			num = int(s[c: c + 11], 2)
 			c += 11
 		
-		packets.append([v, t, l, num, c - o])
+		packets.append([v, t, l, num, c])
 
-
-graph = defaultdict(lambda: [0, []])
-curr = 0
 stack = []
-for p in packets:
+graph = [[] for _ in range(len(packets))]
+
+for i, u in enumerate(packets):
 	if len(stack) > 0:
-		curr += 1
-		graph[stack[-1][0]][1].append(curr)
+		p = stack[-1]
+		graph[p].append(i)
+		packets[p][3] -= 1
+		if packets[p][3] == 0:
+			stack.pop()
 	
-	if len(p) == 5:
-		stack.append([curr, p[3] + 1])
-		graph[curr][0] = p[1]
-	else:
-		graph[curr][0] = p[2]
-	
-	stack[-1][1] -= 1
+	while len(stack) > 0:
+		p = stack[-1]
+		if packets[p][2] == 0 and packets[p][3] <= u[-1] - packets[p][-1]:
+			stack.pop()
+		else:
+			break
 
-	if stack[-1][1] == 0:
-		stack.pop()
+	if u[1] != 4:
+		stack.append(i)
 
-print(*packets, sep = '\n')
-print(s)
-print(graph)
-res = evaluate(0)
-print(res)
+print(evaluate(0))
 # submit(res, part = 'b', day = 16, year = 2021)
