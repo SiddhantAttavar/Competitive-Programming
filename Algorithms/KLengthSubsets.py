@@ -1,4 +1,4 @@
-a = list(map(int, input().split()))
+a = tuple(map(int, input().split()))
 k = int(input())
 
 # Method 1
@@ -9,7 +9,9 @@ for subset in combinations(a, k):
 
 # Method 2
 print('Method 2')
+from functools import lru_cache
 
+@lru_cache(maxsize = None)
 def genSubsets(a, k):
 	if k == 0 or len(a) == 0 or k > len(a):
 		return []
