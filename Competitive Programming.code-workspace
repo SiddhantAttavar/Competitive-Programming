@@ -47,6 +47,9 @@
 		{
 			"name": "Downloads",
 			"path": "..\\..\\Downloads"
+		},
+		{
+			"path": "Codebreaker"
 		}
 	],
 	"settings": {

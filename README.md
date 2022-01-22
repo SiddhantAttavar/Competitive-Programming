@@ -4,6 +4,7 @@ A repository where I store all my competitive programming related code. This inc
 ## Stucture: <a name = "structure"></a>
  - Algorithms: Some practice problems for me to understand various algorithms
  - CSES Problem Set: my solutions of problems from cses
+ - Codebreaker: solutions from [Codebreaker](https://codebreaker.xyz/) problems
  - CodeChef Contests: solutions from [CodeChef](https://www.codechef.com/) contests I have participated in
  - Codeforces Contests: solutions from [Codeforces](https://codeforces.com/) contests I have participated in
  - DSA Learning Series: Some problems I have attempted from CodeChef's [DSA Learning Series](https://www.codechef.com/LEARNDSA/)
