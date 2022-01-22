@@ -1,4 +1,4 @@
-// https://codebreaker.xyz/problem/brick
+// https://codebreaker.xyz/problem/adjlist
 #include <bits/stdc++.h>
 using namespace std;
 template<typename T> inline void input(T& inVar) {cin >> inVar;}
@@ -13,19 +13,16 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 
 int32_t main() {
 	setup();
-	int n;
-	input(n);
-	stack<int> s;
-	while (n--) {
-		int x;
-		input(x);
-		while (!s.empty() and s.top() <= x) {
-			s.pop();
-		}
-		s.push(x);
+	int n, e;
+	input(n, e);
+	vector<vector<int>> graph(n + 1);
+	while (e--) {
+		int a, b;
+		input(a, b);
+		graph[a].push_back(b);
+		graph[b].push_back(a);
 	}
-	while (!s.empty()) {
-		print(s.top());
-		s.pop();
+	range(i, 1, n + 1) {
+		arrPrint(graph[i]);
 	}
 }

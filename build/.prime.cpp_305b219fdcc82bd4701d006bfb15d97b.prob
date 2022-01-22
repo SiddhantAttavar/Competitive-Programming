@@ -1,0 +1,1 @@
+{"name":"Local: prime","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\prime.cpp","tests":[{"id":1642869744190,"input":"7","output":"Prime"},{"id":1642869752349,"input":"4","output":"Not Prime"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\prime.cpp","group":"local","local":true}

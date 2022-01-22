@@ -29,7 +29,10 @@ $problem = $args[0]
 $file = "$root\$problem.cpp"
 New-Item -Type File -Path $file | Out-Null
 
-# Day i, Part j
+# Write to file
 $FileContent = $ExecutionContext.InvokeCommand.ExpandString($template)
 $Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False
 [System.IO.File]::WriteAllLines($file, $FileContent, $Utf8NoBomEncoding)
+
+# Open file
+code -r $file

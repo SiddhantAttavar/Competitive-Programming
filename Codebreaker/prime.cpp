@@ -12,7 +12,22 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	setup();
+	int n;
+	input(n);
+	if (n <= 1) {
+		print("Not Prime");
+		return 0;
+	}
+	bool flag = true;
+	range(i, 2, ((int) sqrt(n)) + 1) {
+		if (n % i == 0) {
+			flag = false;
+			print("Not Prime");
+			break;
+		}
+	}
+	if (flag) {
+		print("Prime");
 	}
 }
