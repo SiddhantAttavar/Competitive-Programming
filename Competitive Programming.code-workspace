@@ -9,10 +9,6 @@
 			"path": "Data Structures"
 		},
 		{
-			"name": "Theory",
-			"path": "Theory"
-		},
-		{
 			"name": "Other Problems",
 			"path": "Other Problems"
 		},
@@ -41,12 +37,20 @@
 			"path": "CSES Problem Set"
 		},
 		{
+			"name": "Theory",
+			"path": "Theory"
+		},
+		{
 			"name": "Codebreaker",
 			"path": "Codebreaker"
 		},
 		{
 			"name": "Templates",
 			"path": "Templates"
+		},
+		{
+			"name": "Scripts",
+			"path": "Scripts"
 		},
 		{
 			"name": "Downloads",
