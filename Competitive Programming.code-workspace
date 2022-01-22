@@ -1,61 +1,13 @@
 {
 	"folders": [
 		{
-			"name": "Algorithms",
-			"path": "Algorithms"
-		},
-		{
-			"name": "Data Structures",
-			"path": "Data Structures"
-		},
-		{
-			"name": "Other Problems",
-			"path": "Other Problems"
-		},
-		{
-			"name": "ICO",
-			"path": "ICO"
-		},
-		{
-			"name": "CodeChef Contests",
-			"path": "CodeChef Contests"
-		},
-		{
-			"name": "Codeforces Contests",
-			"path": "Codeforces Contests"
-		},
-		{
-			"name": "Google Contests",
-			"path": "Google Contests"
-		},
-		{
-			"name": "Other Contests",
-			"path": "Other Contests"
-		},
-		{
-			"name": "CSES Problem Set",
-			"path": "CSES Problem Set"
-		},
-		{
-			"name": "Theory",
-			"path": "Theory"
-		},
-		{
-			"name": "Codebreaker",
-			"path": "Codebreaker"
-		},
-		{
-			"name": "Templates",
-			"path": "Templates"
-		},
-		{
-			"name": "Scripts",
-			"path": "Scripts"
+			"name": "Competitive-Programming",
+			"path": "."
 		},
 		{
 			"name": "Downloads",
-			"path": "..\\..\\Downloads"
-		}
+			"path": "D:\\Downloads"
+		},
 	],
 	"settings": {
 		"files.associations": {
@@ -104,6 +56,27 @@
 			"cstddef": "cpp",
 			"random": "cpp"
 		},
-		"jupyter.jupyterServerType": "local"
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "Add Codebreaker Problem",
+				"type": "shell",
+				"command": "powershell",
+				"args": [
+					"Scripts/Codebreaker.ps1",
+					"${input:problem}"
+				],
+				"problemMatcher": []
+			}
+		],
+		"inputs": [
+			{
+				"id": "problem",
+				"description": "The Codebreaker problem id",
+				"type": "promptString"
+			}
+		]
 	}
 }
