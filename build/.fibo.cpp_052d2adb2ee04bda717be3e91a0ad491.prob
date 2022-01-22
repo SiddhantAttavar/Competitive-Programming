@@ -1,0 +1,1 @@
+{"name":"Local: fibo","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\fibo.cpp","tests":[{"id":1642845399907,"input":"6","output":"0\n1\n1\n2\n3\n5\n8"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\fibo.cpp","group":"local","local":true}

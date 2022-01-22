@@ -1,0 +1,1 @@
+{"name":"Local: sumint","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\sumint.cpp","tests":[{"id":1642843877667,"input":"10\n37 17 38 47 29 83 13 2 8 72","output":"346"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\sumint.cpp","group":"local","local":true}

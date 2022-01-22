@@ -1,0 +1,1 @@
+{"name":"Local: exam","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\exam.cpp","tests":[{"id":1642838339768,"input":"1","output":"Hello World"},{"id":1642838348424,"input":"2\n3 5","output":"15"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\exam.cpp","group":"local","local":true}
