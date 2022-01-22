@@ -29,6 +29,10 @@
 			"path": "Codeforces Contests"
 		},
 		{
+			"name": "Google Contests",
+			"path": "Google Contests"
+		},
+		{
 			"name": "Other Contests",
 			"path": "Other Contests"
 		},
@@ -37,19 +41,16 @@
 			"path": "CSES Problem Set"
 		},
 		{
+			"name": "Codebreaker",
+			"path": "Codebreaker"
+		},
+		{
 			"name": "Templates",
 			"path": "Templates"
 		},
 		{
-			"name": "Google Contests",
-			"path": "Google Contests"
-		},
-		{
 			"name": "Downloads",
 			"path": "..\\..\\Downloads"
-		},
-		{
-			"path": "Codebreaker"
 		}
 	],
 	"settings": {
