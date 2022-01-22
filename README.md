@@ -16,6 +16,7 @@ A repository where I store all my competitive programming related code. This inc
 	 - IOITC 2021: problems and solutions from IOITC 2021 TSTs and mock TSTs
 	 - UFDS 2022: my solutions from mock contests and practice problems during the [UFDS Mentoring Program 2022](https://ufds.cc/)
 	 - Other: other practice problems
+ - Scripts: Scripts that I have created to help create new solution files where [Competitive Companion](https://www.google.com/search?q=competitive+companion&oq=competitive+companion&aqs=edge..69i57j0i512l5j69i64.4565j0j1&sourceid=chrome&ie=UTF-8) is not supported
  - Syntax: Some programs I created while learning C++ and Java
  - Templates: My Python, C++, and Java competitive programming templates
  - Theory: Some more algorithms I have learnt (mostly during IOITC)
