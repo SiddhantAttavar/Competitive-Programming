@@ -68,6 +68,9 @@
 					"Scripts/Codebreaker.ps1",
 					"${input:problem}"
 				],
+				"presentation": {
+					"reveal": "silent",
+				},
 				"problemMatcher": []
 			}
 		],
