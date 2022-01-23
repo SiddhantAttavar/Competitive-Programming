@@ -1,0 +1,1 @@
+{"name":"Local: card","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\card.cpp","tests":[{"id":1642907991222,"input":"6 3 ABBABA.","output":"3 1 5"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\card.cpp","group":"local","local":true}
