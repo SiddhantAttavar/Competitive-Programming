@@ -14,9 +14,8 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
-	}
+	setup();
+	
 }
 '@
 
