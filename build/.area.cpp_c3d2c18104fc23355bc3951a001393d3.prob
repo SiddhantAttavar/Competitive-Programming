@@ -1,0 +1,1 @@
+{"name":"Local: area","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\area.cpp","tests":[{"id":1643040015105,"input":"3\n15 25\n5 6\n3 1","output":"408"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\area.cpp","group":"local","local":true}
