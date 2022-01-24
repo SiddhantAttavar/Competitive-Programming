@@ -1,0 +1,1 @@
+{"name":"Local: swapsort","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\swapsort.cpp","tests":[{"id":1643041575571,"input":"5\n1 2 3 4 5\n3\n1 3\n3 1\n2 3","output":"1\n1 3 2 4 5"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\swapsort.cpp","group":"local","local":true}
