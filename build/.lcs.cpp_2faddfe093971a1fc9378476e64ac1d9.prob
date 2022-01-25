@@ -1,0 +1,1 @@
+{"name":"Local: lcs","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\lcs.cpp","tests":[{"id":1643102601472,"input":"happy\napple","output":"3"},{"id":1643102785667,"input":"Ranald\nIran","output":"2"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\lcs.cpp","group":"local","local":true}
