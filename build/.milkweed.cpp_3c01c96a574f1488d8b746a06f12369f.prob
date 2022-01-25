@@ -1,0 +1,1 @@
+{"name":"Local: milkweed","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\milkweed.cpp","tests":[{"id":1643103656991,"input":"4 3 1 1\n....\n..*.\n.**.","output":"4"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\milkweed.cpp","group":"local","local":true}
