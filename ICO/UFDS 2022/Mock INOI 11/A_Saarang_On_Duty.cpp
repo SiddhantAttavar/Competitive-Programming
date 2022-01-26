@@ -63,29 +63,30 @@ int32_t main() {
 		d.unite(u - 1, v - 1);
 	}
 
-	// Preprocessing
-	map<int, int> map;
-	range(i, 0, n) {
-		if (d.p[i] == i) {
-			map[i] = d.a[i];
-		}
-	}
-	int k = map.size();
-
 	// Create list of components and their sums
 	vector<pair<int, int>> comps;
-	for (pair<int, int> p : map) {
-		comps.push_back({p.second, p.first});
+	range(i, 0, n) {
+		if (d.p[i] == i) {
+			comps.push_back({d.a[i], i});
+		}
 	}
+	int k = comps.size();
 	sort(comps.begin(), comps.end());
-	reverse(comps.begin(), comps.end());
 	
-	// Find the value of res
+	// Find the value of res and create prefSum
 	vector<int> ans(k);
 	range(i, 0, k) {
-		ans[i] = comps[i].first * (i + 1);
+		ans[i] = comps[i].first;
 	}
-
+	int res = 0;
+	range(i, 0, k) {
+		res += ans[i] * (k - i);
+	}
+	vector<int> prefSum(k + 1);
+	range(i, 0, k) {
+		prefSum[i + 1] = prefSum[i] + ans[i];
+	}
+	
 	// Answer queries
 	while (q--) {
 		int u, v;
@@ -95,32 +96,30 @@ int32_t main() {
 		v = d.find(v - 1);
 		
 		if (u == v) {
-			int res = 0;
-			for (int i : ans) {
-				res += i;
-			}
 			print(res);
 			continue;
 		}
 		
-		int res = 0;
-		int curr = 1;
-		bool flag = true;
-		for (pair<int, int> p : comps) {
-			if (flag and p.first < map[u] + map[v]) {
-				res += (map[u] + map[v]) * curr;
-				curr++;
-				flag = false;
-			}
-			if (p.second != u and p.second != v) {
-				res += p.first * curr;
-				curr++;
-			}
+		int x = lower_bound(ans.begin(), ans.end(), d.a[u]) - ans.begin();
+		int y = lower_bound(ans.begin(), ans.end(), d.a[v]) - ans.begin();
+		int z = upper_bound(ans.begin(), ans.end(), d.a[u] + d.a[v]) - ans.begin();
+		
+		if (x > y) {
+			swap(x, y);
 		}
-		if (flag) {
-			res += (map[u] + map[v]) * curr;
+		if (x == y) {
+			y++;
 		}
-		print(res);
+		
+		int finRes = res;
+		finRes -= prefSum[y + 1] + prefSum[x + 1] + ans[x] * (k - x - 2) + ans[y] * (k - y - 1);
+		if (z == k) {
+			finRes += prefSum[k];
+		}
+		else {
+			finRes += prefSum[z] + (k - z) * (ans[x] + ans[y]);
+		}
+		print(finRes);
 	}
 }
 
