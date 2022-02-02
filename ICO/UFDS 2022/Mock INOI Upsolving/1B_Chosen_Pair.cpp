@@ -22,5 +22,5 @@ int32_t main() {
 	a = vector<int>(s.begin(), s.end());
 	n = a.size();
 
-	vector<int>
+	// vector<int>
 }
