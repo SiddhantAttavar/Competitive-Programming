@@ -16,20 +16,32 @@ const int MOD = 1000000007;
 int32_t main() {
 	setup();
 	
-	int n;
+	int n = 5e6;
 	input(n);
 	
-	vector<int> d(n);
-	arrPut(d);
+	vector<int> d;
+	if (n == -1) {
+		n = 5e6;
+		d.resize(n);
+		range(i, 0, n) {
+			d[i] = 1e9;
+		}
+	}
+	else {
+		d.resize(n);
+		arrPut(d);
+	}
 	sort(d.begin(), d.end());
 	reverse(d.begin(), d.end());
+	d.push_back(0);
+
+	range(i, 0, n) {
+		d[i] = ((d[i] * (d[i] + 1)) / 2) % MOD;
+	}
 
 	int res = 0;
-	range(i, 0, n - 1) {
-		res += (i + 1) * d[i] * (d[i] + 1) / 2 - d[i + 1] * (d[i + 1] + 1) / 2;
-		res %= MOD;
+	range(i, 0, n) {
+		res = (res + (i + 1) * (d[i] - d[i + 1] + MOD) % MOD) % MOD;
 	}
-	res += n * d[n - 1] * (d[n - 1] + 1) / 2;
-	res %= MOD;
 	print(res);
 }
