@@ -31,17 +31,10 @@ int32_t main() {
 		d.resize(n);
 		arrPut(d);
 	}
-	sort(d.begin(), d.end());
-	reverse(d.begin(), d.end());
-	d.push_back(0);
-
-	range(i, 0, n) {
-		d[i] = ((d[i] * (d[i] + 1)) / 2) % MOD;
-	}
 
 	int res = 0;
 	range(i, 0, n) {
-		res = (res + (i + 1) * (d[i] - d[i + 1] + MOD) % MOD) % MOD;
+		res = (res + d[i] * (d[i] + 1) / 2) % MOD;
 	}
 	print(res);
 }
