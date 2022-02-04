@@ -54,7 +54,8 @@
 			"unordered_map": "cpp",
 			"unordered_set": "cpp",
 			"cstddef": "cpp",
-			"random": "cpp"
+			"random": "cpp",
+			"iterator": "cpp"
 		},
 	},
 	"tasks": {
