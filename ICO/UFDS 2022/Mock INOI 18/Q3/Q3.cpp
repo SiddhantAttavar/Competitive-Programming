@@ -84,11 +84,9 @@ int32_t main() {
 				pair<int, int> e;
 				if ((1 << x) > q[i][j]) {
 					e = {p[i][j], q[i][j]};
-					q[i][j] = 0;
 				}
 				else {
 					e = {p[i][j], 1 << x};
-					q[i][j] -= 1 << x;
 				}
 				map<pair<int, int>, int>::iterator it = graph[u].lower_bound({p[i][j], -1});
 				if (it == graph[u].end() or (*it).first.first != e.first) {
@@ -98,10 +96,11 @@ int32_t main() {
 					c++;
 				}
 				else {
-					q[i][j] += e.second - (*it).first.second;
+					assert((*it).first.second <= e.second);
 					e = (*it).first;
 				}
 				u = graph[u][e];
+				q[i][j] -= e.second;
 				if (q[i][j] == 0) {
 					break;
 				}
