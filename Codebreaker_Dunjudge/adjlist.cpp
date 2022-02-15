@@ -15,14 +15,21 @@ int32_t main() {
 	setup();
 	int n, e;
 	input(n, e);
-	vector<vector<int>> graph(n + 1);
+	vector<vector<int>> graph(n);
 	while (e--) {
 		int a, b;
 		input(a, b);
-		graph[a].push_back(b);
-		graph[b].push_back(a);
+		assert(0 < a and a <= n);
+		assert(0 < b and b <= n);
+		graph[a - 1].push_back(b - 1);
+		graph[b - 1].push_back(a - 1);
 	}
-	range(i, 1, n + 1) {
-		arrPrint(graph[i]);
+	range(i, 0, n) {
+		range(j, 0, graph[i].size() - 1) {
+			cout << graph[i][j] + 1 << ' ';
+		}
+		if (!graph[i].empty()) {
+			cout << graph[i].back() + 1 << endl;
+		}
 	}
 }
