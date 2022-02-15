@@ -32,37 +32,47 @@ int32_t main() {
 	}
 
 	vector<tuple<int, int, int>> edges(m);
-	vector<vector<pair<int, int>>> graph(n);
+	vector<vector<tuple<int, int, int>>> graph(n);
 	range(i, 0, m) {
 		int u, v, w;
 		input(u, v, w);
 		u--;
 		v--;
 		edges[i] = {u, v, w};
-		graph[u].push_back({v, w});
-		graph[v].push_back({u, w});
+		graph[u].push_back({v, w, i});
+		graph[v].push_back({u, w, i});
 	}
 
 	int res = 1e18;
-	range(i, 0, n) {
+	range(k, 0, m) {
+		int u, v, w;
+		tie(u, v, w) = edges[k];
+
 		vector<int> dist(n, 1e18);
 		priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-		dist[i] = 0;
-		pq.push({0, i});
+		dist[u] = 0;
+		pq.push({0, u});
 		while (!pq.empty()) {
-			int d, u;
-			tie(d, u) = pq.top();
+			int d, i;
+			tie(d, i) = pq.top();
 			pq.pop();
 
-			for (pair<int, int> p : graph[i]) {
-				int v, w;
-				tie(v, w) = p;
-				if (d + w < dist[v]) {
-					dist[v] = d + w;
-					pq.push({dist[v], v});
-				}
-				else {
-					res = min(res, d + w + dist[v]);
+			if (d >= res) {
+				break;
+			}
+
+			if (i == v) {
+				// print(d, w, i, v);
+				res = d + w;
+				break;
+			}
+
+			for (tuple<int, int, int> t : graph[i]) {
+				int j, e, x;
+				tie(j, e, x) = t;
+				if (x != k and dist[i] + e < dist[j]) {
+					dist[j] = dist[i] + e;
+					pq.push({dist[j], j});
 				}
 			}
 		}

@@ -16,11 +16,14 @@ int32_t main() {
 	
 	int n;
 	input(n);
-	set<string> s;
-	while (n--) {
-		string x;
-		input(x);
-		s.insert(x);
+	vector<int> a(n);
+	arrPut(a);
+	sort(a.begin(), a.end());
+	int res = 1;
+	range(i, 1, n) {
+		if (a[i] != a[i - 1]) {
+			res++;
+		}
 	}
-	print(s.size());
+	print(res);
 }
