@@ -53,7 +53,36 @@ int32_t main() {
 		int x, y, z;
 		input(x, y, z);
 		if (x == 1) {
-			update(1, 0, n - 1, y, z);
+			void update(int c, int l, int r, int i, int x) {
+	if (l == r) {
+		segTree[c] = x;
+		return;
+	}
+
+	int m = (l + r) / 2;
+	if (i <= m) {
+		update(2 * c, l, m, i, x);
+	}
+	else {
+		update(2 * c + 1, m + 1, r, i, x);
+	}
+	segTree[c] = min(segTree[2 * c], segTree[2 * c + 1]);
+}
+
+int query(int c, int l, int r, int s, int e) {
+	if (e < l or r < s) {
+		return 1e9;
+	}
+	if (s <= l and r <= e) {
+		return segTree[c];
+	}
+	
+	int m = (l + r) / 2;
+	return min(
+		query(2 * c, l, m, s, e),
+		query(2 * c + 1, m + 1, r, s, e)
+	);
+}
 		}
 		else {
 			print(query(1, 0, n - 1, y, z));

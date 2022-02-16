@@ -11,35 +11,50 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-void dfs(vector<vector<int>> &graph, vector<bool> &visited, int u) {
-	visited[u] = true;
-	for (int v : graph[u]) {
-		if (!visited[v]) {
-			dfs(graph, visited, v);
-		}
+struct DSU {
+	vector<int> a;
+
+	DSU(int n) {
+		a.resize(n, -1);
 	}
-}
+
+	int find(int x) {
+		if (a[x] < 0) {
+			return x;
+		}
+		return a[x] = find(a[x]);
+	}
+
+	bool unite(int x, int y) {
+		x = find(x);
+		y = find(y);
+
+		if (x == y) {
+			return false;
+		}
+
+		if (a[x] > a[y]) {
+			swap(x, y);
+		}
+
+		a[x] += a[y];
+		a[y] = x;
+
+		return true;
+	}
+};
 
 int32_t main() {
 	setup();
 	int n, m;
 	input(n, m);
-	vector<vector<int>> graph(n);
+	DSU dsu(n);
+	int res = n;
 	while (m--) {
 		int u, v;
 		input(u, v);
 
-		graph[u].push_back(v);
-		graph[v].push_back(u);
-	}
-
-	vector<bool> visited(n);
-	int res = 0;
-	range(i, 0, n) {
-		if (!visited[i]) {
-			res++;
-			dfs(graph, visited, i);
-		}
+		res -= dsu.unite(u, v);
 	}
 	print(res);
 }

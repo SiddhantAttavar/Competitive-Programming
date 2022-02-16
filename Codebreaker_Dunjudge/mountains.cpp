@@ -15,14 +15,11 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update>
 
-int32_t main() {
-	setup();
-	
-	int n;
-	input(n);
+int maximum_deevs(vector<int> y) {
+	int n = y.size();
 	vector<pair<int, int>> h(n);
 	range(i, 0, n) {
-		input(h[i].first);
+		h[i].first = y[i];
 		h[i].second = i;
 	}
 	sort(h.begin(), h.end(), [](pair<int, int> a, pair<int, int> b) {
@@ -41,5 +38,15 @@ int32_t main() {
 		s.insert(p.second);
 		m[p.first]++;
 	}
-	print(res);
+	return res;
+}
+
+int32_t main() {
+	setup();
+	
+	int n;
+	input(n);
+	vector<int> y(n);
+	arrPut(y);
+	print(maximum_deevs(y));
 }

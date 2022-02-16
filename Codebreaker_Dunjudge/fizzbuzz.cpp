@@ -13,9 +13,9 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 
 int32_t main() {
 	setup();
-	int n, a, b;
-	input(n, a, b);
-	range(i, 1, n + 1) {
+	int s, e, a, b;
+	input(s, e, a, b);
+	range(i, s, e + 1) {
 		if (i % a == 0) {
 			if (i % b == 0) {
 				print("FizzBuzz");
