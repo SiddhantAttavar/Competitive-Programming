@@ -3,6 +3,9 @@
 *.jpg
 *.exe
 
+# Build files
+*/a.out
+
 # Files
 ICO/1002495_Stage1_2122511010_4998845985.pdf
 ICO/ZIO Registration.txt
