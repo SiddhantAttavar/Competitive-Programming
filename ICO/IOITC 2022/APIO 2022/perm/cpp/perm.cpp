@@ -23,6 +23,7 @@ vector<int> construct_permutation(long long k) {
 			range(i, 0, res.size()) {
 				if (res[i] == 0) {
 					flag = false;
+					break;
 				}
 				if (res[i] == 1) {
 					range(j, 0, res.size()) {
