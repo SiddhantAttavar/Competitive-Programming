@@ -3,11 +3,7 @@
 		{
 			"name": "Competitive-Programming",
 			"path": "."
-		},
-		{
-			"name": "Downloads",
-			"path": "D:\\Downloads"
-		},
+		}
 	],
 	"settings": {
 		"files.associations": {
