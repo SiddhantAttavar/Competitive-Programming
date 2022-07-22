@@ -1,1 +1,0 @@
-{"name":"Local: inequality3","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\inequality3.cpp","tests":[{"id":1643287647326,"input":"4\n5 10\n5 10\n5 14\n3 11","output":"10"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\inequality3.cpp","group":"local","local":true}

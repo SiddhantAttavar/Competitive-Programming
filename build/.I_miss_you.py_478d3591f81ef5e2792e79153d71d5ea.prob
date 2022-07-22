@@ -1,1 +1,0 @@
-{"name":"Local: I_miss_you","url":"d:\\Slingshot\\I_miss_you.py","tests":[{"id":1635144617906,"input":"1 2 0 ","output":"3"},{"id":1635144626142,"input":"7 8 9 11 12","output":"1"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Slingshot\\I_miss_you.py","group":"local","local":true}

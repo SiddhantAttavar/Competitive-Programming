@@ -1,1 +1,0 @@
-{"name":"Local: car","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\car.cpp","tests":[{"id":1644329408887,"input":"5 7\n1 2 10\n1 5 10\n2 3 10\n3 4 2\n4 5 10\n1 4 1\n3 5 1","output":"2"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\car.cpp","group":"local","local":true}

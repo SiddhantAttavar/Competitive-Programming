@@ -1,1 +1,0 @@
-{"name":"Local: boxispull","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\boxispull.cpp","tests":[{"id":1642844240573,"input":"2\n1 2 2 2\n1 1 2 2","output":"1\n4"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\boxispull.cpp","group":"local","local":true}

@@ -1,1 +1,0 @@
-{"name":"Local: paint","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\paint.cpp","tests":[{"id":1642952063876,"input":"7\n100 200 500 300 400 200 100\n5 2 0 5 7 1 3","output":"1837"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\paint.cpp","group":"local","local":true}

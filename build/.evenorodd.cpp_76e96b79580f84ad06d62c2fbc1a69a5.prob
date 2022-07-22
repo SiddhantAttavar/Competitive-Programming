@@ -1,1 +1,0 @@
-{"name":"Local: evenorodd","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\evenorodd.cpp","tests":[{"id":1642852351391,"input":"5","output":"Odd"},{"id":1642852354842,"input":"6","output":"Even"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\evenorodd.cpp","group":"local","local":true}

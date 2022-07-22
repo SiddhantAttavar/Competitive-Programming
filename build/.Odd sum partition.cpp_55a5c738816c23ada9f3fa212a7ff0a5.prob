@@ -1,1 +1,0 @@
-{"name":"Local: Odd sum partition","url":"d:\\Downloads\\Odd sum partition.cpp","tests":[{"id":1621420359119,"input":"1\n5\n01101","output":"-1 3 3 3 1"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Downloads\\Odd sum partition.cpp","group":"local","local":true}

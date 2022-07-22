@@ -1,1 +1,0 @@
-{"name":"Local: fizzbuzz","url":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\fizzbuzz.cpp","tests":[{"id":1642908945789,"input":"10 2 3","output":"1\nFizz\nBuzz\nFizz\n5\nFizzBuzz\n7\nFizz\nBuzz\nFizz"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Competitions\\Competitive-Programming\\Codebreaker\\fizzbuzz.cpp","group":"local","local":true}
