@@ -1,4 +1,6 @@
 #include <bits/stdc++.h>
+#include <vector>
+#include <iostream>
 #define range(it, start, end) for (int it = start; it < end; it++)
 #define input(x) cin >> x
 #define print(x) cout << x << endl
