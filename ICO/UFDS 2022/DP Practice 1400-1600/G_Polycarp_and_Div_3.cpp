@@ -1,4 +1,6 @@
 #include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
 using namespace std;
 template<typename T> inline void input(T& inVar) {cin >> inVar;}
 template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
@@ -19,24 +21,21 @@ int32_t main() {
 	int n = s.size();
 	vector<int> a(n);
 	range(i, 0, n) {
-		a[i] = s[i] - '0';
+		a[i] = (s[i] - '0') % 3;
 	}
 
-	vector<int> dp(n, -1);
-	vector<int> x(3);
-	x[a[0]] = 0;
-	dp[0] = a[0] % 3 == 0;
-
+	vector<vector<int>> dp(n, vector<int>(3, -1));
+	dp[0][a[0]] = 0;
+	dp[0][0] += !a[0];
 	range(i, 1, n) {
-		if (x[0] != -1) {
-			dp[i] = dp[x[0]] + 1;
-		}
 		range(j, 0, 3) {
-			if (x[j] != -1) {
-				x[(a[0] + j) % 3] = i;
+			if (dp[i - 1][(j - a[i] + 3) % 3] != -1) {
+				dp[i][j] = dp[i - 1][(j - a[i] + 3) % 3];
 			}
 		}
+		dp[i][a[i]] = max({dp[i - 1][0], dp[i - 1][1], dp[i - 1][2], dp[i][a[i]]});
+		dp[i][0]++;
 	}
-	
-	print(dp[n - 1]);
+
+	print(max({dp[n - 1][0], dp[n - 1][1], dp[n - 1][2]}));
 }
