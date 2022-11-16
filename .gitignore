@@ -4,6 +4,8 @@
 *.exe
 
 # Build files
+*.testcases
+*.exe
 **/a.out
 build/
 
