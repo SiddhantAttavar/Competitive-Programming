@@ -10,8 +10,56 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+int n, m, p;
+vector<vector<int>> graph;
+vector<int> c;
+
+void dfs(int u, int x, pair<int, int> e) {
+	c[u] = x;
+	for (int v : graph[u]) {
+		if (c[v] == -1 and (e != make_pair(min(u, v), max(u, v)))) {
+			dfs(v, x, e);
+		}
 	}
 }
+
+int32_t main() {
+	setup();
+
+	input(n, m, p);
+
+	graph.clear();
+	graph.resize(n);
+	vector<pair<int, int>> e(m);
+	range(i, 0, m) {
+		int u, v;
+		input(u, v);
+		graph[u - 1].push_back(v - 1);
+		graph[v - 1].push_back(u - 1);
+		e[i] = {u - 1, v - 1};
+		if (e[i].first > e[i].second) {
+			swap(e[i].first, e[i].second);
+		}
+	}
+
+	if (n == 2) {
+		print(1);
+		print("01");
+		return 0;
+	}
+
+	c.resize(n);
+
+	print(n);
+	range(j, 0, n) {
+		cout << !(j == 0);
+	}
+	cout << endl;
+	range(i, 1, n) {
+		range(j, 0, n) {
+			cout << (j == i);
+		}
+		cout << endl;
+	}
+}
+
