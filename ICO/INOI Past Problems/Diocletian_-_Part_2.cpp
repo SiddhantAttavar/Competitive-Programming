@@ -12,16 +12,38 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 
 int n, m, p;
 vector<vector<int>> graph;
-vector<int> c;
 
-void dfs(int u, int x, pair<int, int> e) {
-	c[u] = x;
-	for (int v : graph[u]) {
-		if (c[v] == -1 and (e != make_pair(min(u, v), max(u, v)))) {
-			dfs(v, x, e);
-		}
+struct DSU {
+	vector<int> a;
+
+	DSU(int n) {
+		a.resize(n, -1);
 	}
-}
+
+	int get(int x) {
+		if (a[x] < 0) {
+			return x;
+		}
+		return a[x] = get(a[x]);
+	}
+
+	bool unite(int x, int y) {
+		x = get(x);
+		y = get(y);
+
+		if (x == y) {
+			return false;
+		}
+
+		if (a[x] < a[y]) {
+			swap(x, y);
+		}
+
+		a[y] += a[x];
+		a[x] = y;
+		return true;
+	}
+};
 
 int32_t main() {
 	setup();
@@ -42,24 +64,30 @@ int32_t main() {
 		}
 	}
 
-	if (n == 2) {
-		print(1);
-		print("01");
-		return 0;
-	}
-
-	c.resize(n);
-
-	print(n);
-	range(j, 0, n) {
-		cout << !(j == 0);
-	}
-	cout << endl;
-	range(i, 1, n) {
-		range(j, 0, n) {
-			cout << (j == i);
+	vector<string> res;
+	range(i, 0, m) {
+		DSU d(n);
+		int c = n;
+		range(j, 0, m) {
+			if (i != j) {
+				if (d.unite(e[j].first, e[j].second)) {
+					c--;
+				}
+			}
 		}
-		cout << endl;
+
+		if (c == 2) {
+			string s;
+			range(j, 0, n) {
+				s += '0' + (d.get(j) != d.get(0));
+			}
+			res.push_back(s);
+		}
+	}
+
+	print(res.size());
+	for (string s : res) {
+		print(s);
 	}
 }
 
