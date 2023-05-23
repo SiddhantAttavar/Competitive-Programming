@@ -1,0 +1,10 @@
+Running Alice...
+Alice took 0.000000 seconds
+la = 2
+Running Bob...
+Bob took 0.000000 seconds
+lb = 0
+Running Circuit...
+Circuit took 0.000000 seconds
+l = 3
+Invalid output: -1 at Circuit index 1, 0

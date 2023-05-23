@@ -1,0 +1,9 @@
+3 5
+alic 10000
+bob 20000
+circ 30000
+alic circ
+bob circ
+bob alic
+circ circ
+circ circ
