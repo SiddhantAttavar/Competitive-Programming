@@ -11,38 +11,24 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int w, f;
-		input(w, f);
+	setup();
+	int n;
+	input(n);
 
-		int n;
-		input(n);
+	vector<int> a(n);
+	arrPut(a);
 
-		vector<int> s(n);
-		arrPut(s);
+	int res = 0;
+	int m = 1e9;
+	for (int i : a) {
+		res += i - (i % 2 == 0);
+		m = min(m, i - (i % 2 == 0));
+	}
 
-		int c = 0;
-		for (int i : s) {
-			c += i;
-		}
-
-		set<int> v;
-		v.insert(0);
-		range(i, 0, n) {
-			set<int> nv;
-			for (int j : v) {
-				nv.insert(j + s[i]);
-			}
-			for (int j : nv) {
-				v.insert(j);
-			}
-		}
-
-		int res = 1e9;
-		for (int i : v) {
-			res = min(res, (int) max(ceil(i * 1.0 / w), ceil((c - i) * 1.0 / f)));
-		}
-
+	if (res % 2) {
 		print(res);
+	}
+	else {
+		print(res - m);
 	}
 }

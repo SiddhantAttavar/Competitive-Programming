@@ -15,7 +15,20 @@ int32_t main() {
 		int n;
 		input(n);
 
-		int x = (int) ceil((sqrt(1 + 8 * n) + 1) / 2) - 1;
+		int l = 1, r = 2e9, x = -1;
+		while (l <= r) {
+			int m = (l + r) / 2;
+			if (m * (m - 1) / 2 <= n) {
+				x = m;
+				l = m + 1;
+			}
+			else {
+				r = m - 1;
+			}
+		}
+
+		// print('d', x);
+
 		if (x * (x + 1) / 2 == n) {
 			print(x + 1);
 			continue;

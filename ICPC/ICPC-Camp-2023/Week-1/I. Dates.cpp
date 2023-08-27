@@ -12,37 +12,49 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int w, f;
-		input(w, f);
+		string s;
+		input(s);
 
-		int n;
-		input(n);
-
-		vector<int> s(n);
-		arrPut(s);
-
-		int c = 0;
-		for (int i : s) {
-			c += i;
-		}
-
-		set<int> v;
-		v.insert(0);
-		range(i, 0, n) {
-			set<int> nv;
-			for (int j : v) {
-				nv.insert(j + s[i]);
+		vector<string> dmy(3);
+		int i = 0;
+		bool flag = false;
+		for (char c : s) {
+			if (c == '.') {
+				i++;
 			}
-			for (int j : nv) {
-				v.insert(j);
+			else if (c == '/') {
+				flag = true;
+				i++;
+			}
+			else {
+				dmy[i] += c;
 			}
 		}
 
-		int res = 1e9;
-		for (int i : v) {
-			res = min(res, (int) max(ceil(i * 1.0 / w), ceil((c - i) * 1.0 / f)));
+		string x = dmy[0], y = dmy[1], z = dmy[2];
+
+		if (flag) {
+			swap(x, y);
 		}
 
-		print(res);
+		if (x.size() == 1) {
+			x = '0' + x;
+		}
+
+		if (y.size() == 1) {
+			y = '0' + y;
+		}
+
+		if (z.size() == 1) {
+			z = "000" + z;
+		}
+		else if (z.size() == 2) {
+			z = "00" + z;
+		}
+		else if (z.size() == 3) {
+			z = '0' + z;
+		}
+
+		cout << x << '.' << y << '.' << z << ' ' << y << '/' << x << '/' << z << endl;
 	}
 }

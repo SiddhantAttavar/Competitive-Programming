@@ -11,38 +11,44 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int w, f;
-		input(w, f);
+	setup();
 
-		int n;
-		input(n);
+	int a, b;
+	input(a, b);
 
-		vector<int> s(n);
-		arrPut(s);
+	int x = ((a - b) % 9 + 9) % 9;
+	
+	string s = to_string(b);
+	string r;
+	range(i, 0, x) {
+		r += '1';
+	}
+	s = r + s;
 
-		int c = 0;
-		for (int i : s) {
-			c += i;
+	stringstream ss(s);
+	int k;
+	ss >> k;
+
+	bool flag = false;
+	if (k < a) {
+		flag = true;
+		s = to_string(k);
+		r = "";
+		range(i, 0, 9) {
+			r += '1';
 		}
+		s = r + s;
 
-		set<int> v;
-		v.insert(0);
-		range(i, 0, n) {
-			set<int> nv;
-			for (int j : v) {
-				nv.insert(j + s[i]);
-			}
-			for (int j : nv) {
-				v.insert(j);
-			}
-		}
+		ss = stringstream(s);
+		ss >> k;
+	}
 
-		int res = 1e9;
-		for (int i : v) {
-			res = min(res, (int) max(ceil(i * 1.0 / w), ceil((c - i) * 1.0 / f)));
-		}
-
-		print(res);
+	print("Stable");
+	print(((k - a) > 0) + (x > 0 or flag));
+	if (k - a) {
+		print('+', (k - a) / 9);
+	}
+	if (x > 0 or flag) {
+		print('-', x + flag * 9);
 	}
 }

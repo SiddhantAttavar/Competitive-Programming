@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <cmath>
 using namespace std;
 template<typename T> inline void input(T& inVar) {cin >> inVar;}
 template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
@@ -10,39 +11,39 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
+int ax1, ay1, ax2, ay2, bx1, by1, bx2, by2, vx, vy;
+
+bool intersects(int ax, int ay) {
+	int l = (by2 - by1) * (bx1 - ax) - (bx2 - bx1) * (by1 - ay);
+	int r = (by2 - by1) * vx - (bx2 - bx1) * vy;
+	if (r < 0) {
+		l = -l;
+	}
+	return l >= 0;
+}
+
+bool intersect2() {
+	int l = (ay2 - ay1) * (bx1 - ax1) - (ax2 - ax1) * (by1 - ay1);
+	int r = (bx2 - bx1) * (ay2 - ay1) - (by2 - by1) * (ax2 - ax1);
+	if (r < 0) {
+		l = -l;
+		r = -r;
+	}
+	return l >= 0 and l <= r;
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int w, f;
-		input(w, f);
+		input(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2, vx, vy);
 
-		int n;
-		input(n);
-
-		vector<int> s(n);
-		arrPut(s);
-
-		int c = 0;
-		for (int i : s) {
-			c += i;
+		if (intersect2()) {
+			print("Yes");
 		}
-
-		set<int> v;
-		v.insert(0);
-		range(i, 0, n) {
-			set<int> nv;
-			for (int j : v) {
-				nv.insert(j + s[i]);
-			}
-			for (int j : nv) {
-				v.insert(j);
-			}
+		else if (intersects(ax1, ay1) or intersects(ax2, ay2)) {
+			print("Yes");
 		}
-
-		int res = 1e9;
-		for (int i : v) {
-			res = min(res, (int) max(ceil(i * 1.0 / w), ceil((c - i) * 1.0 / f)));
+		else {
+			print("No");
 		}
-
-		print(res);
 	}
 }
