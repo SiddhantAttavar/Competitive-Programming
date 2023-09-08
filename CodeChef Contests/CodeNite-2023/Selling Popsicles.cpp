@@ -15,8 +15,14 @@ int32_t main() {
 		int n;
 		input(n);
 
-		vector<int> a(n);
+		vector<int> p(n);
+		arrPut(p);
 
-		arrPut(a);
+		int m = 0;
+		for (int i : p) {
+			m = max(m, i);
+		}
+
+		print(max(0ll, m - 10));
 	}
 }

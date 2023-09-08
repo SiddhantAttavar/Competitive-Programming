@@ -12,11 +12,24 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int x, y;
+		input(x, y);
 
-		vector<int> a(n);
-
+		vector<int> a(x), b(y);
 		arrPut(a);
+		arrPut(b);
+
+		vector<vector<int>> dp(x + 1, vector<int>(y + 1, 0));
+		range(i, 0, x) {
+			range(j, 0, y) {
+				dp[i + 1][j + 1] = max(dp[i][j + 1], dp[i + 1][j]);
+
+				if (a[i] == b[j]) {
+					dp[i + 1][j + 1] = max(dp[i + 1][j + 1], 1 + dp[i][j]);
+				}
+			}
+		}
+
+		print(dp[x][y]);
 	}
 }

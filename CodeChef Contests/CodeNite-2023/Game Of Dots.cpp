@@ -12,11 +12,6 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
-
-		vector<int> a(n);
-
-		arrPut(a);
+		
 	}
 }

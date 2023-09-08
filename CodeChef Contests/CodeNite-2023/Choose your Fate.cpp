@@ -10,13 +10,46 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
+int solve(int n) {
+	if (n <= 2) {
+		return n;
+	}
+
+	if (n % 2 == 0) {
+		int x = solve(n / 2);
+
+		if (x == 1) {
+			return n;
+		}
+		else {
+			return 2 * (x - 1);
+		}
+	}
+
+	int x = solve(n - 1);
+	if (x == 1) {
+		return 2;
+	}
+
+	if (x == n - 1) {
+		return 1;
+	}
+
+	return x + 2;
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
 		vector<int> a(n);
-
 		arrPut(a);
+
+		range(i, 0, n) {
+			cout << solve(a[i]) << ' ';
+		}
+
+		cout << endl;
 	}
 }
