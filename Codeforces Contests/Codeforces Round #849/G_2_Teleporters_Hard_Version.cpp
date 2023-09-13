@@ -18,69 +18,46 @@ int32_t main() {
 		vector<int> a(n);
 		arrPut(a);
 
-		priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-		range(i, 1, n + 1) {
-			int y = i + a[i - 1];
-			if (y <= c) {
-				pq.push(make_pair(y, i));
-			}
+		vector<pair<int, int>> v(n + 1, {0, -1});
+		vector<int> ind(n);
+		range(i, 0, n) {
+			v[i + 1] = {min((i + 1ll), (n - i)) + a[i], i};
 		}
+		sort(v.begin(), v.end());
+
+		range(i, 0, n) {
+			v[i + 1].first += v[i].first;
+			ind[v[i + 1].second] = i + 1;
+		}
+
+		// if (n == 5 and c == 8) {
+		// 	print("");
+		// 	range(i, 0, n + 1) {
+		// 		print(v[i].first, v[i].second);
+		// 	}
+		// 	print("");
+		// }
 
 		int res = 0;
-		int m = 1e9;
-		bool flag = true;
-		bool flag2 = true;
-		set<int> s, t;
 		range(i, 1, n + 1) {
-			t.insert(i);
-		}
+			int l = 0, r = n;
+			while (l <= r) {
+				int m = (l + r) / 2;
+				int x = v[m].first + ((v[i].second + 1) + a[v[i].second]);
+				if (m >= i) {
+					x -= v[i].first - v[i - 1].first;
+				}
 
-		while (flag) {
-			while (!pq.empty()) {
-				int x, i;
-				tie(x, i) = pq.top();
-				pq.pop();
-				// print(x, i);
+				// if (n == 2 and c == 14) {
+				// 	print(i, m, x);
+				// }
 
-				if (c >= x) {
-					if (s.count(i)) {
-						continue;
-					}
-
-					c -= x;
-					res++;
-					s.insert(i);
-					t.erase(i);
-					// print('i', i, c);
-
-					if (flag2) {
-						m = max(0ll, 2 * i - (n + 1));
-						range(j, 1, n + 1) {
-							int y = (n + 1) - j + a[j - 1];
-							pq.push(make_pair(y, j));
-						}
-						flag2 = false;
-					}
+				if (x <= c) {
+					res = max(res, m + (m < i));
+					l = m + 1;
 				}
 				else {
-					break;
-				}
-			}
-
-			if (!t.size()) {
-				break;
-			}
-
-			for (int i : t) {
-				int x = 2 * i - (n + 1);
-				if (x <= 0) {
-					flag = false;
-					break;
-				}
-
-				if (x < m) {
-					c += m - x;
-					m = x;
+					r = m - 1;
 				}
 			}
 		}
