@@ -10,42 +10,47 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-int32_t main() {
-	setup();
-	
-	int N = (int) 1e5 + 1;
-	set<int> primes;
-	vector<bool> seive(N, true);
-	seive[0] = seive[1] = false;
-	range(i, 2, N) {
-		if (seive[i]) {
-			primes.insert(i);
-			for (int j = i + i; j < N; j += i) {
-				seive[j] = false;
+void solve(int n, vector<int> &ans) {
+	if (n == 6) {
+		ans[0] = 4;
+		ans[1] = 5;
+		ans[2] = 6;
+		ans[3] = 1;
+		ans[4] = 2;
+		ans[5] = 3;
+	}
+
+
+	if (n <= 7) {
+		ans[n - 2] = 1;
+		ans[n - 1] = 2;
+		range(i, 3, 8) {
+			if (n >= i) {
+				ans[i - 3] = i;
 			}
 		}
 	}
 
+	ans[n - 4] = n - 1;
+	ans[n - 3] = n;
+	ans[n - 2] = n - 3;
+	ans[n - 1] = n - 2;
+	solve(n - 4, ans);
+}
+
+int32_t main() {
+	setup();
 	int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		vector<int> res(n + 1);
-		range(i, 0, n / 4) {
-			res[4 * i + 1] = 4 * i + 3;
-			res[4 * i + 3] = 4 * i + 1;
-
-			res[4 * i + 2] = 4 * i + 4;
-			res[4 * i + 4] = 4 * i + 2;
-		}
-
-		if (n % 2 == 1 and !primes.count(n)) {
+		if (n <= 3) {
 			print(-1);
 			continue;
 		}
 
-		res[n - 1] = n;
-		res.erase(res.begin());
+		vector<int> res(n);
+		solve(n, res);
 		arrPrint(res);
 	}
 }
