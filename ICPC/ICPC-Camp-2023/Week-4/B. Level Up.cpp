@@ -13,41 +13,47 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 int32_t main() {
 	setup();
 
-	const int INF = 1e18;
+	const int INF = 1e16;
 
 	int n, s1, s2;
 	input(n, s1, s2);
 
 	vector<int> x(n), t(n), y(n), r(n);
+	vector<vector<int>> v(n, vector<int>(4));
 	range(i, 0, n) {
-		input(x[i], t[i], y[i], r[i]);
+		input(v[i][0], v[i][1], v[i][2], v[i][3]);
+	}
+	sort(v.begin(), v.end());
+	range(i, 0, n) {
+		x[i] = v[i][0];
+		t[i] = v[i][1];
+		y[i] = v[i][2];
+		r[i] = v[i][3];
 	}
 
-	vector<vector<int>> dp(1001, vector<int>(1001, INF)), ndp(1001, vector<int>(1001, INF));
+	vector<vector<int>> dp(s1 + 501, vector<int>(s2 + 1, INF));
 	dp[0][0] = 0;
 	range(i, 0, n) {
-		range(j, 0, s1 + x[i] + 1) {
-			range(k, 0, s2 + y[i] + 1) {
-				ndp[j][k] = min({
+		for (int j = s1 + 500; j >= 0; j--) {
+			for (int k = s2; k>= 0; k--) {
+				// print(j, k, x[i], y[i]);
+				// cout.flush();
+				dp[j][k] = min({
 					dp[j][k],
-					j >= x[i] ? dp[j - x[i]][k] + t[i] : INF,
+					(j >= x[i] and ((j - x[i]) < s1)) ? dp[j - x[i]][k] + t[i] : INF,
 					k >= y[i] ? dp[j][k - y[i]] + r[i] : INF
 				});
 			}
 		}
-		dp = ndp;
 	}
 
-	if (dp[s1][s2] == INF) {
-		print(-1);
-	}
-	else {
-		int res = 1e18;
-		range(i, s1, s1 + s2 + 1) {
-			range(j, s1 + s2 - i, 1001) {
+	int res = INF;
+	range(i, s1, s1 + 501) {
+		range(j, 0,  s2 + 1) {
+			if ((i + j) >= (s1 + s2)) {
 				res = min(res, dp[i][j]);
 			}
 		}
-		print(res);
 	}
+	print(res == INF ? -1 : res);
 }
