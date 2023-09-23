@@ -12,6 +12,9 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		double l, v1, v2;
+		input(l, v1, v2);
+
+		print((int) (ceil(l / v1) - ceil(l / v2) - 1));
 	}
 }
