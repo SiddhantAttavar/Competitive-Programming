@@ -14,65 +14,56 @@ int32_t main() {
 	setup();
 
 	int MAX_N = 1e6;
-	vector<int> seive(MAX_N + 1), d(MAX_N + 1, 2), l(MAX_N + 1, 1);
-	seive[1] = 1;
-	d[1] = 1;
-	range(i, 4, MAX_N + 1) {
-		seive[i] = 2;
-	}
-
-	range(i, 1, MAX_N + 1) {
-		seive[i] = i;
-	}
-
-	range(i, 3, MAX_N + 1) {
-		print(i);
-		cout.flush();
-		if (seive[i] == i) {
-			for (int j = i * i; j <= MAX_N; j += i) {
-				if (seive[j] == j) {
-					seive[j] = i;
-					if (l[j / i] == j / i / i) {
-						l[j] = l[j / i];
-					}
-					else {
-						l[j] = j / i;
-					}
-				}
-			}
+	vector<vector<int>> factors(MAX_N);
+	range(i, 2, MAX_N + 1) {
+		if (factors[i].size()) {
+			continue;
 		}
-		else {
-			d[i] = d[i / seive[i]] + d[l[i]];
-		}
-		print(i);
-		cout.flush();
-	}
 
-	vector<bool> b(MAX_N + 1, false);
-	range(i, 1, MAX_N + 1) {
-		b[d[i]] = true;
+		for (int j = i; j <= MAX_N; j += i) {
+			factors[j].push_back(i);
+		}
 	}
 
 	int tc; input(tc); while (tc--) {
 		int n, q;
 		input(n, q);
 
-		int m = n;
+		map<int, int> m;
+		int o = n;
+		for (int p : factors[n]) {
+			while (o % p == 0) {
+				m[p]++;
+				o /= p;
+			}
+		}
 
 		while (q--) {
-			int k;
+			int k, x;
 			input(k);
 
 			if (k == 1) {
-				int x;
 				input(x);
-
-				n *= x;
-
-				print(b[n + 1 - d[n]] ? "YES" : "NO");
 			}
 			else {
-				n = m;
+				x = n;
+				m = map<int, int>();
+			}
+
+			int o = x;
+			for (int p : factors[x]) {
+				while (o % p == 0) {
+					m[p]++;
+					o /= p;
+				}
+			}
+
+			if (k == 1) {
+				int res = 1;
+				for (pair<int, int> p : m) {
+					res *= p.second + 1;
+				}
+				print(res);
 			}
 		}
 	}
