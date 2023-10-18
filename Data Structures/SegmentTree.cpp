@@ -1,114 +1,91 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define range(i, s, n) for (int i = s; i < n; i++)
-#define len(a) (*(&a + 1) - a)
-#define print(x) printf("%d\n", x);
-#define println(...) printf(__VA_ARGS__); printf("\n");
-#define input(type, x) type x; cin >> x;
-#define arrput(type, var, n) type var[n]; range(inputCount, 0, n) {cin >> var[inputCount];}
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int n;
-vector<int> a;
-vector<int> segmentTree;
+struct SegTree {
+	vector<int> a;
+	int id;
 
-//Build Array
-int build(int l, int r, int x) {
-    if ((r - l) <= 1) {
-        //We have reached a leaf
-        segmentTree[x] = a[l];
-        return segmentTree[x];
-    }
+	int (*combine) (int, int);
 
-    //Divide into 2 halves and recursively build the segment tree
-    int m = (l + r) / 2;
-    segmentTree[x] = build(l, m, 2 * x) + build(m, r, 2 * x + 1);
-    return segmentTree[x];
-}
+	SegTree(int n, int i, int func(int, int)) {
+		id = i;
+		combine = func;
+		a = vector<int>(4 * n, id);
+	}
 
-//Range query from segment tree
-int query(int s, int e, int l, int r, int x) {
-    if (r <= s || l >= e) {
-        //Range is outside target range
-        return 0;
-    }
-    if (l >= s && r <= e) {
-        //Range is completely inside target range
-        return segmentTree[x];
-    }
-    
-    //Range has an intersection with target range
-    int m = (l + r) / 2;
-    return query(s, e, l, m, 2 * x) + query(s, e, m, r, 2 * x + 1);
-}
+	int query(int l, int r, int s, int e, int curr) {
+		if (l > e || r < s) {
+			return id;
+		}
 
-//Point update of segment tree
-int update(int i, int v, int l, int r, int x) {
-    if (i < l || i >= r) {
-        //Target position not in range
-        return segmentTree[x];
-    }
-    if ((r - l) == 1) {
-        //Position is found
-        segmentTree[x] = v;
-        a[i] = v;
-        return segmentTree[x];
-    }
+		if (l <= s && r >= e) {
+			return a[curr];
+		}
 
-    //Split subtree into 2 halves and recursively search for value
-    int m = (l + r) / 2;
-    segmentTree[x] = update(i, v, l, m, 2 * x) + update(i, v, m, r, 2 * x + 1);
-    return segmentTree[x];
-}
+		int mid = (s + e) / 2;
+		return combine(
+			query(l, r, s, mid, 2 * curr + 1),
+			query(l, r, mid + 1, e, 2 * curr + 2)
+		);
+	}
 
-int main() {
+	void update(int i, int x, int s, int e, int curr) {
+		if (s > i || e < i) {
+			return;
+		}
+
+		if (s == e) {
+			a[curr] = x;
+			return;
+		}
+
+		int mid = (s + e) / 2;
+
+		update(i, x, s, mid, 2 * curr + 1);
+		update(i, x, mid + 1, e, 2 * curr + 2);
+
+		a[curr] = combine(a[2 * curr + 1], a[2 * curr + 2]);
+	}
+};
+
+int32_t main() {
     //Take input
-    input(int, n);
-    a = vector<int>(n);
-    segmentTree = vector<int>(4 * n);
+    int n;
+    input(n);
+    SegTree segTree(n, 0, [](int a, int b) {
+        return a + b;
+    });
+
+    vector<int> a(n);
+    arrPut(a);
     range(i, 0, n) {
-        cin >> a[i];
+        segTree.update(i, a[i], 0, n - 1, 0);
     }
-
-    //Building the segment tree
-    println("Building Segment Tree: ");
-    build(0, n, 1);
-
-    int level = 2;
-    range(x, 1, 4 * n) {
-        if (x == level) {
-            level *= 2;
-            println("");
-        }
-        printf("%d ", segmentTree[x]);
-    }
-    println("");
 
     //Range queries on the segment tree
-    println("Range Queries: ");
-    input(int, q);
+    int q;
+    input(q);
     range(i, 0, q) {
-        input(int, l);
-        input(int, r);
-        print(query(l - 1, r, 0, n, 1));
+        int l, r;
+        input(l, r);
+        print(segTree.query(l, r, 0, n - 1, 0));
     }
 
     //Point updates on the segment tree
-    println("Point Updates: ");
-    input(int, u);
+    int u;
+    input(u);
     range(i, 0, u) {
-        input(int, j);
-        input(int, v);
-        update(j - 1, v, 0, n, 1);
+        int j, y;
+        input(j, y);
+        segTree.update(j, y, 0, n - 1, 0);
     }
-
-    //Print the segment tree
-    level = 2;
-    range(x, 1, 4 * n) {
-        if (x == level) {
-            level *= 2;
-            println("");
-        }
-        printf("%d ", segmentTree[x]);
-    }
-    println("");
 }

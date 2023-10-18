@@ -12,29 +12,6 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n, k;
-		input(n, k);
-
-		vector<int> a(n), h(n);
-		arrPut(a);
-		arrPut(h);
-
-		int res = a[0] <= k, l = a[0] > k, s = a[0] <= k ? a[0] : 0;
-		range(i, 1, n) {
-			if (h[i - 1] % h[i] != 0) {
-				l = i;
-				s = 0;
-			}
-
-			s += a[i];
-			while (s > k) {
-				s -= a[l];
-				l++;
-			}
-
-			res = max(res, i - l + 1);
-		}
-
-		print(res);
+		
 	}
 }
