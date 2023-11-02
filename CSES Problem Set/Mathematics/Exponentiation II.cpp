@@ -10,40 +10,26 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-int32_t main() {
-	setup();
+const int MOD = (int) 1e9 + 7;
 
-	int n;
-	input(n);
-
-	vector<int> a(n);
-	arrPut(a);
-
-	vector<int> pref(n + 1, 0);
-	range(i, 0, n) {
-		pref[i + 1] = pref[i] + a[i];
-	}
-
-	vector<vector<int>> dp(n, vector<int>(n));
-	range(i, 0, n) {
-		dp[i][i] = a[i];
-	}
-
-	range(i, 0, n - 1) {
-		dp[i][i + 1] = max(a[i], a[i + 1]);
-	}
-
-	range(l, 3, n + 1) {
-		range(i, 0, n - l + 1) {
-			int j = i + l - 1;
-			dp[i][j] = max(a[i] + pref[j + 1] - pref[i + 1] - dp[i + 1][j], a[j] + pref[j] - pref[i] - dp[i][j - 1]);
+int modPow(int a, int b, int m) {
+	int res = 1;
+	while (b) {
+		if (b & 1) {
+			res = (res * a) % m;
 		}
+
+		a = (a * a) % m;
+		b >>= 1;
 	}
+	return res;
+}
 
-	// range(i, 0, n) {
-	// 	arrPrint(dp[i]);
-	// }
-	// print("");
+int32_t main() {
+	setup(); int tc; input(tc); while (tc--) {
+		int a, b, c;
+		input(a, b, c);
 
-	print(dp[0][n - 1]);
+		print(modPow(a, modPow(b, c, MOD - 1), MOD));
+	}
 }

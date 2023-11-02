@@ -10,40 +10,27 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
+int solve(int n, int k) {
+	if (n == 1) {
+		return 1;
+	}
+
+	if (k <= n / 2) {
+		return 2 * k;
+	}
+
+	if (n % 2 == 1) {
+		return 2 * ((solve(n / 2 + 1, k - n / 2) + n / 2 - 1) % (n / 2 + 1)) + 1;
+	}
+
+	return 2 * solve(n / 2, k - n / 2) - 1;
+}
+
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n, k;
+		input(n, k);
 
-	int n;
-	input(n);
-
-	vector<int> a(n);
-	arrPut(a);
-
-	vector<int> pref(n + 1, 0);
-	range(i, 0, n) {
-		pref[i + 1] = pref[i] + a[i];
+		print(solve(n, k));
 	}
-
-	vector<vector<int>> dp(n, vector<int>(n));
-	range(i, 0, n) {
-		dp[i][i] = a[i];
-	}
-
-	range(i, 0, n - 1) {
-		dp[i][i + 1] = max(a[i], a[i + 1]);
-	}
-
-	range(l, 3, n + 1) {
-		range(i, 0, n - l + 1) {
-			int j = i + l - 1;
-			dp[i][j] = max(a[i] + pref[j + 1] - pref[i + 1] - dp[i + 1][j], a[j] + pref[j] - pref[i] - dp[i][j - 1]);
-		}
-	}
-
-	// range(i, 0, n) {
-	// 	arrPrint(dp[i]);
-	// }
-	// print("");
-
-	print(dp[0][n - 1]);
 }

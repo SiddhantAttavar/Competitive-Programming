@@ -10,8 +10,43 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
+int dfs(int u, int p, vector<vector<int>> &graph) {
+	int res = 0;
+	if (graph[u].size() > 1) {
+		res = u;
+	}
+
+	for (int v : graph[u]) {
+		if (v != p) {
+			res = max(res, dfs(v, u, graph));
+		}
+	}
+
+	return res;
+}
+
 int32_t main() {
 	setup();
+
+	int N = 1e6;
+	vector<int> spf(N + 1);
+	range(i, 0, N + 1) {
+		spf[i] = i;
+	}
+
+	for (int i = 4; i <= N; i += 2) {
+		spf[i] = 2;
+	}
+
+	for (int i = 3; i * i <= N; i++) {
+		if (spf[i] == i) {
+			for (int j = 2 * i; j <= N; j += i) {
+				if (spf[j] == j) {
+					spf[j] = i;
+				}
+			}
+		}
+	}
 
 	int n;
 	input(n);
@@ -19,31 +54,13 @@ int32_t main() {
 	vector<int> a(n);
 	arrPut(a);
 
-	vector<int> pref(n + 1, 0);
-	range(i, 0, n) {
-		pref[i + 1] = pref[i] + a[i];
-	}
-
-	vector<vector<int>> dp(n, vector<int>(n));
-	range(i, 0, n) {
-		dp[i][i] = a[i];
-	}
-
-	range(i, 0, n - 1) {
-		dp[i][i + 1] = max(a[i], a[i + 1]);
-	}
-
-	range(l, 3, n + 1) {
-		range(i, 0, n - l + 1) {
-			int j = i + l - 1;
-			dp[i][j] = max(a[i] + pref[j + 1] - pref[i + 1] - dp[i + 1][j], a[j] + pref[j] - pref[i] - dp[i][j - 1]);
+	vector<vector<int>> graph(N + 1);
+	for (int i : a) {
+		while (i > 1) {
+			graph[i / spf[i]].push_back(i);
+			i /= spf[i];
 		}
 	}
 
-	// range(i, 0, n) {
-	// 	arrPrint(dp[i]);
-	// }
-	// print("");
-
-	print(dp[0][n - 1]);
+	print(dfs(1, -1, graph));
 }

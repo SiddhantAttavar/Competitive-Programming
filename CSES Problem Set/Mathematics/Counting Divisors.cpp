@@ -11,39 +11,40 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup();
-
-	int n;
-	input(n);
-
-	vector<int> a(n);
-	arrPut(a);
-
-	vector<int> pref(n + 1, 0);
-	range(i, 0, n) {
-		pref[i + 1] = pref[i] + a[i];
+	int N = 1e6;
+	vector<int> spf(N + 1);
+	range(i, 0, N + 1) {
+		spf[i] = i;
 	}
 
-	vector<vector<int>> dp(n, vector<int>(n));
-	range(i, 0, n) {
-		dp[i][i] = a[i];
+	for (int i = 4; i <= N; i += 2) {
+		spf[i] = 2;
 	}
 
-	range(i, 0, n - 1) {
-		dp[i][i + 1] = max(a[i], a[i + 1]);
-	}
-
-	range(l, 3, n + 1) {
-		range(i, 0, n - l + 1) {
-			int j = i + l - 1;
-			dp[i][j] = max(a[i] + pref[j + 1] - pref[i + 1] - dp[i + 1][j], a[j] + pref[j] - pref[i] - dp[i][j - 1]);
+	for (int i = 3; i * i <= N; i++) {
+		if (spf[i] == i) {
+			for (int j = 2 * i; j <= N; j += i) {
+				if (spf[j] == j) {
+					spf[j] = i;
+				}
+			}
 		}
 	}
 
-	// range(i, 0, n) {
-	// 	arrPrint(dp[i]);
-	// }
-	// print("");
+	setup(); int tc; input(tc); while (tc--) {
+		int x;
+		input(x);
 
-	print(dp[0][n - 1]);
+		map<int, int> m;
+		while (x > 1) {
+			m[spf[x]]++;
+			x /= spf[x];
+		}
+
+		int res = 1;
+		for (pair<int, int> p : m) {
+			res *= p.second + 1;
+		}
+		print(res);
+	}
 }
