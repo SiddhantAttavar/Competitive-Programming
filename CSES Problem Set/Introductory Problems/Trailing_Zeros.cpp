@@ -1,31 +1,25 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int legenders(int n, int p) {
-	int res = 0;
-	int k = p;
-	while (true) {
-		int x = n / k;
-		if (x == 0) {
-			break;
-		}
-		res += x;
-		k *= p;
-	}
-	return res;
-}
-
-int main() {
+int32_t main() {
 	setup();
-	
-	int n; input(n);
-	print(min(legenders(n, 2), legenders(n, 5)));
+
+	int n;
+	input(n);
+
+	int x = 5, res = 0;
+	while (n / x) {
+		res += n / x;
+		x *= 5;
+	}
+	print(res);
 }

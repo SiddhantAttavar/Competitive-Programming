@@ -1,26 +1,31 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define range(i, s, n) for (int i = s; i < n; i++)
-#define len(a) (*(&a + 1) - a)
-#define print(x) cout << x << endl;
-#define input(type, x) type x; cin >> x;
-#define arrput(type, var, n) type var[n]; range(inputCount, 0, n) {cin >> var[inputCount];}
-#define setup() ios::sync_with_stdio(false); cin.tie(0);
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	
-	input(string, s);
-	char curr = s[0];
-	int currLen = 1;
-	int res = 0;
-	range(i, 1, s.size()) {
-		if (curr != s[i]) {
-			res = max(res, currLen);
-			curr = s[i];
-			currLen = 0;
+
+	string s;
+	input(s);
+
+	int n = s.size();
+
+	int c = 1, res = 1;
+	range(i, 1, n) {
+		if (s[i] != s[i - 1]) {
+			res = max(res, c);
+			c = 0;
 		}
-		currLen++;
+		c++;
 	}
-	print(max(res, currLen));
+
+	print(max(res, c));
 }

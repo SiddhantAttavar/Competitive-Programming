@@ -1,22 +1,27 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
-	setup();
-	int tc; input(tc); while (tc--) {
+int32_t main() {
+	setup(); int tc; input(tc); while (tc--) {
 		int a, b;
-		input(a);
-		input(b);
+		input(a, b);
 
-		if ((a + b) % 3 == 0 && a >= b / 2 && b >= a / 2) {
+		if (a > b) {
+			swap(a, b);
+		}
+
+		int x = 2 * a - b;
+
+		if (x >= 0 and x % 3 == 0) {
 			print("YES");
 		}
 		else {

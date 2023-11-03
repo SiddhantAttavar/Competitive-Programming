@@ -1,34 +1,36 @@
 #include <bits/stdc++.h>
-#include <vector>
-#include <iostream>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-vector<pair<int, int>> moves;
-
-void solve(int n, int a, int b, int c) {
+void solve(int n, int a, int b, int c, vector<pair<int, int>> &res) {
 	if (n == 0) {
 		return;
 	}
-	solve(n - 1, a, c, b);
-	moves.push_back({a, b});
-	solve(n - 1, c, b, a);
+
+	solve(n - 1, a, c, b, res);
+	res.push_back({a, b});
+	solve(n - 1, c, b, a, res);
 }
 
-int main() {
+int32_t main() {
 	setup();
-	
-	int n; input(n);
-	solve(n, 1, 3, 2);
-	print(moves.size());
-	for (pair<int, int> p : moves) {
-		print(p.first << " " << p.second);
+
+	int n;
+	input(n);
+
+	vector<pair<int, int>> res;
+	solve(n, 0, 2, 1, res);
+
+	print(res.size());
+	for (pair<int, int> p : res) {
+		print(p.first + 1, p.second + 1);
 	}
 }

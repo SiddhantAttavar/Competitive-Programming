@@ -1,45 +1,50 @@
 #include <bits/stdc++.h>
-#define lli long long int
-#define li long int
-#define ld long double
 using namespace std;
-const lli mod = 1e9 + 7;
-int ans = 0;
-bool takencols[8], takendiag1[16], takendiag2[16];
- 
-void place(string board[8], int r, int &ans)
-{
-    if (r == 8)
-    {
-        ans++;
-        return;
-    }
-    for (int c = 0; c < 8; c++)
-    {
-        if (board[r][c] == '.')
-        {
-            if (!takencols[c] && !takendiag1[r - c + 8 - 1] && !takendiag2[r + c])
-            {
-                takencols[c] = takendiag1[r - c + 8 - 1] = takendiag2[r + c] = true;
-                place(board, r + 1, ans);
-                takencols[c] = takendiag1[r - c + 8 - 1] = takendiag2[r + c] = false;
-            }
-        }
-    }
-}
- 
-int main()
-{
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    string s;
-    string board[8];
-    int ans = 0;
-    for (int i = 0; i < 8; i++)
-    {
-        cin >> board[i];
-    }
-    place(board, 0, ans);
-    cout << ans;
-    return 0;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
+
+int32_t main() {
+	setup();
+
+	int n = 8;
+
+	vector<string> v(n);
+	arrPut(v);
+
+	vector<int> a(n);
+	range(i, 0, n) {
+		a[i] = i;
+	}
+
+	int res = 0;
+	do {
+		bool flag = true;
+
+		set<int> x, y;
+		range(i, 0, n) {
+			if (v[i][a[i]] == '*') {
+				flag = false;
+				break;
+			}
+
+			if (x.count(i + a[i]) or y.count(i - a[i])) {
+				flag = false;
+				break;
+			}
+			x.insert(i + a[i]);
+			y.insert(i - a[i]);
+		}
+
+		res += flag;
+
+	} while (next_permutation(a.begin(), a.end()));
+
+	print(res);
 }

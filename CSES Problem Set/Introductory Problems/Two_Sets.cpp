@@ -1,41 +1,48 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	
-	ll n; input(n);
-	ll total = n * (n + 1) / 2;
 
-	if (total % 2 == 1) {
+	int n;
+	input(n);
+
+	int x = n * (n + 1) / 2;
+
+	if (x % 2 == 1) {
 		print("NO");
 		return 0;
 	}
 
 	print("YES");
+	x /= 2;
 
-	vector<int> a, b;
-	total /= 2;
-	for (int i = n; i > 0; i--) {
-		if (total >= i) {
-			a.push_back(i);
-			total -= i;
-		}
-		else {
-			b.push_back(i);
-		}
+	set<int> s;
+	range(i, 1, n + 1) {
+		s.insert(i);
 	}
 
-	print(a.size());
-	arrPrint(a);
-	print(b.size());
-	arrPrint(b);
+	vector<int> res;
+	while (x) {
+		set<int>::iterator i = s.upper_bound(x);
+		i--;
+		x -= *i;
+		res.push_back(*i);
+		s.erase(i);
+	}
+
+	print(res.size());
+	arrPrint(res);
+
+	print(s.size());
+	arrPrint(s);
 }

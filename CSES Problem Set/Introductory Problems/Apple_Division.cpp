@@ -1,40 +1,39 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int n;
-vector<int> a;
-ll total = 0;
-
-ll solve(int i, ll curr) {
-	if (i == n) {
-		return abs(2 * curr - total);
-	}
-	if (curr >= total / 2) {
-		return abs(2 * curr - total);
-	}
-	return min(
-		solve(i + 1, curr),
-		solve(i + 1, curr + a[i])
-	);
-}
-
-int main() {
+int32_t main() {
 	setup();
-	
+
+	int n;
 	input(n);
-	a = vector<int>(n);
+
+	vector<int> a(n);
 	arrPut(a);
+
+	int s = 0;
 	for (int i : a) {
-		total += i;
+		s += i;
 	}
 
-	print(solve(0, 0));
+	int res = 20e9;
+	range(i, 0, 1 << n) {
+		int c = 0;
+		range(j, 0, n) {
+			if ((1 << j) & i) {
+				c += a[j];
+			}
+		}
+		res = min(res, abs(s - 2 * c));
+	}
+
+	print(res);
 }

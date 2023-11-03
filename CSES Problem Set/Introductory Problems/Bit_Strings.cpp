@@ -1,29 +1,33 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int modPow(ll a, int b, int m) {
-	ll res = 1;
-	while (b > 0) {
-		if (b % 2 == 1) {
-			res = (res * a) % m;
-		}
-		b /= 2;
-		a = (a * a) % m;
-	}
-	return res;
-}
-
-int main() {
+int32_t main() {
 	setup();
-	
-	int n; input(n);
-	print(modPow(2, n, MOD));
+
+	int MOD = (int) 1e9 + 7;
+
+	int n;
+	input(n);
+
+	int res = 1;
+	int a = 2;
+	while (n) {
+		if (n & 1) {
+			res = (res * a) % MOD;
+		}
+
+		a = (a * a) % MOD;
+		n >>= 1;
+	}
+
+	print(res);
 }
