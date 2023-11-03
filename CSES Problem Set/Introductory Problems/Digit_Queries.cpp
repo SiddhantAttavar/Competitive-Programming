@@ -1,75 +1,53 @@
 #include <bits/stdc++.h>
 using namespace std;
- 
-#define ll long long
-const int MaxN = 1e5;
-const ll mod = 1e9 + 7;
- 
-ll fun(ll x, ll size) {
-	ll count = 0;
-	for(int i = 1; i < size; i++) {
-		ll num = (9ll * pow(10, i-1));
-		count += (num * i);
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
+
+int f(int n) {
+	int c = 0;
+	int x = 1, y = 1;
+
+	while (10 * x <= n) {
+		c += 9 * x * y;
+		y++;
+		x *= 10;
 	}
-	ll mi = pow(10ll, size - 1);
-	count += ((x - mi) * size) + 1;
-	return count;
-	// returns starting index of x.
+
+	return c + (n - x) * y;
 }
- 
-int main() {
- 
-	ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
- 
-	int t;
-	cin >> t;
- 
-	while(t--) {
- 
-		ll N;
-		cin >> N;
- 
-		ll sum = 0, which_size;
- 
-		for(int i = 1; i <= 18; i++) {
-			ll num = (9ll * pow(10, i-1));
-			sum += (num * i);
-			if(N <= sum) {
-				which_size = i;
-				break;
-			}
-		}
- 
-		ll lo = pow(10ll, which_size - 1);
-		ll hi = pow(10ll, which_size) - 1;
- 
-		// cout << "lo : " << lo << " hi : " << hi << endl;
-		ll mid, ans = 0, index = 0;
- 
-		while(lo <= hi) {
-			mid = (lo + hi)/2;
-			ll value = fun(mid, which_size);
-			if(value <= N) {
-				index = max(index, value);
-				ans = max(ans, mid);
-				lo = mid + 1;
+
+int32_t main() {
+	setup(); int tc; input(tc); while (tc--) {
+		int k;
+		input(k);
+
+		int l = 1, r = 1e18, res = 1;
+		while (l <= r) {
+			int m = (l + r) / 2;
+			if (f(m) < k) {
+				res = m;
+				l = m + 1;
 			}
 			else {
-				hi = mid - 1;
+				r = m - 1;
 			}
 		}
- 
-		// cout << ans << " " << index << "\n";
- 
-		string str = to_string(ans);
- 
-		for(auto ch : str) {
-			if(N == index) {
-				cout << (ch - '0')  << "\n";
-				break;
-			}
-			index++;
+
+		vector<int> d;
+		int x = res;
+		while (x) {
+			d.push_back(x % 10);
+			x /= 10;
 		}
- 
+		reverse(d.begin(), d.end());
+
+		print(d[k - f(res) - 1]);
 	}
 }

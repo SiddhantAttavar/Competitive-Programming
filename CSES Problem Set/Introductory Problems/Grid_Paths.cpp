@@ -10,36 +10,37 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
+int solve(int i, int j, set<pair<int, int>> m, string &s) {
+	if (i == 0 and j == 6) {
+		return 1;
+	}
+
+	int res = 0;
+	vector<pair<int, int>> d = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+	for (pair<int, int> p : d) {
+		int x = i + p.first, y = j + p.second;
+		
+		if (m.count({x, y})) {
+			continue;
+		}
+
+		if (x < 0 or y < 0 or x >= 7 or y >= 7) {
+			continue;
+		}
+		
+		set<pair<int, int>> v(m);
+		v.insert({x, y});
+		res += solve(x, y, v, s);
+	}
+	return res;
+}
+
 int32_t main() {
-	setup(); 
+	setup();
 
-	int n, m, k;
-	input(n, m, k);
+	string s;
+	input(s);
 
-	vector<int> a(n);
-	arrPut(a);
-
-	vector<int> b(m);
-	arrPut(b);
-
-	sort(a.begin(), a.end());
-	sort(b.begin(), b.end());
-
-	vector<int> l(n), r(n, -1);
-	range(i, 0, n) {
-		l[i] = lower_bound(b.begin(), b.end(), a[i] - k) - b.begin();
-		if (l[i] != m and b[l[i]] <= a[i] + k) {
-			r[i] = upper_bound(b.begin(), b.end(), a[i] + k) - b.begin() - 1;
-		}
-	}
-
-	int c = -1, res = 0;;
-	range(i, 0, n) {
-		if (r[i] != -1 and c < r[i]) {
-			res++;
-			c = max(c + 1, l[i]);
-		}
-	}
-
-	print(res);
+	set<pair<int, int>> m;
+	print(solve(0, 0, m, s));
 }
