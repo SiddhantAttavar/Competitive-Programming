@@ -1,52 +1,51 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	
-	int n; input(n);
 
-	tuple<int, int, int> l[n];
+	int n;
+	input(n);
+
+	vector<pair<int, pair<int, bool>> v;
 	range(i, 0, n) {
-		input(get<0>(l[i]));
-		input(get<1>(l[i]));
-		get<2>(l[i]) = i;
+		int a, b;
+		input(a, b);
+
+		v.push_back({a, {i, false}});
+		v.push_back({b, {i, true}});
 	}
-	sort(l, l + n);
 
-	int k = 0;
-	int res[n];
-	multiset<pair<int, int>> m;
-	for (tuple<int, int, int> t : l) {
-		int a, b, i;
-		tie(a, b, i) = t;
+	sort(v.begin(), v.end());
 
-		multiset<pair<int, int>>::iterator it = m.lower_bound({a, 0});
-		int room;
-		if (it == m.begin()) {
-			//We must use a new room
-			k++;
-			room = k;
+	int j = 0;
+	set<int> s;
+	vector<int> a(n);
+	for (pair<int, pair<int, bool>> p : v) {
+		int x = p.first, i = p.second.first;
+		if (!p.second.second) {
+			if (s.empty()) {
+				j++;
+				v[i] = j;
+			}
+			else {
+				v[i] = *s.begin();
+				s.erase(s.begin());
+			}
 		}
 		else {
-			//We can go after one of the existing rooms
-			it--;
-			room = (*it).second;
-			m.erase(it);
+			s.insert(v[i]);
 		}
-
-		m.insert({b, room});
-		res[i] = room;
 	}
 
-	print(k);
-	arrPrint(res);
+	print(j);
 }

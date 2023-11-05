@@ -1,49 +1,43 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int n, t;
-vector<int> k;
-
-bool possible(ll x) {
-	ll res = 0;
-	for (int i : k) {
+bool check(int x, vector<int> &a, int t) {
+	__int128_t res = 0;
+	for (int i : a) {
 		res += x / i;
-		if (res >= t) {
-			return true;
-		}
 	}
-	return false;
+	return res >= t;
 }
 
-int main() {
+int32_t main() {
 	setup();
-	
-	input(n);
-	input(t);
 
-	k.resize(n);
-	arrPut(k);
+	int n, t;
+	input(n, t);
 
-	ll low = 0, high = 1e18;
-	ll ans = 1e18;
-	while (low <= high) {
-		ll mid = (low + high) / 2;
-		if (possible(mid)) {
-			ans = mid;
-			high = mid - 1;
+	vector<int> a(n);
+	arrPut(a);
+
+	int l = 0, r = 1e18, res = -1;
+	while (l <= r) {
+		int m = (l + r) / 2;
+		if (check(m, a, t)) {
+			res = m;
+			r = m - 1;
 		}
 		else {
-			low = mid + 1;
+			l = m + 1:
 		}
 	}
 
-	print(ans);
+	print(res);
 }
