@@ -16,36 +16,15 @@ int32_t main() {
 	int n;
 	input(n);
 
-	vector<int> t(n);
-	arrPut(t);
-	sort(t.begin(), t.end());
-	arrPrint(t);
+	vector<int> a(n);
+	arrPut(a);
 
-	priority_queue<pair<int, bool>, vector<pair<int, bool>>, greater<pair<int, bool>>> pq;
+	int m = *max_element(a.begin(), a.end());
 
-	int c = 0;
-	for (int i : t) {
-		c += i;
+	int s = 0;
+	for (int i : a) {
+		s += i;
 	}
 
-	int u;
-	for (u = n - 1; u >= 1; u--) {
-		c -= t[u];
-		if (c <= t[u]) {
-			print(u);
-			pq.push({c, false});
-			pq.push({t[u], true});
-			break;
-		}
-	}
-
-	range(i, u + 1, n) {
-		pq.push({pq.top().first + t[i], pq.top().second});
-		pq.pop();
-	}
-
-	print(pq.top().first);
-	pq.pop();
-	print(pq.top().first);
-	print(2 * pq.top().first);
+	print(max(2 * m, s));
 }
