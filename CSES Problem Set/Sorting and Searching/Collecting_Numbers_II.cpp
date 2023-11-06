@@ -1,38 +1,72 @@
-#include <iostream>
-#include <vector>
-
+#include <bits/stdc++.h>
 using namespace std;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int nums[200005], pos[200005]; // nums[i] represent where the number i is, and pos[i] represent what number is at position i.
+int32_t main() {
+	setup();
 
-int main(){
-    int n, m;
-    cin>>n>>m;
-    for (int i=0;i<n;i++){
-        int a;
-        cin>>a;
-        nums[a]=i;
-        pos[i]=a;
-    }
-    int ans=1;
-    for (int i=2;i<=n;i++){
-        if (nums[i-1]>nums[i]) ans++;
-    }
-    for (int i=0;i<m;i++){
-        int a, b;
-        cin>>a>>b;
-        a--;b--;
-        int num1=min(pos[a], pos[b]), num2=max(pos[a], pos[b]);
-        if (nums[num1]<nums[num1-1]) ans--; // comparing x to x-1
-        if (nums[num1]>nums[num1+1]) ans--;// comparing x to x+1
-        if (num2-num1!=1&&nums[num2]<nums[num2-1]) ans--; // comparing y to y-1, don't count twice
-        if (num2!=n&&nums[num2]>nums[num2+1]) ans--; // comparing y to y+1
-        swap(nums[pos[a]], nums[pos[b]]);
-        swap(pos[a], pos[b]);
-        if (nums[num1]<nums[num1-1]) ans++;
-        if (nums[num1]>nums[num1+1]) ans++;
-        if (num2-num1!=1&&nums[num2]<nums[num2-1]) ans++;
-        if (num2!=n&&nums[num2]>nums[num2+1]) ans++;
-        cout<<ans<<endl;
-    }
+	int n, m;
+	input(n, m);
+
+	vector<int> x(n);
+	arrPut(x);
+
+	vector<int> ind(n);
+	range(i, 0, n) {
+		x[i]--;
+		ind[x[i]] = i;
+	}
+
+	vector<bool> v(n, false);
+	int c = 0;
+	range(i, 0, n) {
+		c += x[i] == 0 or !v[x[i] - 1];
+		v[x[i]] = true;
+	}
+
+	range(i, 0, m) {
+		int a, b;
+		input(a, b);
+		a--;
+		b--;
+
+		if (x[a] < n - 1) {
+			c += a < ind[x[a] + 1];
+		}
+		if (x[a] >= 0) {
+			c += a > ind[x[a] - 1];
+		}
+		if (x[b] < n - 1 and x[b] + 1 != x[a]) {
+			c += b < ind[x[b] + 1];
+		}
+		if (x[b] >= 0 and x[b] - 1 != x[a]) {
+			c += b > ind[x[b] - 1];
+		}
+
+		swap(ind[x[a]], ind[x[b]]);
+		swap(x[a], x[b]);
+
+		if (x[a] < n - 1) {
+			c -= a < ind[x[a] + 1];
+		}
+		if (x[a] >= 0) {
+			c -= a > ind[x[a] - 1];
+		}
+		if (x[b] < n - 1 and x[b] + 1 != x[a]) {
+			c -= b < ind[x[b] + 1];
+		}
+		if (x[b] >= 0 and x[b] - 1 != x[a]) {
+			c -= b > ind[x[b] - 1];
+		}
+
+		print(c);
+	}
 }

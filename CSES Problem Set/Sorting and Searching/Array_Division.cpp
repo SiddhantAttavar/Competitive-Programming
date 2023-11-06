@@ -1,55 +1,47 @@
-#include <bits/stdc++.h> 
+#include <bits/stdc++.h>
 using namespace std;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-using ll = long long;
-
-using vi = vector<int>;
-#define pb push_back
-#define rsz resize
-#define all(x) begin(x), end(x)
-#define sz(x) (int)(x).size()
-
-using pi = pair<int,int>;
-#define f first
-#define s second
-#define mp make_pair
-
-int main(){
-	ios::sync_with_stdio(false);
-	cin.tie(0);
-	int n, k; cin >> n >> k;
-	vector<ll> a(n);
-	for (int i = 0; i < n; i++) {
-		cin >> a[i];
+bool check(vector<int> &a, int n, int x, int k) {
+	int c = 0, res = 1;
+	range(i, 0, n) {
+		if (c + a[i] > x) {
+			res++;
+			c = 0;
+		}
+		c += a[i];
 	}
-	ll lo = 0, hi = (ll) 1e18, ans = 0;
-	auto works = [&] (ll mid) {
-		int groups = 0;
-		ll sum = 0;
-		for (int i = 0; i < n; i++) {
-			if (a[i] > mid) {
-				return false;
-			}
-			if (sum + a[i] > mid) {
-				++groups;
-				sum = 0;
-			}
-			sum += a[i];
-		}
-		if (sum > 0) {
-			++groups;
-		}
-		return groups <= k;
-	};
-	while (lo <= hi) {
-		ll mid = (lo + hi) / 2;
-		if (works(mid)) {
-			hi = mid - 1;
-			ans = mid;
+	return res <= k;
+}
+
+int32_t main() {
+	setup();
+
+	int n, k;
+	input(n, k);
+
+	vector<int> a(n);
+	arrPut(a);
+
+	int l = *max_element(a.begin(), a.end()), r = 1e18, res = -1;
+	while (l <= r) {
+		int m = (l + r) / 2;
+		if (check(a, n, m, k)) {
+			res = m;
+			r = m - 1;
 		}
 		else {
-			lo = mid + 1;
+			l = m + 1;
 		}
 	}
-	cout << ans << '\n';
+
+	print(res);
 }

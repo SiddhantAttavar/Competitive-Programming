@@ -1,43 +1,47 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
-	setup();
-	
-	int n; input(n);
-	list<int> l;
-	range(i, 1, n + 1) {
-		l.push_back(i);
-	}
-
+vector<int> solve(int n) {
 	if (n == 1) {
-		print(1);
-		return 0;
+		return {1};
 	}
 
-	list<int>::iterator prev = l.begin();
-	list<int>::iterator it = next(l.begin(), 1);
-	range(i, 0, n) {
-		cout << *it << " ";
-		l.erase(it);
-		if (l.size() != 0) {
-			prev++;
-			if (prev == l.end()) {
-				prev = l.begin();
-			}
-			list<int>::iterator temp = prev;
-			it = next(temp, 1);
-			if (it == l.end()) {
-				it = l.begin();
-			}
-		}
+	vector<int> res;
+	for (int i = 2; i <= n; i += 2) {
+		res.push_back(i);
 	}
+
+	vector<int> a;
+	for (int i = 1; i < n; i += 2) {
+		a.push_back(i);
+	}
+
+	if (n % 2 == 1) {
+		a.insert(a.begin(), n);
+	}
+
+	vector<int> b = solve(n - n / 2);
+	for (int i : b) {
+		res.push_back(a[i - 1]);
+	}
+	
+	return res;
+}
+
+int32_t main() {
+	setup();
+
+	int n;
+	input(n);
+
+	arrPrint(solve(n));
 }

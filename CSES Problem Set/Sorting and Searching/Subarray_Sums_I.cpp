@@ -1,56 +1,42 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	
+
 	int n, x;
-	input(n);
-	input(x);
+	input(n, x);
 
-	int h = ceil(log2(n));
-	
-	ll sum[n][h + 1];
-	range(i, 0, n) {
-		input(sum[i][0]);
+	vector<int> a(n);
+	arrPut(a);
+
+	int l = 0, res = 0, c = a[0];
+
+	if (a[0] == x) {
+		res++;
+	}
+	else if (a[0] > x) {
+		l++;
+		c -= a[0];
 	}
 
-	for (int i = n - 1; i >= 0; i--) {
-		int curr = 1;
-		range(j, 1, h + 1) {
-			if (i + curr >= n) {
-				break;
-			}
-			sum[i][j] = sum[i][j - 1] + sum[i + curr][j - 1];
-			curr *= 2;
-		}
-	}
-
-	int res = 0;
-	int temp = pow(2, h);
-	range(i, 0, n) {
-		ll s = 0;
-		int curr = temp;
-		int j = i;
-		for (int k = h; k >= 0; k--) {
-			if (j + curr <= n && s + sum[j][k] <= x) {
-				s += sum[j][k];
-				j += curr;
-			}
-			curr /= 2;
+	range(i, 1, n) {
+		c += a[i];
+		while (c > x) {
+			c -= a[l];
+			l++;
 		}
 
-		if (s == x) {
-			res++;
-		}
+		res += c == x;
 	}
 
 	print(res);

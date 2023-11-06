@@ -1,45 +1,43 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	
+
 	int n, x;
-	input(n);
-	input(x);
+	input(n, x);
 
-	set<int> s;
-	map<int, int> ind;
-	int special = -1;
-	range(i, 1, n + 1) {
-		int a; input(a);
-		s.insert(a);
-		if (x % 2 == 0 && a == x / 2 && special == -1) {
-			special = i;
-		}
-		else {
-			ind[a] = i;
-		}
+	vector<int> a(n);
+	arrPut(a);
+
+	map<int, vector<int>> m;
+	range(i, 0, n) {
+		m[a[i]].push_back(i + 1);
 	}
 
-	if (x % 2 == 0 && special != -1 && ind.find(x / 2) != ind.end()) {
-		print(special <<  " " << ind[x / 2]);
-		return 0;
-	}
+	for (pair<int, vector<int>> p : m) {
+		if (p.first > x / 2 or (x % 2 == 0 and p.first == x / 2)) {
+			break;
+		}
 
-	for (int i : s) {
-		if ((x % 2 == 1 || (x % 2 == 0 && i != x / 2)) && s.find(x - i) != s.end()) {
-			print(ind[i] << " " << ind[x - i]);
+		if (m.count(x - p.first)) {
+			print(m[p.first][0], m[x - p.first][0]);
 			return 0;
 		}
+	}
+
+	if (x % 2 == 0 and m.count(x / 2) and m[x / 2].size() >= 2) {
+		print(m[x / 2][0], m[x / 2][1]);
+		return 0;
 	}
 
 	print("IMPOSSIBLE");

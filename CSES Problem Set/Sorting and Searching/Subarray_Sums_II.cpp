@@ -1,32 +1,35 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	
+
 	int n, x;
-	input(n);
-	input(x);
+	input(n, x);
 
-	int a[n]; arrPut(a);
+	vector<int> a(n);
+	arrPut(a);
 
-	ll sum = 0;
-	ll res = 0;
-	map<ll, int> freq;
-	freq[0] = 1;
+	int c = 0;
+	map<int, int> m;
+	m[0] = 1;
 
-	for (int x : a) {
-		sum += x;
-		res += freq[sum - x];
-		freq[x]++;
+	int res = 0;
+	range(i, 0, n) {
+		c += a[i];
+		if (m.count(c - x)) {
+			res += m[c - x];
+		}
+		m[c]++;
 	}
 
 	print(res);

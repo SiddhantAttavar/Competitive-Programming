@@ -1,34 +1,34 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
-
-int main() {
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
+ 
+int32_t main() {
 	setup();
-
-	int n; input(n);
-	pair<int, int> movies[n];
-	for (pair<int, int> &i : movies) {
-		input(i.second);
-		input(i.first);
+ 
+	int n;
+	input(n);
+ 
+	vector<pair<int, int>> v(n);
+	range(i, 0, n) {
+		input(v[i].second, v[i].first);
 	}
-
-	sort(movies, movies + n);
-
-	int curr = 0;
+	sort(v.begin(), v.end());
+ 
+	int c = 0;
 	int res = 0;
-	for (pair<int, int> p : movies) {
-		if (curr <= p.second) {
+	for (pair<int, int> p : v) {
+		if (c <= p.second) {
+			c = p.first;
 			res++;
-			curr = p.first;
 		}
 	}
-
 	print(res);
 }
