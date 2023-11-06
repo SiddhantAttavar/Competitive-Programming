@@ -1,64 +1,119 @@
-#include <iostream>
-#include <set>
-#include <algorithm>
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
 using namespace std;
-using ll = long long;
-const ll mn = (ll) 2e5+5;
+using namespace __gnu_pbds; 
+#define ordered_set tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update> 
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-ll N, K;
-ll arr[mn];
-multiset<ll> up;
-multiset<ll> low;
-ll sLow, sUp;
+int32_t main() {
+	setup();
 
-void ins(ll val){
-	ll a = *low.rbegin();
-	if(a < val){
-		up.insert(val); sUp += val;
-		if(up.size() > K/2){
-			ll moving = *up.begin();
-			low.insert(moving); sLow += moving;
-			up.erase(up.find(moving)); sUp -= moving;
+	int n, k;
+	input(n, k);
+
+	vector<int> a(n);
+	arrPut(a);
+
+	if (k == 1) {
+		range(i, 0, n) {
+			cout << "0 ";
 		}
+		return 0;
 	}
-	else{
-		low.insert(val); sLow += val;
-		if(low.size() > (K + 1)/2){
-			ll moving = *low.rbegin();
-			up.insert(*low.rbegin()); sUp += moving;
-			low.erase(low.find(*low.rbegin())); sLow -= moving;
-		}
-	}
-}
 
-void er(ll val){
-	if(up.find(val) != up.end()) up.erase(up.find(val)), sUp -= val;
-	else low.erase(low.find(val)), sLow -= val;
-	if(low.empty()){
-		ll moving = *up.begin();
-		low.insert(*up.begin()); sLow += moving;
-		up.erase(up.find(*up.begin())); sUp -= moving;
+	multiset<int> x, y;
+	int p = 0, q = 0;
+	range(i, 0, k) {
+		y.insert(a[i]);
+		q += a[i];
 	}
-}
 
-ll med(){ return (K%2 == 0) ? 0 : (*low.rbegin()); }
+	range(i, 0, k / 2) {
+		x.insert(*y.begin());
+		y.erase(y.begin());
 
-int main() {
-	cin >> N >> K;
-	for(ll i = 0; i < N; i++) cin >> arr[i];
-	low.insert(arr[0]); sLow += arr[0];
-	for(ll i = 1; i < K; i++) ins(arr[i]);
-	cout << sUp - sLow + med(); if(N!=1) cout << " ";
-	for(ll i = K; i < N; i++){
-		if(K == 1){
-			ins(arr[i]);
-			er(arr[i - K]);
-		}
-		else{
-			er(arr[i - K]);
-			ins(arr[i]);
-		}
-		cout << sUp - sLow + med(); if(i != N -1) cout << " ";
+		q -= a[i];
+		p += a[i];
 	}
-	cout << endl;
+
+	if (k % 2 == 1) {
+		x.insert(*y.begin());
+		p += *y.begin();
+		q -= *y.begin();
+		y.erase(y.begin());
+	}
+
+	multiset<int>::iterator j = x.end();
+	j--;
+	cout << ((int) x.size() * (*j)) - p + q - ((int) y.size() * (*j)) << ' ';
+
+	range(i, k, n) {
+		if (a[i - k] <= *j) {
+			x.erase(x.find(a[i - k]));
+			p -= a[i - k];
+
+			if (x.size() < y.size()) {
+				x.insert(*y.begin());
+				p += *y.begin();
+				q -= *y.begin();
+				y.erase(y.begin());
+			}
+		}
+		else {
+			y.erase(y.find(a[i - k]));
+			q -= a[i - k];
+
+			if (y.size() < x.size() - 1) {
+				y.insert(*j);
+				q += *j;
+				p -= *j;
+				x.erase(j);
+			}
+		}
+
+		j = x.end();
+		j--;
+		// arrPrint(x);
+		// arrPrint(y);
+		// print('j', *j);
+
+		if (a[i] <= *j) {
+			x.insert(a[i]);
+			p += a[i];
+
+			if (y.size() < x.size() - 1) {
+				y.insert(*j);
+				q += *j;
+				p -= *j;
+				x.erase(j);
+			}
+		}
+		else {
+			y.insert(a[i]);
+			q += a[i];
+
+			if (x.size() < y.size()) {
+				x.insert(*y.begin());
+				p += *y.begin();
+				q -= *y.begin();
+				y.erase(y.begin());
+			}
+		}
+
+		j = x.end();
+		j--;
+		// arrPrint(x);
+		// arrPrint(y);
+		// print(*j, p, q);
+		cout << ((int) x.size() * (*j)) - p + q - ((int) y.size() * (*j)) << ' ';
+	}
 }

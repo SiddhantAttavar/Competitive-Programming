@@ -1,30 +1,48 @@
-#include <iostream>
-#include <vector>
-#include <set>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
-	int n, k; cin >> n >> k;
+int32_t main() {
+	setup();
+
+	int n, k;
+	input(n, k);
+
 	vector<pair<int, int>> v(n);
-	for (int i = 0; i < n; i++) // read start time, end time
-		cin >> v[i].second >> v[i].first;
-	sort(begin(v), end(v)); // sort by end time
+	range(i, 0, n) {
+		input(v[i].second, v[i].first);
+	}
+	sort(v.begin(), v.end());
 
-	int ans = 0;
-	multiset<int> end_times; // times when members will finish watching movies
-	for (int i = 0; i < k; ++i)
-		end_times.insert(0);
-
-	for (int i = 0; i < n; i++) {
-		auto it = end_times.upper_bound(v[i].second);
-		if (it == begin(end_times)) continue;
-		// assign movie to be watched by member in multiset who finishes at time *prev(it)
-		end_times.erase(--it);
-		// member now finishes watching at time v[i].first
-		end_times.insert(v[i].first);
-		++ ans;
+	multiset<int> m;
+	range(i, 0, k) {
+		m.insert(0);
 	}
 
-	cout << ans;
+	int res = 0;
+	for (pair<int, int> p : v) {
+		// print(p.second, p.first);
+		// arrPrint(m);
+		// cout.flush();
+		multiset<int>::iterator x = m.upper_bound(p.second);
+		if (x == m.begin()) {
+			continue;
+		}
+		x--;
+		if (*x <= p.second) {
+			res++;
+			m.erase(x);
+			m.insert(p.first);
+		}
+	}
+
+	print(res);
 }

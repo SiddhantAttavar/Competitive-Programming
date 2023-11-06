@@ -1,32 +1,43 @@
 #include <bits/stdc++.h>
-
 using namespace std;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-using ll = long long;
-const ll LINF = 1e18;
+int32_t main() {
+	setup();
 
-int N, A, B;
+	int n, a, b;
+	input(n, a, b);
 
-int main() {
-	ios_base::sync_with_stdio(0);
-	cin.tie(0); cout.tie(0);
-	cin >> N >> A >> B; // reading in variables
+	vector<int> v(n);
+	arrPut(v);
 
-	vector<long long> pfx(N+1); 
-	for(int i = 1; i <= N; i++) {
-		int a; cin >> a;
-		pfx[i] = a + pfx[i-1]; // construction of our prefix sum
+	vector<int> p(n + 1);
+	p[0] = 0;
+	range(i, 0, n) {
+		p[i + 1] = p[i] + v[i];
 	}
 
-	ll ret = -LINF;
-	multiset<ll> ms;
-
-	// we can keep a sliding window of size B, then find the lowest pfx[j] using multiset
-	for(int i = A; i <= N; ++i) {
-		if(i > B) ms.erase(ms.find(pfx[i-B-1])); //erase the element if size > B
-		ms.insert(pfx[i-A]);
-		ret = max(ret, pfx[i]-*ms.begin()); //we want to minimize ms.begin() aka pfx[j]
+	int res = p[a];
+	multiset<int> m;
+	m.insert(0);
+	range(i, a, b) {
+		m.insert(p[i - a + 1]);
+		res = max(res, p[i + 1] - *m.begin());
 	}
 
-	cout << ret << "\n";
+	range(i, b, n) {
+		m.erase(m.find(p[i - b]));
+		m.insert(p[i - a + 1]);
+		res = max(res, p[i + 1] - *m.begin());
+	}
+
+	print(res);
 }
