@@ -1,48 +1,40 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+// #define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	
+
 	int n, x;
-	input(n);
-	input(x);
+	input(n, x);
 
 	vector<int> h(n), s(n);
-	for (int &i : h) {
-		cin >> i;
+	arrPut(h);
+	arrPut(s);
+
+	vector<vector<int>> dp(n, vector<int>(x + 1, 0));
+	dp[0][0] = 0;
+	range(j, h[0], x + 1) {
+		dp[0][j] = s[0];
 	}
-	for (int &i : s) {
-		cin >> i;
-	}
 
-	vector<vector<int>> dp(x + 1, vector<int>(n + 1, 0));
-
-	//For x > 0
-	range(p, 1, x + 1) {
-		range(i, 0, n) {
-			//If we don't choose the book we get dp[p][i - 1]
-			//If we choose the book the remaining money is p - h[i - 1]
-			//The maximum pages we can choose with p - h[i - 1] is dp[p - h[i - 1]][i - 1]
-			int moneyLeft = p - h[i];
-
-			if (moneyLeft >= 0) {
-				dp[p][i + 1] = max(dp[p][i], dp[moneyLeft][i] + s[i]);
-			}
-			else {
-				dp[p][i + 1] = dp[p][i];
+	range(i, 1, n) {
+		dp[i][0] = 0;
+		range(j, 1, x + 1) {
+			dp[i][j] = max(dp[i][j - 1], dp[i - 1][j]);
+			if (j >= h[i]) {
+				dp[i][j] = max(dp[i][j], dp[i - 1][j - h[i]] + s[i]);
 			}
 		}
 	}
 
-	//The answer is dp[x][n]
-	print(dp[x][n]);
+	print(dp[n - 1][x]);
 }

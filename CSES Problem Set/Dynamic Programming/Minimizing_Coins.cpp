@@ -1,34 +1,38 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	
+
 	int n, x;
-	input(n);
-	input(x);
-	int c[n];
+	input(n, x);
+
+	vector<int> c(n);
 	arrPut(c);
 
-	sort(c, c + n);
-	int dp[x + 1] = {0};
-	fill(dp + 1, dp + x + 1, 1e9);
+	vector<int> dp(x + 1, 1e18);
+	dp[0] = 0;
 	range(i, 1, x + 1) {
-		for (int j : c) {
-			if (j > i) {
-				break;
+		range(j, 0, n) {
+			if (i >= c[j]) {
+				dp[i] = min(dp[i], dp[i - c[j]] + 1);
 			}
-			dp[i] = min(dp[i], dp[i - j] + 1);
 		}
 	}
 
-	print((dp[x] == 1e9 ? -1 : dp[x]));
+	if (dp[x] == (int) 1e18) {
+		print(-1);
+	}
+	else {
+		print(dp[x]);
+	}
 }

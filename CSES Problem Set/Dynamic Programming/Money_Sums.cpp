@@ -1,42 +1,41 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	
-	int n; input(n);
-	int x[n]; arrPut(x);
 
-	bool dp[n][100001];
-	range(i, 0, n) {
-		dp[i][0] = true;
-		fill(dp[i] + 1, dp[i] + 100001, false);
-	}
-	dp[0][x[0]] = true;
+	int n;
+	input(n);
 
+	vector<int> a(n);
+	arrPut(a);
+
+	int N = 1e5;
+	vector<vector<bool>> dp(n, vector<bool>(N + 1, false));
+	dp[0][0] = dp[0][a[0]] = true;
 	range(i, 1, n) {
-		range(j, 1, 100001) {
-			if (dp[i - 1][j] || (j >= x[i] && dp[i - 1][j - x[i]])) {
-				dp[i][j] = true;
+		dp[i][0] = true;
+		range(j, 1, N + 1) {
+			dp[i][j] = dp[i - 1][j];
+			if (j >= a[i]) {
+				dp[i][j] = dp[i][j] or dp[i - 1][j - a[i]];
 			}
 		}
 	}
 
 	vector<int> res;
-	range(j, 1, 100001) {
-		range(i, 0, n) {
-			if (dp[i][j]) {
-				res.push_back(j);
-				break;
-			}
+	range(j, 1, N + 1) {
+		if (dp[n - 1][j]) {
+			res.push_back(j);
 		}
 	}
 

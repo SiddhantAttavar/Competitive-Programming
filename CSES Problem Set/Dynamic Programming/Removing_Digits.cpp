@@ -1,31 +1,30 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int maxDig(int n) {
-	int res = 0;
-	while (n > 0) {
-		res = max(res, n % 10);
-		n /= 10;
-	}
-	return res;
-}
-
-int main() {
+int32_t main() {
 	setup();
-	
-	int n; input(n);
-	int res = 0;
-	while (n > 0) {
-		n -= maxDig(n);
-		res++;
+
+	int n;
+	input(n);
+
+	vector<int> dp(n + 1, 1e18);
+	dp[0] = 0;
+	range(i, 1, n + 1) {
+		int j = i;
+		while (j) {
+			dp[i] = min(dp[i], dp[i - (j % 10)] + 1);
+			j /= 10;
+		}
 	}
-	print(res);
+
+	print(dp[n]);
 }
