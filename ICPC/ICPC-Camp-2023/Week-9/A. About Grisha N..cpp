@@ -10,30 +10,8 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-const int MOD = (int) 1e9 + 7;
-
 int32_t main() {
-	setup();
-
-	int n, m;
-	input(n, m);
-
-	vector<int> dp(1 << n, 0);
-	dp[0] = 1;
-	range(j, 0, m) {
-		range(i, 0, n) {
-			vector<int> ndp(1 << n);
-			range(k, 0, 1 << n) {
-				ndp[k] = dp[k ^ (1 << i)];
-
-				if (i and !(k & (1 << i)) and !(k & (1 << (i - 1)))) {
-					ndp[k] = (ndp[k] + dp[k ^ (1 << (i - 1))]) % MOD;
-				}
-			}
-
-			dp = ndp;
-		}
+	setup(); int tc; input(tc); while (tc--) {
+		
 	}
-
-	print(dp[0]);
 }
