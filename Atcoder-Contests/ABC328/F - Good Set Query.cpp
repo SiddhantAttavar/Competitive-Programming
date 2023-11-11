@@ -10,55 +10,14 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-int solve(int x) {
-	if (x == (int) 1e18) {
-		x--;
-	}
-
-	if (x < 10) {
-		return x + 1;
-	}
-
-	vector<int> d(18);
-	range(i, 0, 18) {
-		d[i] = x % 10;
-		x /= 10;
-	}
-	reverse(d.begin(), d.end());
-
-	int c = 1;
-	range(i, 0, 17) {
-		c *= 9;
-	}
-
-	bool flag = false;
-	int res = 0;
-	range(i, 0, 18) {
-		res += c * d[i];
-		if (flag and d[i - 1] < d[i]) {
-			res -= c;
-		}
-		else if (flag and d[i - 1] == d[i]) {
-			return res;
-		}
-
-		if ((!flag) and d[i]) {
-			res -= c;
-			res += (c * 9 - 1) / 8;
-			flag = true;
-		}
-		c /= 9;
-	}
-
-	return res + 1;
-}
-
 int32_t main() {
 	setup();
 
-	int a, b;
-	input(a, b);
+	int n, q;
+	input(n, q);
 
-	print(solve(b), solve(a - 1));
-	print(solve(b) - solve(a - 1));
+	vector<int> s;
+	while (q--) {
+
+	}
 }
