@@ -1,50 +1,50 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define range(i, s, n) for (int i = s; i < n; i++)
-#define len(a) (*(&a + 1) - a)
-#define print(x) cout << (x) << endl;
-#define input(type, x) type x; cin >> x;
-#define arrput(type, var, n) type var[n]; range(inputCount, 0, n) {cin >> var[inputCount];}
-#define setup() ios::sync_with_stdio(false); cin.tie(0);
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	input(int, n);
-	input(int, m);
-	input(int, q);
 
-	long long cost[n][n];
+	int n, m, q;
+	input(n, m, q);
+
+	vector<vector<int>> d(n, vector<int>(n, 1e18));
 	range(i, 0, n) {
-		fill(cost[i], cost[i] + n, LONG_LONG_MAX);
-		cost[i][i] = 0;
+		d[i][i] = 0;
 	}
-
 	range(i, 0, m) {
-		input(int, a);
-		input(int, b);
-		input(long long, c);
-		cost[a - 1][b - 1] = min(cost[a - 1][b - 1], c);
-		cost[b - 1][a - 1] = min(cost[a - 1][b - 1], c);
+		int u, v, w;
+		input(u, v, w);
+
+		d[u - 1][v - 1] = min(d[u - 1][v - 1], w);
+		d[v - 1][u - 1] = min(d[v - 1][u - 1], w);
 	}
 
 	range(k, 0, n) {
 		range(i, 0, n) {
 			range(j, 0, n) {
-				if (cost[i][k] != LONG_LONG_MAX && cost[k][j] != LONG_LONG_MAX) {
-					cost[i][j] = min(cost[i][j], cost[i][k] + cost[k][j]);
-				}
+				d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
 			}
 		}
 	}
 
-	range(i, 0, q) {
-		input(int, a);
-		input(int, b);
-		if (cost[a - 1][b - 1] == LONG_LONG_MAX) {
+	while (q--) {
+		int u, v;
+		input(u, v);
+
+		if (d[u - 1][v - 1] == (int) 1e18) {
 			print(-1);
 		}
 		else {
-			print(cost[a - 1][b - 1]);
+			print(d[u - 1][v - 1]);
 		}
 	}
 }

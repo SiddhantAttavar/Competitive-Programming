@@ -1,77 +1,110 @@
-#include <iostream>
-#include <vector>
-#include <queue>
-#include <climits>
-#include <cstring>
-#include <algorithm>
-#define pii pair<int, int>
-#define mn 1005
+#include <bits/stdc++.h>
 using namespace std;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int N, M;
-queue<pii> q;
-int paths[mn][mn];
-pii from[mn][mn];
-int oo = INT_MAX;
-pii A;
-string ans;
-bool possible = false;
+bool dfs(pair<int, int> p, int n, int m, vector<vector<bool>> &a, string &path) {
+	a[p.first][p.second] = false;
 
-void retrace(pii node){  // retrace from final node, adding direction from previous node to a string. This string will be backwards but will be reversed before output.
-	pii origin = from[node.first][node.second];
-	if(origin ==  pii(0,0)) return;
-	if(origin.first == node.first+1) ans.push_back('U');
-	if(origin.first == node.first-1) ans.push_back('D');
-	if(origin.second == node.second+1) ans.push_back('L');
-	if(origin.second==node.second-1) ans.push_back('R');
-	retrace(origin);
-	
-}
-void check(pii origin, pii dest){ // check if the considered destination may be traveled to
-	int pl = paths[origin.first][origin.second];
-	if(pl+1<paths[dest.first][dest.second]){
-		paths[dest.first][dest.second]  = pl+1;
-		q.push(dest);
-		from[dest.first][dest.second] = origin;
+	vector<pair<char, pair<int, int>>> v = {
+		{'U', {p.first - 1, p.second}},
+		{'D', {p.first + 1, p.second}},
+		{'R', {p.first, p.second + 1}},
+		{'L', {p.first, p.second - 1}},
+	};
+
+	if (p.first == 0 or p.first == n - 1 or p.second == 0 or p.second == m - 1) {
+		return true;
 	}
-}
-bool mora = false; // false if bfs for monsters, true if bfs for A
-void bfs(){
-	while(!q.empty()){
-		pii loc = q.front(), next; q.pop();
-		next = loc; next.first++; check(loc, next); // go through adjacent locations
-		next = loc; next.first--; check(loc, next);
-		next = loc; next.second++; check(loc, next);
-		next = loc; next.second--; check(loc, next);
-		if(mora && (loc.first == 1 || loc.second == 1 || loc.first == N || loc.second == M)){
-			cout << "YES" << endl;
-			cout << paths[loc.first][loc.second] << endl;
-			retrace(loc);
-			possible = true;
-			return;
+
+	for (pair<char, pair<int, int>> q : v) {
+		if (a[q.second.first][q.second.second]) {
+			path += q.first;
+			if (dfs(q.second, n, m, a, path)) {
+				return true;
+			}
+			path.pop_back();
 		}
 	}
+
+	return false;
 }
-int main() {
-	cin >> N >> M;
-	for(int i = 1; i <= N; i++){
+
+int32_t main() {
+	setup();
+
+	int n, m;
+	input(n, m);
+
+	vector<vector<int>> v(n, vector<int>(m, -1));
+	vector<vector<bool>> a(n, vector<bool>(m, false));
+	pair<int, int> o;
+	queue<pair<int, pair<bool, pair<int, int>>>> q;
+	range(i, 0, n) {
 		string s;
-		cin >> s;
-		for(int j = 1; j <= M; j++){
-			paths[i][j] = oo;
-			if(s[j-1] == '#') paths[i][j] = 0;
-			if(s[j-1] == 'M') {q.push(pii(i,j)); paths[i][j]  = 0;}
-			if(s[j-1] == 'A') {A.first = i; A.second = j;}
+		input(s);
+		range(j, 0, m) {
+			if (s[j] == '#') {
+				v[i][j] = 1e18;
+			}
+			else if (s[j] == 'A') {
+				a[i][j] = true;
+				v[i][j] = 0;
+				q.push({0, {true, {i, j}}});
+				o = {i, j};
+			}
+			else if (s[j] == 'M') {
+				v[i][j] = 0;
+				q.push({0, {false, {i, j}}});
+			}
+			else {
+				a[i][j] = true;
+			}
 		}
 	}
-	bfs(); // monster bfs
-	mora = true; // change next bfs to A bfs
-	from[A.first][A.second] = pii(0,0); // give the retrace a terminating location
-	paths[A.first][A.second] = 0; q.push(A); // get ready for next bfs
-	bfs(); // bfs with A
-	if(possible){
-		reverse(ans.begin(), ans.end());
-		cout << ans << endl;
+
+	while (!q.empty()) {
+		int x = q.front().first;
+		bool b = q.front().second.first;
+		pair<int, int> u = q.front().second.second;
+		q.pop();
+
+		vector<pair<int, int>> d = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+		for (pair<int, int> p : d) {
+			pair<int, int> w = {u.first + p.first, u.second + p.second};
+
+			if (w.first >= 0 and w.first < n and w.second >= 0 and w.second < m) {
+				if (v[w.first][w.second] == -1) {
+					v[w.first][w.second] = true;
+					a[w.first][w.second] = b;
+					q.push({x + 1, {b, w}});
+				}
+				else if (x + 1 == v[w.first][w.second]) {
+					a[w.first][w.second] = a[w.first][w.second] && b;
+				}
+			}
+		}
 	}
-	else cout << "NO" << endl;
+
+	// range(i, 0, n) {
+	// 	arrPrint(a[i]);
+	// }
+
+	string res;
+	if (dfs(o, n, m, a, res)) {
+		print("YES");
+		print(res.size());
+		// reverse(res.begin(), res.end());
+		print(res);
+	}
+	else {
+		print("NO");
+	}
 }

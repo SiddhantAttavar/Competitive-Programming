@@ -1,118 +1,82 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	
+
+	vector<pair<int, int>> d = {{-1, 0}, {1, 0}, {0, -1},{0, 1}};
+	string t = "DURL";
+	map<pair<int, int>, char> o;
+	range(i, 0, 4) {
+		o[d[i]] = t[i];
+	}
+
 	int n, m;
-	input(n);
-	input(m);
+	input(n, m);
 
-	//Take input and find start and end
-	pair<int, int> s, e;
-	bool safe[n][m];
-
+	vector<vector<bool>> w(n, vector<bool>(m));
+	vector<vector<pair<int, int>>> l(n, vector<pair<int, int>>(m, {-1, -1}));
+	pair<int, int> x, y;
 	range(i, 0, n) {
-		string str; input(str);
+		string s;
+		input(s);
 		range(j, 0, m) {
-			safe[i][j] = (str[j] != '#');
-			if (str[j] == 'A') {
-				s.first = i;
-				s.second = j;		
+			w[i][j] = s[j] == '#';
+			if (s[j] == 'A') {
+				x = {i, j};
 			}
-			else if (str[j] == 'B') {
-				e.first = i;
-				e.second = j;
+			else if (s[j] == 'B') {
+				y = {i, j};
 			}
 		}
 	}
 
-	//BFS to find shortest path
-	pair<int, int> prev[n][m];
 	queue<pair<int, int>> q;
-	q.push(s);
-	safe[s.first][s.second] = false;
-	bool flag = false;
-
+	q.push(x);
+	w[x.first][x.second] = true;
 	while (!q.empty()) {
-		pair<int, int> p = q.front();
+		pair<int, int> u = q.front();
 		q.pop();
 
-		int i, j;
-		tie(i, j) = p;
-
-		if (i < 0 || i == n || j < 0 || j == m) {
-			continue;
-		}
-
-		if (p == e) {
-			flag = true;
+		if (u == y) {
 			break;
 		}
 
-		if (i > 0 && safe[i - 1][j]) {
-			safe[i - 1][j] = false;
-			prev[i - 1][j] = p;
-			q.push({i - 1, j});
-		}
-		if (i < (n - 1) && safe[i + 1][j]) {
-			safe[i + 1][j] = false;
-			prev[i + 1][j] = p;
-			q.push({i + 1, j});
-		}
-		if (j > 0 && safe[i][j - 1]) {
-			safe[i][j - 1] = false;
-			prev[i][j - 1] = p;
-			q.push({i, j - 1});
-		}
-		if (j < (m - 1) && safe[i][j + 1]) {
-			safe[i][j + 1] = false;
-			prev[i][j + 1] = p;
-			q.push({i, j + 1});
+		for (pair<int, int> p : d) {
+			pair<int, int> v = {u.first + p.first, u.second + p.second};
+			if (v.first >= 0 and v.first < n and v.second >= 0 and v.second < m and !w[v.first][v.second]) {
+				w[v.first][v.second] = true;
+				l[v.first][v.second] = u;
+				q.push(v);
+			}
 		}
 	}
 
-	if (!flag) {
+	if (!w[y.first][y.second]) {
 		print("NO");
 		return 0;
 	}
 
 	print("YES");
 
-	//Retreive the shortest path
-	vector<pair<int, int>> path;
-	do {
-		path.push_back(e);
-		e = prev[e.first][e.second];
-	} while (e != s);
-
-	print(path.size());
-	reverse(path.begin(), path.end());
-	
 	string res;
-	for (pair<int, int> p : path) {
-		if (p.first < s.first) {
-			res += 'U';
-		}
-		else if (p.first > s.first) {
-			res += 'D';
-		}
-		else if (p.second < s.second) {
-			res += 'L';
-		}
-		else {
-			res += 'R';
-		}
-		s = p;
+	pair<int, int> c = y;
+	while (c != x) {
+		pair<int, int> v = l[c.first][c.second];
+		res += o[{v.first - c.first, v.second - c.second}];
+		c = v;
 	}
- 
+
+	print(res.size());
+	reverse(res.begin(), res.end());
 	print(res);
 }

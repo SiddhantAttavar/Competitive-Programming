@@ -1,52 +1,56 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define range(i, s, n) for (int i = s; i < n; i++)
-#define len(a) (*(&a + 1) - a)
-#define print(x) cout << (x) << endl;
-#define input(type, x) type x; cin >> x;
-#define arrput(type, var, n) type var[n]; range(inputCount, 0, n) {cin >> var[inputCount];}
-#define setup() ios::sync_with_stdio(false); cin.tie(0);
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int n, m;
-vector<vector<int>> graph;
-vector<int> team;
-
-bool dfs(int u, int t) {
-	team[u] = t;
+bool dfs(int u, int c, vector<vector<int>> &graph, vector<int> &color) {
+	color[u] = c;
 	for (int v : graph[u]) {
-		if (team[v] == 0) {
-			if (!dfs(v, t % 2 + 1)) {
+		if (color[v] == 0) {
+			if (!dfs(v, 3 - c, graph, color)) {
 				return false;
 			}
 		}
-		else if (team[v] == t) {
+		else if (color[v] == color[u]) {
 			return false;
 		}
 	}
+
 	return true;
 }
 
-int main() {
+int32_t main() {
 	setup();
-	cin >> n >> m;
-	graph = vector<vector<int>>(n);
-	team = vector<int>(n, 0);
-	
+
+	int n, m;
+	input(n, m);
+
+	vector<vector<int>> graph(n);
 	range(i, 0, m) {
-		input(int, u);
-		input(int, v);
+		int u, v;
+		input(u, v);
+
 		graph[u - 1].push_back(v - 1);
 		graph[v - 1].push_back(u - 1);
 	}
 
+	vector<int> c(n);
 	range(i, 0, n) {
-		if (team[i] == 0 && !dfs(i, 1)) {
-			print("IMPOSSIBLE");
-			return 0;
+		if (!c[i]) {
+			if (!dfs(i, 1, graph, c)) {
+				print("IMPOSSIBLE");
+				arrPrint(c);
+				return 0;
+			}
 		}
 	}
 
-	for (int i : team) {
-		cout << i << " ";
-	}
+	arrPrint(c);
 }

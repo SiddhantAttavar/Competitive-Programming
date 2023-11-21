@@ -1,66 +1,65 @@
 #include <bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-#define range(i, s, n) for (int i = s; i < n; i++)
-#define len(a) (*(&a + 1) - a)
-#define print(x) cout << (x) << endl;
-#define input(type, x) type x; cin >> x;
-#define arrput(type, var, n) type var[n]; range(inputCount, 0, n) {cin >> var[inputCount];}
-#define setup() ios::sync_with_stdio(false); cin.tie(0);
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	input(int, n);
-	input(int, m);
-	
-	vector<int> graph[n + 1];
+
+	int n, m;
+	input(n, m);
+
+	vector<vector<int>> graph(n);
 	range(i, 0, m) {
-		input(int, u);
-		input(int, v);
-		graph[u].push_back(v);
-		graph[v].push_back(u);
+		int u, v;
+		input(u, v);
+
+		graph[u - 1].push_back(v - 1);
+		graph[v - 1].push_back(u - 1);
 	}
 
-	int prev[n + 1];
-	prev[1] = -1;
-	bool visited[n + 1];
-	fill(visited + 1, visited + n + 1, false);
-	visited[1] = true;
+	vector<int> p(n, -1);
 	queue<int> q;
-	q.push(1);
-	
-	bool flag = true;
-
+	q.push(0);
+	p[0] = n;
 	while (!q.empty()) {
 		int u = q.front();
 		q.pop();
 
-		if (u == n) {
-			flag = false;
+		if (u == n - 1) {
 			break;
 		}
 
 		for (int v : graph[u]) {
-			if (!visited[v]) {
-				visited[v] = true;
-				prev[v] = u;
+			if (p[v] == -1) {
+				p[v] = u;
 				q.push(v);
 			}
 		}
 	}
 
-	if (flag) {
+	if (p[n - 1] == -1) {
 		print("IMPOSSIBLE");
 		return 0;
 	}
 
-	vector<int> path;
-	int curr = n;
-	while (curr != -1) {
-		path.push_back(curr);
-		curr = prev[curr];
+	vector<int> c;
+	c.push_back(n);
+	int u = n - 1;
+	while (u != 0) {
+		u = p[u];
+		c.push_back(u + 1);
 	}
-	print(path.size());
-	for (int i = path.size() - 1; i >= 0; i--) {
-		cout << path[i] << " ";
-	}
+
+	print(c.size());
+	reverse(c.begin(), c.end());
+	arrPrint(c);
 }

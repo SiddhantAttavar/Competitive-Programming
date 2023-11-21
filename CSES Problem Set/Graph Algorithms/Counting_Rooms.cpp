@@ -1,50 +1,50 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define range(i, s, n) for (int i = s; i < n; i++)
-#define len(a) (*(&a + 1) - a)
-#define print(x) cout << (x) << endl;
-#define input(type, x) type x; cin >> x;
-#define arrput(type, var, n) type var[n]; range(inputCount, 0, n) {cin >> var[inputCount];}
-#define setup() ios::sync_with_stdio(false); cin.tie(0);
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+void dfs(int x, int y, int n, int m, vector<vector<bool>> &v) {
+	v[x][y] = true;
+	vector<pair<int, int>> d = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+	for (pair<int, int> p : d) {
+		int i = x + p.first, j = y + p.second;
+		if (i >= 0 and i < n and j >= 0 and j < m and !v[i][j]) {
+			dfs(i, j, n, m, v);
+		}
+	}
+}
+
+int32_t main() {
 	setup();
-	input(int, n);
-	input(int, m);
-	
-	bool mat[n][m], visited[n][m];
+
+	int n, m;
+	input(n, m);
+
+	vector<vector<bool>> v(n, vector<bool>(m));
 	range(i, 0, n) {
-		input(string, s);
+		string s;
+		input(s);
 		range(j, 0, m) {
-			mat[i][j] = s[j] == '.';
-			visited[i][j] = false;
+			v[i][j] = s[j] == '#';
 		}
 	}
 
-	queue<pair<int, int>> q;
-	int rooms = 0;
+	int c = 0;
 	range(i, 0, n) {
 		range(j, 0, m) {
-			if (mat[i][j] && !visited[i][j]) {
-				rooms++;
-				q.push({i, j});
-				while (!q.empty()) {
-					pair<int, int> p = q.front();
-					q.pop();
-					int x = p.first;
-					int y = p.second;
-
-					if (x >= 0 && x < n && y >= 0 && y < m && mat[x][y] && !visited[x][y]) {
-						visited[x][y] = true;
-						q.push({x - 1, y});
-						q.push({x + 1, y});
-						q.push({x, y - 1});
-						q.push({x, y + 1});
-					}
-				}
+			if (!v[i][j]) {
+				dfs(i, j, n, m, v);
+				c++;
 			}
 		}
 	}
 
-	print(rooms);
+	print(c);
 }
