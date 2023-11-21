@@ -10,55 +10,67 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-int solve(int x) {
-	if (x == (int) 1e18) {
-		x--;
+int solve_util(int x) {
+	if (x == -1) {
+		return 0;
 	}
 
-	if (x < 10) {
-		return x + 1;
+	if (x == 0) {
+		return 1;
 	}
 
-	vector<int> d(18);
+	vector<int> d;
 	range(i, 0, 18) {
-		d[i] = x % 10;
+		d.push_back(x % 10);
 		x /= 10;
+		if (x == 0) {
+			break;
+		}
 	}
 	reverse(d.begin(), d.end());
-
+	// arrPrint(d);
+ 
 	int c = 1;
-	range(i, 0, 17) {
+	range(i, 0, (int) d.size() - 1) {
 		c *= 9;
 	}
 
-	bool flag = false;
-	int res = 0;
-	range(i, 0, 18) {
-		res += c * d[i];
-		if (flag and d[i - 1] < d[i]) {
-			res -= c;
-		}
-		else if (flag and d[i - 1] == d[i]) {
+	int res = c * (d[0] - 1);
+	c /= 9;
+
+	range(i, 1, (int) d.size()) {
+		res += c * (d[i] - (d[i] > d[i - 1]));
+		c /= 9;
+		if (d[i] == d[i - 1]) {
 			return res;
 		}
-
-		if ((!flag) and d[i]) {
-			res -= c;
-			res += (c * 9 - 1) / 8;
-			flag = true;
-		}
-		c /= 9;
 	}
 
 	return res + 1;
 }
 
+int solve(int x) {
+	if (x == (int) 1e18) {
+		x--;
+	}
+
+	int res = 0, c = 1;
+	for (int i = 1; i <= x; i *= 10) {
+		res += c;
+		c *= 9;
+	}
+
+	return res + solve_util(x);
+}
+
 int32_t main() {
 	setup();
+
+	// print(solve_util(123));
 
 	int a, b;
 	input(a, b);
 
-	print(solve(b), solve(a - 1));
+	// print(solve(b), solve(a - 1));
 	print(solve(b) - solve(a - 1));
 }
