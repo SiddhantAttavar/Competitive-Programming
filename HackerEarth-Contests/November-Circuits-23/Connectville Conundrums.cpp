@@ -11,24 +11,7 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup();
-
-	int n, x;
-	input(n, x);
-
-	vector<int> a(n);
-	arrPut(a);
-
-	map<int, int> m;
-	m[a[0]] = 0;
-	range(i, 1, n) {
-		range(j, i + 1, n) {
-			if (m.count(x - a[i] - a[j])) {
-				print(m[x - a[i] - a[j]] + 1, i + 1, j + 1);
-				return 0;
-			}
-		}
-		m[a[i]] = i;
+	setup(); int tc; input(tc); while (tc--) {
+		
 	}
-	print("IMPOSSIBLE");
 }

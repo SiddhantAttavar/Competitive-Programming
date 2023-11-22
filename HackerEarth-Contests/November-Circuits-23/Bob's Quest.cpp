@@ -11,24 +11,31 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n, x, y;
+		input(n, x, y);
 
-	int n, x;
-	input(n, x);
+		vector<int> a(n);
+		arrPut(a);
 
-	vector<int> a(n);
-	arrPut(a);
+		map<int, int> m = {{a[0], 1}};
+		int res = x == 1 and a[0] == y, l = 0;
+		range(i, 1, n) {
+			m[a[i]]++;
 
-	map<int, int> m;
-	m[a[0]] = 0;
-	range(i, 1, n) {
-		range(j, i + 1, n) {
-			if (m.count(x - a[i] - a[j])) {
-				print(m[x - a[i] - a[j]] + 1, i + 1, j + 1);
-				return 0;
+			while ((int) m.size() > x) {
+				m[a[l]]--;
+				if (m[a[l]] == 0) {
+					m.erase(a[l]);
+				}
+				l++;
+			}
+
+			if ((int) m.size() == x and m.count(y)) {
+				res = max(res, i - l + 1);
 			}
 		}
-		m[a[i]] = i;
+
+		print(res);
 	}
-	print("IMPOSSIBLE");
 }

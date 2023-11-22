@@ -1,73 +1,67 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int main() {
+int32_t main() {
 	setup();
-	
-	int n, m;
-	input(n);
-	input(m);
 
-	vector<pair<int, int>> graph[n];
+	const int MOD = (int) 1e9 + 7;
+
+	int n, m;
+	input(n, m);
+
+	vector<vector<pair<int, int>>> graph(n);
 	range(i, 0, m) {
 		int u, v, w;
-		input(u);
-		input(v);
-		input(w);
+		input(u, v, w);
 
 		graph[u - 1].push_back({v - 1, w});
+		// graph[v - 1].push_back({u - 1, w});
 	}
 
-	int minF[n] = {0};
-	int maxF[n] = {0};
-	int num[n] = {1};
-	ll distance[n] = {0};
-	fill(distance + 1, distance + n, 1e15);
-	bool visited[n];
-	fill(visited, visited + n, false);
-
-	priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<pair<ll, int>>> pq;
-	range(i, 0, n) {
-		pq.push({distance[i], i});
-	}
-
+	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+	vector<int> a(n, 0), b(n, m), c(n, 0), d(n, 1e18);
+	pq.push({0, 0});
+	d[0] = 0;
+	c[0] = 1;
+	b[0] = 0;
+	a[0] = 0;
 	while (!pq.empty()) {
-		int u = pq.top().second;
+		int x, u;
+		tie(x, u) = pq.top();
 		pq.pop();
 
-		if (visited[u]) {
+		if (x != d[u]) {
 			continue;
 		}
-		visited[u] = true;
 
-		for (pair<ll, int> p : graph[u]) {
+		for (pair<int, int> p : graph[u]) {
 			int v, w;
 			tie(v, w) = p;
-			
-			ll dist = distance[u] + w;
-			if (dist < distance[v]) {
-				distance[v] = dist;
-				pq.push({dist, v});
-				num[v] = num[u];
-				minF[v] = minF[u] + 1;
-				maxF[v] = maxF[u] + 1;
+			if ((x + w) < d[v]) {
+				a[v] = a[u] + 1;
+				b[v] = b[u] + 1;
+				c[v] = c[u];
+				d[v] = x + w;
+				pq.push({d[v], v});
 			}
-			else if (dist == distance[v]) {
-				num[v] = (num[v] + num[u]) % MOD;
-				maxF[v] = max(maxF[v], maxF[u] + 1);
-				minF[v] = min(minF[v], minF[u] + 1);
-				pq.push({dist, v});
+			else if ((x + w) == d[v]) {
+				a[v] = max(a[v], a[u] + 1);
+				b[v] = min(b[v], b[u] + 1);
+				c[v] = (c[v] + c[u]) % MOD;
 			}
 		}
 	}
 
-	print(distance[n - 1] << " " << num[n - 1] << " " << minF[n - 1] << " " << maxF[n - 1]);
+	// arrPrint(d);
+
+	print(d[n - 1], c[n - 1], b[n - 1], a[n - 1]);
 }

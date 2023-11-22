@@ -1,111 +1,115 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-vector<vector<int>> graph;
-vector<bool> visited;
-
-int dfs(int u) {
-	if (visited[u]) {
-		return 0;
-	}
-	visited[u] = true;
-	int res = 1;
+void dfs(int u, vector<vector<int>> &graph, vector<bool> &vis) {
+	vis[u] = true;
 	for (int v : graph[u]) {
-		res += dfs(v);
+		if (!vis[v]) {
+			dfs(v, graph, vis);
+		}
 	}
-	return res;
 }
 
-int main() {
+bool cycle(int u, vector<vector<int>> &graph, vector<bool> &in_stack, set<pair<int, int>> &s, vector<int> &p) {
+	in_stack[u] = true;
+
+	for (int v : graph[u]) {
+		if (p[v] == -1 and s.count({u, v})) {
+			p[v] = u;
+			if (cycle(v, graph, in_stack, s, p)) {
+				return true;
+			}
+		}
+		else if (s.count({u, v}) and in_stack[v]) {
+			vector<int> res = {v + 1, u + 1};
+			while (u != v) {
+				u = p[u];
+				res.push_back(u + 1);
+			}
+			reverse(res.begin(), res.end());
+			arrPrint(res);
+			return true;
+		}
+	}
+
+	in_stack[u] = false;
+	return false;
+}
+
+int32_t main() {
 	setup();
-	
+
 	int n, m;
-	input(n);
-	input(m);
+	input(n, m);
 
-	tuple<int, int, int> edges[m];
-	graph.resize(n);
-	visited = vector<bool>(n, false);
-
+	vector<vector<int>> graph(n);
+	vector<pair<pair<int, int>, int>> e;
 	range(i, 0, m) {
 		int u, v, w;
-		input(u);
-		input(v);
-		input(w);
+		input(u, v, w);
 
-		edges[i] = {u - 1, v - 1, w};
 		graph[u - 1].push_back(v - 1);
+		e.push_back({{u - 1, v - 1}, w});
 	}
 
-	ll distance[n];
-	fill(distance, distance + n, 1e15);
-
-	int parent[n];
-	fill(parent, parent + n, -1);
-
-	int cycleStart = -1;
+	vector<bool> vis(n, false);
+	vector<int> d(n, 1e18);
 	range(i, 0, n) {
-		if (visited[i]) {
-			continue;
-		}
-		int compSize = dfs(i);
-		distance[i] = 0;
-
-		if (n < 1000) {
-			compSize = n;
-		}
-
-		range(j, 0, compSize - 1) {
-			for (tuple<int, int, int> t : edges) {
-				int u, v, w; tie(u, v, w) = t;
-				if ((distance[u] + w) < distance[v]) {
-					distance[v] = distance[u] + w;
-					parent[v] = u;
-				}
-			}
-		}
-
-		for (tuple<int, int, int> t : edges) {
-			int u, v, w; tie(u, v, w) = t;
-			if ((distance[u] + w) < distance[v]) {
-				parent[v] = u;
-				cycleStart = u;
-				break;
-			}
-		}
-
-		if (cycleStart != -1) {
-			break;
+		if (!vis[i]) {
+			d[i] = 0;
+			dfs(i, graph, vis);
 		}
 	}
 
-	if (cycleStart == -1) {
+	// arrPrint(d);
+	range(i, 0, n - 1) {
+		for (pair<pair<int, int>, int> p : e) {
+			d[p.first.second] = min(d[p.first.second], d[p.first.first] + p.second);
+		}
+	}
+	// arrPrint(d);
+
+	set<pair<int, int>> s;
+	bool flag = false;
+	range(i, 0, n) {
+		for (pair<pair<int, int>, int> p : e) {
+			// print(p.first.first, p.first.second, p.second);
+			if ((d[p.first.first] + p.second) < d[p.first.second]) {
+				d[p.first.second] = d[p.first.first] + p.second;
+				s.insert(p.first);
+				flag = true;
+			}
+		}
+	}
+
+	if (!flag) {
 		print("NO");
 		return 0;
 	}
 
 	print("YES");
 
+	// for (pair<int, int> p : s) {
+	// 	print(p.first, p.second);
+	// }
+
+	vector<int> p(n, -1);
+	vector<bool> in_stack(n, false);
 	range(i, 0, n) {
-		cycleStart = parent[cycleStart];
+		if (p[i] == -1) {
+			p[i] = n;
+			if (cycle(i, graph, in_stack, s, p)) {
+				return 0;
+			}
+		}
 	}
-
-	vector<int> cycle;
-	int curr = cycleStart;
-	do {
-		cycle.push_back(curr + 1);
-		curr = parent[curr];
-	} while (curr != cycleStart);
-
-	reverse(cycle.begin(), cycle.end());
-	cout << cycleStart + 1 << " ";
-	arrPrint(cycle);
 }

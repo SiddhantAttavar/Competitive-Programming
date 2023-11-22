@@ -1,76 +1,66 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define range(i, s, n) for (int i = s; i < n; i++)
-#define len(a) (*(&a + 1) - a)
-#define print(x) cout << (x) << endl;
-#define input(type, x) type x; cin >> x;
-#define arrput(type, var, n) type var[n]; range(inputCount, 0, n) {cin >> var[inputCount];}
-#define setup() ios::sync_with_stdio(false); cin.tie(0);
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int n, m;
-vector<vector<int>> graph;
-vector<int> path;
-vector<bool> visited, onStack;
-
-bool dfs(int u) {
-	visited[u] = true;
-	onStack[u] = true;
+bool dfs(int u, vector<vector<int>> &graph, vector<bool> &vis, vector<int> &p, vector<bool> &inStack) {
+	vis[u] = true;
+	inStack[u] = true;
 	for (int v : graph[u]) {
-		if (onStack[v]) {
-			path.push_back(u);
-			onStack[u] = false;
-			onStack[v] = false;
+		if (!vis[v]) {
+			p[v] = u;
+			if (dfs(v, graph, vis, p, inStack)) {
+				return true;
+			}
+		}
+		else if (inStack[v]) {
+			vector<int> res = {v + 1, u + 1};
+			while (u != v) {
+				u = p[u];
+				res.push_back(u + 1);
+			}
+			print(res.size());
+			reverse(res.begin(), res.end());
+			arrPrint(res);
 			return true;
 		}
-		else if (!visited[v]) {
-			if (dfs(v)) {
-				if (onStack[u]) {
-					path.push_back(u);
-					onStack[u] = false;
-					return true;
-				}
-				else {
-					path.push_back(u);
-					return false;
-				}
-			}
-			if (!path.empty()) {
-				return false;
-			}
-		}
 	}
-	onStack[u] = false;
+
+	inStack[u] = false;
 	return false;
 }
 
-int main() {
+int32_t main() {
 	setup();
-	cin >> n >> m;
 
-	onStack = vector<bool>(n + 1, false);
-	visited = vector<bool>(n + 1, false);
-	graph = vector<vector<int>>(n + 1);
+	int n, m;
+	input(n, m);
+
+	vector<vector<int>> graph(n);
 	range(i, 0, m) {
-		input(int, u);
-		input(int, v);
-		graph[u].push_back(v);
+		int u, v;
+		input(u, v);
+
+		graph[u - 1].push_back(v - 1);
 	}
 
-	range(i, 1, n + 1) {
-		dfs(i);
-		if (!path.empty()) {
-			break;
+	vector<bool> vis(n, false);
+	vector<int> p(n, -1);
+	vector<bool> inStack(n, false);
+	range(i, 1, n) {
+		if (!vis[i]) {
+			if (dfs(i, graph, vis, p, inStack)) {
+				return 0;
+			}
 		}
 	}
 
-	if (path.empty()) {
-		print("IMPOSSIBLE");
-	}
-	else {
-		print(path.size() + 1);
-		for (int i = path.size() - 1; i >= 0; i--) {
-			cout << path[i] << " ";
-		}
-		print(path[path.size() - 1]);
-	}
+	print("IMPOSSIBLE");
 }

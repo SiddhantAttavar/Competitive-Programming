@@ -10,18 +10,11 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-const int INF = 1e18;
-
 int32_t main() {
 	setup();
 
 	int n, m;
 	input(n, m);
-
-	if (n == 1) {
-		print(0);
-		return 0;
-	}
 
 	vector<vector<pair<int, int>>> graph(2 * n);
 	range(i, 0, m) {
@@ -29,33 +22,28 @@ int32_t main() {
 		input(u, v, w);
 
 		graph[u - 1].push_back({v - 1, w});
-		graph[n + u - 1].push_back({n + v - 1, w});
 		graph[u - 1].push_back({n + v - 1, w / 2});
+		graph[n + u - 1].push_back({n + v - 1, w});
 	}
 
-	vector<int> d(2 * n, INF);
 	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+	vector<int> d(2 * n, 1e18);
 	d[0] = 0;
 	pq.push({0, 0});
-
 	while (!pq.empty()) {
 		int x, u;
 		tie(x, u) = pq.top();
 		pq.pop();
-		// print(x, u);
-
-		if (x > d[2 * n - 1]) {
-			break;
-		}
 
 		if (x > d[u]) {
 			continue;
 		}
 
 		for (pair<int, int> p : graph[u]) {
-			int v, w;
+			int w, v;
 			tie(v, w) = p;
-			if (d[u] + w < d[v]) {
+
+			if (d[v] > (d[u] + w)) {
 				d[v] = d[u] + w;
 				pq.push({d[v], v});
 			}
@@ -64,4 +52,3 @@ int32_t main() {
 
 	print(d[2 * n - 1]);
 }
-

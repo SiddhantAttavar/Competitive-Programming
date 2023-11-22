@@ -1,4 +1,7 @@
 #include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
+using namespace __gnu_pbds; 
 using namespace std;
 template<typename T> inline void input(T& inVar) {cin >> inVar;}
 template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
@@ -9,26 +12,34 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
+#define ordered_set tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update> 
 
 int32_t main() {
 	setup();
 
-	int n, x;
-	input(n, x);
+	int n, l, r;
+	input(n, l, r);
 
-	vector<int> a(n);
-	arrPut(a);
+	ordered_set o, e;
+	int res = 0;
+	range(k, 0, n) {
+		int x;
+		input(x);
 
-	map<int, int> m;
-	m[a[0]] = 0;
-	range(i, 1, n) {
-		range(j, i + 1, n) {
-			if (m.count(x - a[i] - a[j])) {
-				print(m[x - a[i] - a[j]] + 1, i + 1, j + 1);
-				return 0;
-			}
+		if (x % 2 == 0) {
+			int j = o.order_of_key(r - x + 1);
+			int i = o.order_of_key(l - x);
+			// print(x, i, j);
+			res += j - i;
+			e.insert(x);
 		}
-		m[a[i]] = i;
+		else {
+			int j = e.order_of_key(r - x + 1);
+			int i = e.order_of_key(l - x);
+			res += j - i;
+			// print(x, i, j);
+			o.insert(x);
+		}
 	}
-	print("IMPOSSIBLE");
+	print(res);
 }

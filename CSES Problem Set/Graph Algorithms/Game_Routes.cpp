@@ -1,55 +1,53 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-vector<vector<int>> graph;
-vector<int> topoSort;
-vector<bool> visited;
-
-void dfs(int u) {
-	visited[u] = true;
-	for (int v : graph[u]) {
-		if (!visited[v]) {
-			dfs(v);
+void dfs(int u, vector<vector<int>> &graph, vector<bool> &v, vector<int> &l) {
+	v[u] = true;
+	for (int i : graph[u]) {
+		if (!v[i]) {
+			dfs(i, graph, v, l);
 		}
 	}
-	topoSort.push_back(u);
+	l.push_back(u);
 }
 
-int main() {
+int32_t main() {
 	setup();
 	
+	const int MOD = 1e9 + 7;
+
 	int n, m;
-	input(n);
-	input(m);
+	input(n, m);
 
-	graph.resize(n);
-	visited = vector<bool>(n, false);
-
+	vector<vector<int>> graph(n), rev_graph(n);
 	range(i, 0, m) {
 		int u, v;
-		input(u);
-		input(v);
+		input(u, v);
+
 		graph[u - 1].push_back(v - 1);
+		rev_graph[v - 1].push_back(u - 1);
 	}
 
-	dfs(0);
+	vector<bool> v(n, false);
+	vector<int> l;
+	dfs(0, graph, v, l);
+	reverse(l.begin(), l.end());
+	// arrPrint(l);
 
-	reverse(topoSort.begin(), topoSort.end());
-
-	int dp[n] = {1};
-	fill(dp + 1, dp + n, 0);
-
-	for (int u : topoSort) {
-		for (int v : graph[u]) {
-			dp[v] = (dp[v] + dp[u]) % MOD;
+	vector<int> dp(n, 0);
+	dp[0] = 1;
+	for (int i : l) {
+		for (int j : rev_graph[i]) {
+			dp[i] = (dp[i] + dp[j]) % MOD;
 		}
 	}
 
