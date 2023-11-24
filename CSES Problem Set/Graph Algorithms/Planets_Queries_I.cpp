@@ -10,17 +10,39 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
+const int N = 2e5, H = 30;
+int p[N][H];
+
 int32_t main() {
 	setup();
 
 	int n, q;
 	input(n, q);
 
-	vector<int> a(n);
-	arrPut(a);
 	range(i, 0, n) {
-		a[i]--;
+		input(p[i][0]);
+		p[i][0]--;
+	}
+	
+	range(j, 1, H) {
+		range(i, 0, n) {
+			p[i][j] = p[p[i][j - 1]][j - 1];
+		}
 	}
 
+	while (q--) {
+		int u, k;
+		input(u, k);
 
+		u--;
+		range(i, 0, H) {
+			if (k & 1) {
+				u = p[u][i];
+			}
+
+			k >>= 1;
+		}
+
+		print(u + 1);
+	}
 }

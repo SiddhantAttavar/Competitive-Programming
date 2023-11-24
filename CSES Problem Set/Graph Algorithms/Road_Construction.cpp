@@ -1,19 +1,23 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
 struct DSU {
-	vector<ll> a;
-
-	DSU(int n) {
-		a = vector<ll>(n, -1);
+	vector<int> a;
+	int l, n;
+	
+	DSU(int x) {
+		a.resize(x, -1);
+		l = 1;
+		n = x;
 	}
 
 	int get(int x) {
@@ -23,46 +27,38 @@ struct DSU {
 		return a[x] = get(a[x]);
 	}
 
-	ll unite(int x, int y) {
+	bool unite(int x, int y) {
 		x = get(x);
 		y = get(y);
 
 		if (x == y) {
-			return -1;
+			return false;
 		}
 
 		if (a[x] < a[y]) {
 			swap(x, y);
 		}
 
-		a[x] += a[y];
-		a[y] = x;
-
-		return -a[x];
+		a[y] += a[x];
+		a[x] = y;
+		this->l = max(this->l, -a[y]);
+		this->n--;
+		return true;
 	}
 };
 
-int main() {
+int32_t main() {
 	setup();
-	
+
 	int n, m;
-	input(n);
-	input(m);
+	input(n, m);
 
-	DSU dsu(n);
-	ll currMax = 1;
-
+	DSU d(n);
 	range(i, 0, m) {
-		int a, b;
-		input(a);
-		input(b);
+		int u, v;
+		input(u, v);
 
-		ll x = dsu.unite(a - 1, b - 1);
-		if (x != -1) {
-			n--;
-			currMax = max(currMax, x);
-		}
-
-		print(n << " " << currMax);
+		d.unite(u - 1, v - 1);
+		print(d.n, d.l);
 	}
 }

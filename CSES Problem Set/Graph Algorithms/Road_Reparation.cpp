@@ -1,26 +1,27 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
 struct DSU {
-	vector<ll> a;
-
+	vector<int> a;
+	
 	DSU(int n) {
-		a = vector<ll>(n, -1);
+		a.resize(n, -1);
 	}
 
-	ll get(int x) {
+	int get(int x) {
 		if (a[x] < 0) {
 			return x;
 		}
-		return get(a[x]);
+		return a[x] = get(a[x]);
 	}
 
 	bool unite(int x, int y) {
@@ -31,49 +32,41 @@ struct DSU {
 			return false;
 		}
 
-		if (a[x] > a[y]) {
+		if (a[x] < a[y]) {
 			swap(x, y);
 		}
 
-		a[x] += a[y];
-		a[y] = x;
-
+		a[y] += a[x];
+		a[x] = y;
 		return true;
 	}
 };
 
-int main() {
+int32_t main() {
 	setup();
-	
+
 	int n, m;
-	input(n);
-	input(m);
+	input(n, m);
 
-	vector<pair<int, pair<int, int>>> edges(m);
-	for (pair<int, pair<int, int>> &e : edges) {
-		input(e.second.first);
-		input(e.second.second);
-		input(e.first);
+	vector<pair<int, pair<int, int>>> e(m);
+	range(i, 0, m) {
+		input(e[i].second.first, e[i].second.second, e[i].first);
 	}
+	sort(e.begin(), e.end());
 
-	sort(edges.begin(), edges.end());
-
-	DSU dsu(n);
-
-	ll cost = 0;
-	for (pair<int, pair<int, int>> e : edges) {
-		if (dsu.unite(e.second.first - 1, e.second.second - 1)) {
-			cost += e.first;
+	int res = 0, x = n;
+	DSU d(n);
+	for (pair<int, pair<int, int>> p : e) {
+		if (d.unite(p.second.first - 1, p.second.second - 1)) {
+			res += p.first;
+			x--;
 		}
 	}
 
-	int u = dsu.get(0);
-	range(i, 1, n) {
-		if (dsu.get(i) != u) {
-			print("IMPOSSIBLE");
-			return 0;
-		}
+	if (x > 1) {
+		print("IMPOSSIBLE");
 	}
-
-	print(cost);
+	else {
+		print(res);
+	}
 }

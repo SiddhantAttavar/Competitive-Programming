@@ -1,157 +1,135 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int n, q, currTime;
-vector<vector<int>> prevN, graph;
-vector<int> nextN, comp, timeIn, timeOut, cycleEnd, depth, cycleSize;
-vector<bool> v2, compDone, inCycle;
+void dfs(int u, vector<int> &a, vector<bool> &vis, vector<bool> &in_stack, vector<vector<int>> &cycles, vector<int> &in_cycle, vector<vector<int>> &p, vector<int> &l) {
+	vis[u] = true;
+	in_stack[u] = true;
+	if (!vis[a[u]]) {
+		dfs(a[u], a, vis, in_stack, cycles, in_cycle, p, l);
+	}
+	else if (in_stack[a[u]]) {
+		in_cycle[u] = cycles.size();
+		vector<int> curr_cycle = {u};
+		int o = u;
+		while (a[o] != u) {
+			o = a[o];
+			in_cycle[o] = cycles.size();
+			curr_cycle.push_back(o);
+		}
+		cycles.push_back(curr_cycle);
+	}
 
-void dfs1(int u, int c) {
-	comp[u] = c;
-
-	for (int v : graph[u]) {
-		if (comp[v] == -1) {
-			dfs1(v, c);
+	if (in_cycle[u] == -1) {
+		p[u][0] = a[u];
+		l[u] = l[a[u]] + 1;
+		range(i, 1, 30) {
+			if (p[u][i - 1] != -1) {
+				p[u][i] = p[p[u][i - 1]][i - 1];
+			}
 		}
 	}
+	in_stack[u] = false;
 }
 
-int dfs2(int u) {
-	v2[u] = true;
-
-	if (v2[nextN[u]]) {
-		return u;
-	}
-
-	return dfs2(nextN[u]);
-}
-
-void dfs3(int u, int d) {
-	depth[u] = d;
-	timeIn[u] = currTime;
-	currTime++;
-
-	for (int v : prevN[u]) {
-		if (depth[v] == -1) {
-			dfs3(v, d - 1);
-		}
-	}
-
-	currTime++;
-	timeOut[u] = currTime;
-}
-
-int main() {
+int32_t main() {
 	setup();
 
-	input(n);
-	input(q);
+	int n, q;
+	input(n, q);
 
-	graph.resize(n);
-	prevN.resize(n);
-	nextN.resize(n);
-	timeIn.resize(n);
-	timeOut.resize(n);
-
-	comp = vector<int>(n, -1);
-	depth = vector<int>(n, -1);
-	v2 = vector<bool>(n, false);
-	inCycle = vector<bool>(n, false);
-
+	vector<int> a(n);
+	arrPut(a);
 	range(i, 0, n) {
-		int j;
-		input(j);
-		j--;
-
-		nextN[i] = j;
-		prevN[j].push_back(i);
-		graph[i].push_back(j);
-		graph[j].push_back(i);
+		a[i]--;
 	}
 
-	int currComp = 0;
+	vector<bool> in_stack(n, false), vis(n, false);
+	vector<int> in_cycle(n, -1), cycle_ind(n, -1), in_tail(n, -1), tail_ind(n, -1), tail_end(n, -1), l(n, 0);
+	vector<vector<int>> cycles, p(n, vector<int>(30, -1));
 	range(i, 0, n) {
-		if (comp[i] == -1) {
-			dfs1(i, currComp);
-			currComp++;
+		if (!vis[i]) {
+			dfs(i, a, vis, in_stack, cycles, in_cycle, p, l);
 		}
 	}
 
-	compDone = vector<bool>(currComp, false);
-	cycleSize = vector<int>(currComp, 0);
-	range(i, 0, n) {
-		if (prevN[i].size() == 0 && !compDone[comp[i]]) {
-			compDone[comp[i]] = true;
-			int cycleEnd = dfs2(i);
-
-			int curr = cycleEnd;
-			do {
-				inCycle[curr] = true;
-				curr = nextN[curr];
-				cycleSize[comp[i]]++;
-			} while (curr != cycleEnd);
-
-			dfs3(cycleEnd, n);
+	for (vector<int> v : cycles) {
+		range(i, 0, (int) v.size()) {
+			cycle_ind[v[i]] = i;
 		}
 	}
 
-	range(i, 0, n) {
-		if (!compDone[comp[i]]) {
-			compDone[comp[i]] = true;
-			int cycleEnd = dfs2(i);
-
-			int curr = cycleEnd;
-			do {
-				inCycle[curr] = true;
-				curr = nextN[curr];
-				cycleSize[comp[i]]++;
-			} while (curr != cycleEnd);
-
-			dfs3(cycleEnd, n);
-		}
-	}
+	// range(i, 0, n) {
+	// 	arrPrint(p[i]);
+	// }
+	// arrPrint(l);
+	// arrPrint(in_cycle);
+	// arrPrint(cycle_ind);
+	// arrPrint(in_tail);
+	// arrPrint(tail_ind);
 
 	while (q--) {
-		int a, b;
-		input(a);
-		input(b);
+		int u, v;
+		input(u, v);
+		u--;
+		v--;
 
-		if (a == b) {
-			print(0);
-			continue;
-		}
-
-		a--;
-		b--;
-
-		if (comp[a] != comp[b]) {
+		if (in_cycle[u] != -1 and in_cycle[v] != -1 and in_cycle[u] != in_cycle[v]) {
 			print(-1);
 			continue;
 		}
 
-		if (inCycle[a] && inCycle[b]) {
-			print((depth[b] - depth[a] + cycleSize[comp[a]]) % cycleSize[comp[a]]);
-			continue;
-		}
-
-		if (timeIn[a] > timeIn[b] == timeOut[a] > timeOut[b]) {
+		if (in_cycle[u] != -1 and in_cycle[v] == -1) {
 			print(-1);
 			continue;
 		}
 
-		if (depth[a] > depth[b]) {
+		if (in_cycle[u] == -1 and in_cycle[v] == -1) {
+			if (l[u] < l[v]) {
+				print(-1);
+				continue;
+			}
+
+			int res = l[u] - l[v];
+			for (int i = 29; i >= 0; i--) {
+				if (p[u][i] != -1 and l[p[u][i]] >= l[v]) {
+					u = p[u][i];
+				}
+			}
+			// print(u, v);
+
+			if (u != v) {
+				print(-1);
+			}
+			else {
+				print(res);
+			}
+			continue;
+		}
+
+		int res = 0;
+		if (in_cycle[v] != -1) {
+			res = l[u];
+			for (int i = 29; i >= 0; i--) {
+				if (p[u][i] != -1) {
+					u = p[u][i];
+				}
+			}
+		}
+
+		if (in_cycle[u] != in_cycle[v]) {
 			print(-1);
 			continue;
 		}
 
-		print(depth[b] - depth[a]);
+		print(res + (cycle_ind[v] - cycle_ind[u] + cycles[in_cycle[u]].size()) % cycles[in_cycle[u]].size());
 	}
 }

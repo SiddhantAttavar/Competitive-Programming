@@ -1,126 +1,90 @@
 #include <bits/stdc++.h>
-#define range(it, start, end) for (int it = start; it < end; it++)
-#define input(x) cin >> x
-#define print(x) cout << x << endl
-#define arrPut(var) for (auto &i : var) {cin >> i;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << " ";} cout << endl
-#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 using namespace std;
-typedef long long ll;
-const int MOD = 1e9 + 7;
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 
-int n;
-vector<vector<int>> graph;
-vector<int> prevN, nextN;
-vector<int> comp;
-vector<bool> cycleDone;
-vector<int> a;
-vector<bool> visited;
+void dfs(int u, vector<int> &a, vector<bool> &vis, vector<bool> &in_stack, vector<vector<int>> &cycles, vector<int> &in_cycle, vector<vector<int>> &p, vector<int> &l) {
+	// print(u);
 
-int compSize = 0;
+	vis[u] = true;
+	in_stack[u] = true;
+	if (!vis[a[u]]) {
+		dfs(a[u], a, vis, in_stack, cycles, in_cycle, p, l);
+	}
+	else if (in_stack[a[u]]) {
+		in_cycle[u] = cycles.size();
+		vector<int> curr_cycle = {u};
+		int o = u;
+		while (a[o] != u) {
+			o = a[o];
+			in_cycle[o] = cycles.size();
+			curr_cycle.push_back(o);
+		}
+		cycles.push_back(curr_cycle);
+	}
 
-void dfs(int u) {
-	comp[u] = compSize;
-
-	for (int v : graph[u]) {
-		if (comp[v] == -1) {
-			dfs(v);
+	if (in_cycle[u] == -1) {
+		p[u][0] = a[u];
+		l[u] = l[a[u]] + 1;
+		range(i, 1, 30) {
+			if (p[u][i - 1] != -1) {
+				p[u][i] = p[p[u][i - 1]][i - 1];
+			}
 		}
 	}
+	in_stack[u] = false;
 }
 
-int size(int u) {
-	if (a[u] != -1) {
-		return a[u];
-	}
-	return a[u] = size(nextN[u]) + 1;
-}
-
-int main() {
+int32_t main() {
 	setup();
-	
+
 	int n;
 	input(n);
 
-	comp = vector<int>(n, -1);
-	graph.resize(n);
-	visited = vector<bool>(n, false);
-	prevN = vector<int>(n, 0);
-	nextN.resize(n);
-	a = vector<int>(n, -1);
-
+	vector<int> a(n);
+	arrPut(a);
 	range(i, 0, n) {
-		int j;
-		input(j);
-		j--;
-
-		prevN[j]++;
-		nextN[i] = j;
-		graph[i].push_back(j);
-		graph[j].push_back(i);
+		a[i]--;
 	}
 
+	vector<bool> in_stack(n, false), vis(n, false);
+	vector<int> in_cycle(n, -1), cycle_ind(n, -1), in_tail(n, -1), tail_ind(n, -1), tail_end(n, -1), l(n, 0);
+	vector<vector<int>> cycles, p(n, vector<int>(30, -1));
 	range(i, 0, n) {
-		if (comp[i] == -1) {
-			dfs(i);
-			compSize++;
+		if (!vis[i]) {
+			dfs(i, a, vis, in_stack, cycles, in_cycle, p, l);
 		}
 	}
 
-	cycleDone = vector<bool>(compSize, false);
+	// range(i, 0, n) {
+	// 	arrPrint(p[i]);
+	// }
+	// arrPrint(l);
+	// arrPrint(in_cycle);
+	// arrPrint(cycle_ind);
+	// arrPrint(in_tail);
+	// arrPrint(tail_ind);
 
-	range(i, 0, n) {
-		if (prevN[i] == 0 && !cycleDone[comp[i]]) {
-			cycleDone[comp[i]] = true;
-			int curr = i;
-
-			while (!visited[curr]) {
-				visited[curr] = true;
-				curr = nextN[curr];
+	range(u, 0, n) {
+		// print(u);
+		// cout.flush();
+		int res = l[u];
+		int o = u;
+		for (int i = 29; i >= 0; i--) {
+			if (p[o][i] != -1) {
+				o = p[o][i];
 			}
-
-			int cycleStart = curr;
-
-			int cycleSize = 0;
-
-			do {
-				cycleSize++;
-				curr = nextN[curr];
-			}  while (curr != cycleStart);
-
-			do {
-				a[curr] = cycleSize;
-				curr = nextN[curr];
-			}  while (curr != cycleStart);
 		}
+
+		// print(o);
+		// cout.flush();
+		cout << (res + cycles[in_cycle[o]].size()) << ' ';
 	}
-
-	range(i, 0, n) {
-		if (!cycleDone[comp[i]]) {
-			cycleDone[comp[i]] = true;
-			int curr = i;
-
-			int cycleSize = 0;
-			while (!visited[curr]) {
-				visited[curr] = true;
-				cycleSize++;
-				curr = nextN[curr];
-			}
-
-			int cycleStart = curr;
-
-			do {
-				a[curr] = cycleSize;
-				curr = nextN[curr];
-			}  while (curr != cycleStart);
-		}
-	}
-
-	range(i, 0, n) {
-		if (prevN[i] == 0) {
-			size(i);
-		}
-	}
-
-	arrPrint(a);
 }

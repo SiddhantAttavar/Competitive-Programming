@@ -1,100 +1,108 @@
-/*
-Problem Name: Giant Pizza
-Problem Link: https://cses.fi/problemset/task/1684
-Author: Sachin Srivastava (mrsac7)
-*/
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-#define error(args...) { string _s = #args; replace(_s.begin(), _s.end(), ',', ' '); stringstream _ss(_s); istream_iterator<string> _it(_ss); err(_it, args); }
-void err(istream_iterator<string> it) {}
-template<typename T, typename... Args>
-void err(istream_iterator<string> it, T a, Args... args) {cerr << *it << "=" << a << ", "; err(++it, args...);}
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
-#define pb push_back
-#define F first
-#define S second
-#define ll long long
-#define ull unsigned long long
-#define ld long double
-#define pii pair<int,int>
-#define tiii tuple<int,int,int>
-#define vi vector<int>
-#define vii vector<pii>
-#define vc vector
-#define L cout<<'\n';
-#define E cerr<<'\n';
-#define all(x) x.begin(),x.end()
-#define rep(i,a,b) for (int i=a; i<b; ++i)
-#define rev(i,a,b) for (int i=a; i>b; --i)
-#define IOS ios_base::sync_with_stdio(false);cin.tie(0);cout.tie(0);
-#define setpr(x) cout<<setprecision(x)<<fixed
-#define sz size()
-#define seea(a,x,y) for(int i=x;i<y;i++){cin>>a[i];}
-#define seev(v,n) for(int i=0;i<n;i++){int x; cin>>x; v.push_back(x);}
-#define sees(s,n) for(int i=0;i<n;i++){int x; cin>>x; s.insert(x);}
-const ll inf = 1LL<<62;
-const ld ep = 0.0000001;
-const ld pi = acos(-1.0);
-const ll md = 1000000007;
 
-int tval[200005];
-vi adj[200005], adj2[200005];
-vi v;
-bool vis[200005];
-void dfs(int s){
-    if (vis[s]) return;
-    vis[s]=1;
-    for (auto i: adj[s]) dfs(i);
-    v.pb(s);
+void topo_sort(int u, vector<vector<int>> &graph, vector<bool> &vis, vector<int> &topo) {
+	vis[u] = true;
+	for (int v : graph[u]) {
+		if (!vis[v]) {
+			topo_sort(v, graph, vis, topo);
+		}
+	}
+	topo.push_back(u);
 }
-int k=0;
-int comp[200005];
-void dfs2(int s){
-    if (vis[s]) return;
-    vis[s]=1; comp[s]=k;
-    for (auto i: adj2[s]) dfs2(i);
+
+void dfs(int u, vector<vector<int>> &graph, vector<int> &comp, int x) {
+	comp[u] = x;
+	for (int v : graph[u]) {
+		if (comp[v] == -1) {
+			dfs(v, graph, comp, x);
+		}
+	}
 }
-void solve(){
-    int n,m; cin >> n >> m;
-    //2sat
-    rep(i,0,n){
-        char x,y;
-        int a,b; cin >> x >> a >> y >> b;
-        if (x=='-') a=2*m-a+1;
-        if (y=='-') b=2*m-b+1;
-        adj[2*m-a+1].pb(b), adj[2*m-b+1].pb(a);
-        adj2[a].pb(2*m-b+1), adj2[b].pb(2*m-a+1);
-    }
-    rep(i,1,2*m+1){
-        if (!vis[i]) dfs(i);
-    }
-    memset(vis,0,sizeof vis);
-    for (auto i=v.rbegin();i!=v.rend();i++){
-        int x = *i;
-        if (!vis[x]){k++; dfs2(x);}
-    }
-    rep(i,1,m+1){
-        if (comp[i]==comp[2*m-i+1]){cout << ("IMPOSSIBLE"); return;}
-        tval[i] = (comp[i]>comp[2*m-i+1]);
-    }
-    rep(i,1,m+1){
-        cout << ((tval[i])?'+':'-') << " ";
-    }
-}    
-signed main(){
-    IOS;
-    #ifdef LOCAL
-    freopen("input.txt", "r" , stdin);
-    freopen("output.txt", "w", stdout);
-    #endif
-    int t=1;
-    //cin>>t;
-    while(t--){
-        solve();
-        //cout<<'\n';
-    }
-    #ifdef LOCAL
-    clock_t tStart = clock();
-    cerr<<fixed<<setprecision(10)<<"\nTime Taken: "<<(double)(clock()- tStart)/CLOCKS_PER_SEC<<endl;
-    #endif
+
+int flip(int x, int m) {
+	return 2 * m - x - 1;
+}
+
+int32_t main() {
+	setup();
+
+	int n, m;
+	input(n, m);
+
+	vector<vector<int>> graph(2 * m), rev_graph(2 * m);
+	range(i, 0, n) {
+		char p, q;
+		int x, y;
+		input(p, x, q, y);
+
+		x--;
+		y--;
+
+		if (p == '-') {
+			x = flip(x, m);
+		}
+		if (q == '-') {
+			y = flip(y, m);
+		}
+
+		graph[flip(x, m)].push_back(y);
+		graph[flip(y, m)].push_back(x);
+		rev_graph[y].push_back(flip(x, m));
+		rev_graph[x].push_back(flip(y, m));
+	}
+	
+	// range(i, 0, 2 * m) {
+	// 	arrPrint(graph[i]);
+	// }
+	// range(i, 0, 2 * m) {
+	// 	arrPrint(rev_graph[i]);
+	// }
+
+	vector<bool> vis(2 * m, false);
+	vector<int> topo;
+	range(i, 0, 2 * m) {
+		if (!vis[i]) {
+			topo_sort(i, graph, vis, topo);
+		}
+	}
+	reverse(topo.begin(), topo.end());
+	// arrPrint(topo);
+
+	vector<int> comp(2 * m, -1);
+	int x = 0;
+	for (int i : topo) {
+		if (comp[i] == -1) {
+			dfs(i, rev_graph, comp, x);
+			x++;
+		}
+	}
+
+	// arrPrint(comp);
+
+	vector<char> res(m);
+	range(i, 0, m) {
+		if (comp[i] == comp[flip(i, m)]) {
+			print("IMPOSSIBLE");
+			return 0;
+		}
+
+		if (comp[i] > comp[flip(i, m)]) {
+			res[i] = '+';
+		}
+		else {
+			res[i] = '-';
+		}
+	}
+
+	arrPrint(res);
 }
