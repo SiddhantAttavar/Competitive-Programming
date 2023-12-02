@@ -25,79 +25,49 @@ int32_t main() {
 		}
 		sort(p.begin(), p.end());
 
-		vector<int> a(n), b(n);
-		range(i, 0, n) {
-			tie(a[i], b[i]) = p[i].first;
-		}
-
 		int s, e;
 		range(i, 0, n) {
 			if (p[i].second == 0) {
 				s = i;
 			}
-			else if (p[i].second == n - 1) {
+			if (p[i].second == n - 1) {
 				e = i;
 			}
 		}
 
-		vector<int> dp1(n, 0);
-		int x = b[s];
+		vector<int> a, b;
+		int c = p[s].first.second;
 		range(i, s + 1, n) {
-			dp1[i] = dp1[i - 1] + x * (a[i] - a[i - 1]);
-			x = min(x, b[i]);
+			if (c < p[i].first.second) {
+				c = p[i].first.second;
+				a.push_back(i);
+			}
 		}
-
-		x = p[s].first.second;
+		c = p[s].first.second;
 		for (int i = s - 1; i >= 0; i--) {
-			dp1[i] = dp1[i + 1] + x * (a[i + 1] - a[i]);
-			x = min(x, b[i]);
+			if (c < p[i].first.second) {
+				c = p[i].first.second;
+				b.push_back(i);
+			}
 		}
 
-		if (k == 0) {
-			print(dp1[e]);
-			continue;
+		vector<int> d(n, 1e18);
+		int l = 0, r = 0;
+
+		priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, greater<tuple<int, int, int>>> pq;
+		pq.push({0, s, 0});
+		while (!pq.empty()) {
+			int x, u, y;
+			tie(x, u, y) = pq.top();
+			pq.pop();
 		}
 
-		vector<int> dp2(n, 0);
-		stack<int> st;
-		range(i, e + 1, n) {
-			while (!st.empty() and b[st.top()] > b[i]) {
-				st.pop();
-			}
-			if (st.empty()) {
-				dp2[i] = b[i] * (a[i] - a[e]);
-			}
-			else {
-				dp2[i] = dp2[st.top()] + b[i] * (a[i] - a[st.top()]);
-			}
-			st.push(i);
+		int res = abs(p[s].first.first - p[e].first.first) * p[s].first.second;
+		for (int i : a) {
+			res = min(res, d[i] + abs(p[i].first.first - p[e].first.first) * p[i].first.second);
 		}
-		while (!st.empty()) {
-			st.pop();
-		}
-
-		for (int i = e - 1; i >= 0; i--) {
-			while (!st.empty() and b[st.top()] > b[i]) {
-				st.pop();
-			}
-			if (st.empty()) {
-				dp2[i] = b[i] * (a[e] - a[i]);
-			}
-			else {
-				dp2[i] = dp2[st.top()] + b[i] * (a[st.top()] - a[i]);
-			}
-			st.push(i);
-		}
-
-		// arrPrint(dp1);
-		// arrPrint(dp2);
-
-		// print("debug");
-		// cout.flush();
-
-		int res = 1e18;
-		range(i, 0, n) {
-			res = min(res, dp1[i] + dp2[i]);
+		for (int i : b) {
+			res = min(res, d[i] + abs(p[i].first.first - p[e].first.first) * p[i].first.second);
 		}
 
 		print(res);
