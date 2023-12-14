@@ -1,4 +1,5 @@
 from aocd import get_data, submit
+from functools import lru_cache
 data = get_data(day = 12, year = 2023).splitlines()
 # data = '''???.### 1,1,3
 # .??..??...?##. 1,1,3
@@ -7,46 +8,33 @@ data = get_data(day = 12, year = 2023).splitlines()
 # ????.######..#####. 1,6,5
 # ?###???????? 3,2,1'''.splitlines()
 
-def check(s, l):
-	# print(''.join(s), l)
-	v = [0]
-	for i in s:
-		if i == '.':
-			if v[-1] != 0:
-				v.append(0)
-		else:
-			v[-1] += 1
+@lru_cache(maxsize = 10000)
+def solve(s, l, i, j):
+	# print('debug', s, l, i, j)
+	if j < 0:
+		return i < 0 or ('#' not in s[:i + 1])
+
+	if i < 0:
+		return 0
 	
-	if v[-1] == 0:
-		v.pop()
-	# print(v)
-	return v == l
-
-def solve(s, l):
-	s = list(s)
-	v = []
-	for i in range(len(s)):
-		if s[i] == '?':
-			v.append(i)
-
 	res = 0
-	for i in range(1 << len(v)):
-		t = s.copy()
-		for j in range(len(v)):
-			if i & (1 << j):
-				t[v[j]] = '#'
-			else:
-				t[v[j]] = '.'
-		res += check(t, l)
-
+	for k in range(i, l[j] - 2, -1):
+		if '.' not in s[k - l[j] + 1: k + 1] and (k < l[j] or s[k - l[j]] != '#'):
+			res += solve(s, l, k - l[j] - 1, j - 1)
+		if s[k] == '#':
+			return res
+	
 	return res
 
 res = 0
 for i, r in enumerate(data):
 	s, l = r.split()
+	s = '?'.join([s] * 5)
+	l = tuple(list(map(int, l.split(','))) * 5)
+	# l = tuple(list(map(int, l.split(','))))
 	# print(i)
-	res += solve(s, list(map(int, l.split(','))))
+	res += solve(s, l, len(s) - 1, len(l) - 1)
 	# break
 
 print(res)
-# submit(res, part = 'b', day = 12, year = 2023)
+submit(res, part = 'b', day = 12, year = 2023)

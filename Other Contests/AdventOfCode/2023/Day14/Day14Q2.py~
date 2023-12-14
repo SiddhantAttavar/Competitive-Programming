@@ -1,16 +1,16 @@
 import numpy as np
 from aocd import get_data, submit
 data = get_data(day = 14, year = 2023).splitlines()
-data = '''O....#....
-O.OO#....#
-.....##...
-OO.#O....O
-.O.....O#.
-O.#..O.#.#
-..O..#O..O
-.......O..
-#....###..
-#OO..#....'''.splitlines()
+# data = '''O....#....
+# O.OO#....#
+# .....##...
+# OO.#O....O
+# .O.....O#.
+# O.#..O.#.#
+# ..O..#O..O
+# .......O..
+# #....###..
+# #OO..#....'''.splitlines()
 
 def printMat(data):
 	for i in data:
@@ -65,7 +65,7 @@ while (u != slow).any():
 
 for i in range(x % y):
 	next_cycle(u)
-printMat(u);
+# printMat(u);
 
 # res = 0
 # old_data = np.zeros(data.shape)
@@ -88,9 +88,9 @@ n = len(u)
 m = len(u[0])
 res = 0
 for j in range(m):
-	for i in range(1, n):
-		if u[i][j] == 0:
-			res += n - i
+	for k in range(1, n):
+		if u[k][j] == 0:
+			res += n - k
 
 print(res)
-# submit(res, part = 'b', day = 14, year = 2023)
+submit(res, part = 'b', day = 14, year = 2023)

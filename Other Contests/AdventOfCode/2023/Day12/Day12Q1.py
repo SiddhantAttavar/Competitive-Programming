@@ -45,7 +45,9 @@ res = 0
 for i, r in enumerate(data):
 	s, l = r.split()
 	# print(i)
-	res += solve(s, list(map(int, l.split(','))))
+	x = solve(s, list(map(int, l.split(','))))
+	print(x)
+	res += x
 	# break
 
 print(res)
