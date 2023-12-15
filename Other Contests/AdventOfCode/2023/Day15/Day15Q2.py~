@@ -1,6 +1,6 @@
 from aocd import get_data, submit
 data = get_data(day = 15, year = 2023).splitlines()
-# data = '''rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7'''.splitlines()
+data = '''rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7'''.splitlines()
 
 def hash(s):
 	res = 0
@@ -16,24 +16,27 @@ for r in data[0].split(','):
 	if r[-1] == '-':
 		s = r[:-1]
 		c = hash(s)
-		# print(s, '-')
 		if s not in lens[c]:
 			continue
-
-		lens[c].pop(s)
+		
+		u = l[c]
+		while u != s:
+			v = lens[c][u][0]
+			lens[c].pop(u)
+			u = v
 	else:
 		s = r.split('=')[0]
 		x = int(r.split('=')[1])
-		# print(s, x)
 		c = hash(s)
-		lens[c][s] = x
 
-# print(lens)
-# print(l)
-for i, r in enumerate(lens):
-	# print(v, end = ' ')
-	for j, x in enumerate(r.values()):
-		res += x * (j + 1) * (i + 1)
+		lens[c][s][0] = x
+		if s not in lens[c]:
+			lens[c][s][1] = l[c]
+			l[c] = s
+
+for i in lens:
+	if i != None:
+		res += i
 	
 print(res)
-submit(res, part = 'b', day = 15, year = 2023)
+# submit(res, part = 'b', day = 15, year = 2023)
