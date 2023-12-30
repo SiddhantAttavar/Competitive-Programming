@@ -24,7 +24,8 @@ int32_t main() {
 	vector<vector<bool>> v(n, vector<bool>(m, true));
 	for (int i = 8; i >= 0; i--) {
 		res ^= 1 << i;
-		bool b = true;
+		bool q = true;
+		vector<pair<int, int>> d;
 		range(j, 0, n) {
 			bool flag = false;
 			range(k, 0, m) {
@@ -32,18 +33,26 @@ int32_t main() {
 					continue;
 				}
 				int x = a[j] & b[k];
-				if (((1 << i) & x) and !((1 << i) & res)) {
-					v[j][k] = false;
+				if (((1 << i) & x)) {
+					d.push_back({j, k});
 				}
 				else {
 					flag = true;
 				}
 			}
 			if (!flag) {
-				b = false;
+				q = false;
 			}
-
+		}
+		if (!q) {
 			res ^= 1 << i;
+			continue;
+		}
+
+		for (pair<int, int> p : d) {
+			v[p.first][p.second] = false;
 		}
 	}
+
+	print(res);
 }
