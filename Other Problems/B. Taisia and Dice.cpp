@@ -10,46 +10,25 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
+int32_t main() {
+	setup(); int tc; input(tc); while (tc--) {
+		int n, s, r;
+		input(n, s, r);
 
-const int MOD = (int) 1e9 + 7;
+		vector<int> res;
+		res.push_back(s - r);
 
-int mod_pow(int a, int b) {
-	int res = 1;
-	while (b) {
-		if (b & 1) {
-			res = (res * a) % MOD;
+		n--;
+
+		for (int i = s - r; i >= 1; i--) {
+			while ((r - i) >= (n - 1) and n >= 1) {
+				// print(i);
+				n--;
+				r -= i;
+				res.push_back(i);
+			}
 		}
 
-		a = (a * a) % MOD;
-		b >>= 1;
+		arrPrint(res);
 	}
-	return res;
-}
-
-int mod_inv(int a) {
-	return mod_pow(a, MOD - 2);
-}
-
-int32_t main() {
-	setup();
-
-	int n, m;
-	input(n, m);
-
-	int x = 2 * m - 1;
-
-	vector<int> fact(n + x), fact_inv(n + x);
-	fact[0] = 1;
-	fact_inv[0] = 1;
-	range(i, 0, n + x - 1) {
-		fact[i + 1] = (fact[i] * (i + 1)) % MOD;
-		fact_inv[i + 1] = mod_inv(fact[i + 1]);
-	}
-
-	int res = 0;
-	range(i, 0, n) {
-		res = (res + ((fact[i + x] * fact_inv[i]) % MOD * fact_inv[x]) % MOD) % MOD;
-	}
-
-	print(res);
 }

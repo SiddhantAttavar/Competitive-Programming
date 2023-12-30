@@ -11,7 +11,39 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	setup();
+
+	int n, m;
+	input(n, m);
+
+	vector<int> a(n), b(m);
+	arrPut(a);
+	arrPut(b);
+
+	int res = (1 << 9) - 1;
+	vector<vector<bool>> v(n, vector<bool>(m, true));
+	for (int i = 8; i >= 0; i--) {
+		res ^= 1 << i;
+		bool b = true;
+		range(j, 0, n) {
+			bool flag = false;
+			range(k, 0, m) {
+				if (!v[j][k]) {
+					continue;
+				}
+				int x = a[j] & b[k];
+				if (((1 << i) & x) and !((1 << i) & res)) {
+					v[j][k] = false;
+				}
+				else {
+					flag = true;
+				}
+			}
+			if (!flag) {
+				b = false;
+			}
+
+			res ^= 1 << i;
+		}
 	}
 }

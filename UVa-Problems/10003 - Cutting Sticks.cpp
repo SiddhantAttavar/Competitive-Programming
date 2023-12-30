@@ -10,46 +10,44 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-
-const int MOD = (int) 1e9 + 7;
-
-int mod_pow(int a, int b) {
-	int res = 1;
-	while (b) {
-		if (b & 1) {
-			res = (res * a) % MOD;
-		}
-
-		a = (a * a) % MOD;
-		b >>= 1;
-	}
-	return res;
-}
-
-int mod_inv(int a) {
-	return mod_pow(a, MOD - 2);
-}
-
 int32_t main() {
 	setup();
+	while (true) {
+		int l;
+		input(l);
 
-	int n, m;
-	input(n, m);
+		if (l == 0) {
+			break;
+		}
 
-	int x = 2 * m - 1;
+		int n;
+		input(n);
 
-	vector<int> fact(n + x), fact_inv(n + x);
-	fact[0] = 1;
-	fact_inv[0] = 1;
-	range(i, 0, n + x - 1) {
-		fact[i + 1] = (fact[i] * (i + 1)) % MOD;
-		fact_inv[i + 1] = mod_inv(fact[i + 1]);
+		vector<int> c(n);
+		arrPut(c);
+		c.insert(c.begin(), 0);
+		c.push_back(l);
+		n += 2;
+
+		vector<vector<int>> dp(n, vector<int>(n, 1e9));
+		range(i, 0, n) {
+			dp[i][i] = 0;
+		}
+		range(i, 0, n - 1) {
+			dp[i][i + 1] = 0;
+		}
+		range(x, 3, n + 1) {
+			range(i, 0, n - x + 1) {
+				int j = i + x - 1;
+				range(k, i + 1, j) {
+					dp[i][j] = min(dp[i][j], dp[i][k] + dp[k][j] + c[j] - c[i]);
+				}
+			}
+		}
+		// range(i, 0, n) {
+		// 	arrPrint(dp[i]);
+		// }
+
+		printf("The minimum cutting is %Ld.\n", dp[0][n - 1]);
 	}
-
-	int res = 0;
-	range(i, 0, n) {
-		res = (res + ((fact[i + x] * fact_inv[i]) % MOD * fact_inv[x]) % MOD) % MOD;
-	}
-
-	print(res);
 }
