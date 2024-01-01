@@ -11,29 +11,27 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	map<multiset<int>, vector<int>> m;
-	vector<int> v;
-	range(i, 1, 1e5) {
-		int x = i * i;
-		multiset<int> c;
-		while (x) {
-			c.insert(x % 10);
-			x /= 10;
-		}
-
-		m[c].push_back(x);
-		if (m[c].size() == 100) {
-			v = m[c];
-			break;
-		}
-	}
-	arrPrint(v);
-	cout.flush();
-
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
-		vector<int> a(v.begin(), v.begin() + n);
-		arrPrint(a);
+
+		if (n == 1) {
+			print("1");
+			continue;
+		}
+
+		vector<string> res;
+		res.push_back("196" + string(n - 3, '0'));
+
+		range(i, 0, (n - 1) / 2) {
+			res.push_back('1' + string(i, '0') + '6' + string(i, '0') + '9' + string(n - 3 - 2 * i, '0'));
+		}
+		range(i, 0, (n - 1) / 2) {
+			res.push_back('9' + string(i, '0') + '6' + string(i, '0') + '1' + string(n - 3 - 2 * i, '0'));
+		}
+
+		for (string s : res) {
+			print(s);
+		}
 	}
 }

@@ -20,4 +20,24 @@ int32_t main() {
 	range(i, 0, m) {
 		input(a[i], b[i], c[i], d[i]);
 	}
+
+	vector<vector<vector<int>>> dp(n + 1, vector<vector<int>>(m, vector<int>(101, 0)));
+	range(j, 0, m) {
+		range(i, 0, n + 1) {
+			range(k, 0, 101) {
+				if (j == 0) {
+					dp[i][j][k] = (i / c0) * d0;
+				}
+				else {
+					dp[i][j][k] = dp[i][j - 1][a[j - 1]];
+				}
+
+				if (i >= c[j] and k >= b[j]) {
+					dp[i][j][k] = max(dp[i][j][k], dp[i - c[j]][j][k - b[j]] + d[j]);
+				}
+			}
+		}
+	}
+
+	print(dp[n][m - 1][a[m - 1]]);
 }

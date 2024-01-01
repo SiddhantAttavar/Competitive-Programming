@@ -11,7 +11,51 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	setup();
+
+	int n, m;
+	input(n, m);
+
+	vector<int> a(n);
+	arrPut(a);
+
+	vector<int> p(n, 0), s(n, n - 1);
+	range(i, 1, n) {
+		if (a[i] <= a[i - 1]) {
+			p[i] = p[i - 1];
+		}
+		else {
+			p[i] = i;
+		}
+	}
+	for (int i = n - 2; i >= 0; i--) {
+		if (a[i] <= a[i + 1]) {
+			s[i] = s[i + 1];
+		}
+		else {
+			s[i] = i;
+		}
+	}
+
+	// arrPrint(p);
+	// arrPrint(s);
+	// arrPrint(v);
+
+	while (m--) {
+		int l, r;
+		input(l, r);
+		l--;
+		r--;
+
+		int x = min(s[l], r);
+		int y = max(p[r], l);
+
+		if (x < y) {
+			print("No");
+			continue;
+		}
+		else {
+			print("Yes");
+		}
 	}
 }

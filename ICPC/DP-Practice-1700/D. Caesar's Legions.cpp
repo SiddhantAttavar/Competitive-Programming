@@ -10,8 +10,36 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+int solve(int a, int b, int x, int y, int i, int j, map<tuple<int, int, int, int>, int> &memo) {
+	if (x == 0 and y == 0) {
+		return 1;
 	}
+
+	int MOD = 1e8;
+
+	if (memo.count({x, y, i, j})) {
+		return memo[{x, y, i, j}];
+	}
+
+	int &res = memo[{x, y, i, j}];
+	res = 0;
+	
+	if (i < a and x > 0) {
+		res = solve(a, b, x - 1, y, i + 1, 0, memo);
+	}
+	if (j < b and y > 0) {
+		res = (res + solve(a, b, x, y - 1, 0, j + 1, memo)) % MOD;
+	}
+
+	return res;
+}
+
+int32_t main() {
+	setup();
+
+	int n, m, a, b;
+	input(n, m, a, b);
+
+	map<tuple<int, int, int, int>, int> memo;
+	print(solve(a, b, n, m, 0, 0, memo));
 }
