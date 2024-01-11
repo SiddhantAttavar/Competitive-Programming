@@ -11,7 +11,44 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	setup();
+
+	int N = 1e7;
+
+	int n;
+	input(n);
+
+	vector<int> a(n);
+	arrPut(a);
+
+	vector<int> c(N + 1, 0);
+	for (int i : a) {
+		c[i]++;
+	}
+
+	vector<bool> seive(N + 1, true);
+	vector<int> pref(N + 1, 0);
+	range(i, 2, N + 1) {
+		pref[i] = pref[i - 1];
+		if (seive[i]) {
+			for (int j = i; j <= N; j += i) {
+				seive[j] = false;
+				pref[i] += c[j];
+			}
+		}
+	}
+
+	int m;
+	input(m);
+	while (m--) {
+		int l, r;
+		input(l, r);
+
+		if (l > N) {
+			print(0);
+		}
+		else {
+			print(pref[min(r, N)] - pref[l - 1]);
+		}
 	}
 }

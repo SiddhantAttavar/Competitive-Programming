@@ -11,7 +11,27 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	setup();
+
+	int n, k;
+	input(n, k);
+
+	vector<int> a(n);
+	arrPut(a);
+
+	map<int, int> x, y;
+	for (int i : a) {
+		x[i]++;
 	}
+
+	int res = 0;
+	for (int i : a) {
+		x[i]--;
+		if (i % k == 0 and x.count(i * k) and y.count(i / k)) {
+			res += x[i * k] * y[i / k];
+		}
+		y[i]++;
+	}
+
+	print(res);
 }

@@ -11,7 +11,28 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	setup();
+
+	int n, m, k;
+	input(n, m, k);
+
+	vector<int> a(n);
+	arrPut(a);
+	
+	vector<int> pref(n + 1, 0);
+	range(i, 0, n) {
+		pref[i + 1] = pref[i] + a[i];
 	}
+
+	vector<vector<int>> dp(n + 1, vector<int>(k + 1, 0));
+	range(i, 1, n + 1) {
+		range(j, 1, k + 1) {
+			dp[i][j] = dp[i - 1][j];
+			if (i >= m) {
+				dp[i][j] = max(dp[i][j], dp[i - m][j - 1] + pref[i] - pref[i - m]);
+			}
+		}
+	}
+
+	print(dp[n][k]);
 }
