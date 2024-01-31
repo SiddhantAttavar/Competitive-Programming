@@ -13,10 +13,42 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int n, q;
+		input(n, q);
+
+		string s;
+		input(s);
+
+		int x = 1, m = 1;
+		range(i, 1, n) {
+			if (s[i] == s[i - 1]) {
+				x++;
+				m = max(m, x);
+			}
+			else {
+				x = 1;
+			}
+		}
+
+		cout << m << ' ';
+		while (q--) {
+			char c;
+			input(c);
+
+			if (c == s.back()) {
+				x++;
+				m = max(m, x);
+			}
+			else {
+				x = 1;
+			}
+			s.push_back(c);
+
+			cout << m << ' ';
+		}
+		cout << endl;
 	}
 }

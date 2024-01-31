@@ -13,7 +13,6 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-#define ordered_multiset tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update> 
 
 template<class T> struct SegTree {
 	vector<T> a;
@@ -23,15 +22,20 @@ template<class T> struct SegTree {
 		id = i; combine = func;
 		a = vector<T>(4 * n, id);
 	}
-	T query(int k, int s, int e, int curr) {
+	T query(int l, int r, int p, int s, int e, int curr) {
+		if (a[curr] > p) {
+			return -1;
+		}
+		if (l > e || r < s)  return -1;
 		if (s == e) {
 			return s;
 		}
 		int mid = (s + e) / 2;
-		if (a[2 * curr + 2] >= k) {
-			return query(k, mid + 1, e, 2 * curr + 2);
+		int x = query(l, r, p, s, mid, 2 * curr + 1);
+		if (x != -1) {
+			return x;
 		}
-		return query(k - a[2 * curr + 2], s, mid, 2 * curr + 1);
+		return query(l, r, p, mid + 1, e, 2 * curr + 2);
 	}
 	void update(int i, T x, int s, int e, int curr) {
 		if (s > i || e < i) return;
@@ -43,25 +47,40 @@ template<class T> struct SegTree {
 	}
 };
 
+
 int32_t main() {
 	setup();
 
-	int n;
-	input(n);
+	int n, m;
+	input(n, m);
 
-	vector<int> a(n);
-	arrPut(a);
+	SegTree<int> s(n, 2e9, [](int a, int b) {return min(a, b);});
 
-	SegTree<int> s(n, 0, [](int a, int b) {return a + b;});
-	range(i, 0, n) {
-		s.update(i, 1, 0, n - 1, 0);
+	vector<int> a(n, -1);
+
+	while (m--) {
+		int o;
+		input(o);
+
+		if (o == 1) {
+			int i, x;
+			input(i, x);
+
+			s.update(i, x, 0, n - 1, 0);
+		}
+		else {
+			int l, r, p;
+			input(l, r, p);
+
+			int res = 0;
+			int x = s.query(l, r - 1, p, 0, n - 1, 0);
+			while (x != -1) {
+				res++;
+				s.update(x, 2e9, 0, n - 1, 0);
+				x = s.query(l, r - 1, p, 0, n - 1, 0);
+			}
+
+			print(res);
+		}
 	}
-
-	vector<int> res(n);
-	for (int i = n - 1; i >= 0; i--) {
-		res[i] = s.query(a[i] + 1, 0, n - 1, 0) + 1;
-		s.update(res[i] - 1, 0, 0, n - 1, 0);
-	}
-
-	arrPrint(res);
 }

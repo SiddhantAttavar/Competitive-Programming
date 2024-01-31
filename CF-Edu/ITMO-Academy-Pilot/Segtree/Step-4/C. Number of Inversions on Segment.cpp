@@ -13,7 +13,6 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-#define ordered_multiset tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update> 
 
 template<class T> struct SegTree {
 	vector<T> a;
@@ -23,15 +22,12 @@ template<class T> struct SegTree {
 		id = i; combine = func;
 		a = vector<T>(4 * n, id);
 	}
-	T query(int k, int s, int e, int curr) {
-		if (s == e) {
-			return s;
-		}
+	T query(int l, int r, int s, int e, int curr) {
+		if (l > e || r < s)  return id;
+		if (l <= s && r >= e) return a[curr];
 		int mid = (s + e) / 2;
-		if (a[2 * curr + 2] >= k) {
-			return query(k, mid + 1, e, 2 * curr + 2);
-		}
-		return query(k - a[2 * curr + 2], s, mid, 2 * curr + 1);
+		return combine(query(l, r, s, mid, 2 * curr + 1),
+			query(l, r, mid + 1, e, 2 * curr + 2));
 	}
 	void update(int i, T x, int s, int e, int curr) {
 		if (s > i || e < i) return;
@@ -46,22 +42,48 @@ template<class T> struct SegTree {
 int32_t main() {
 	setup();
 
-	int n;
-	input(n);
+	int n, q;
+	input(n, q);
 
 	vector<int> a(n);
 	arrPut(a);
 
-	SegTree<int> s(n, 0, [](int a, int b) {return a + b;});
+	SegTree<pair<int, vector<int>>> s(n, {0, vector<int>(40)}, [](pair<int, vector<int>> a, pair<int, vector<int>> b) {
+		vector<int> c(40);
+		int res = 0, x = 0;
+		for (int i = 39; i >= 0; i--) {
+			c[i] = a.second[i] + b.second[i];
+			res += x * b.second[i];
+			x += a.second[i];
+		}
+
+		return make_pair(a.first + b.first + res, c);
+	});
+
 	range(i, 0, n) {
-		s.update(i, 1, 0, n - 1, 0);
+		vector<int> b(40);
+		b[a[i] - 1] = 1;
+		s.update(i, {0, b}, 0, n - 1, 0);
 	}
 
-	vector<int> res(n);
-	for (int i = n - 1; i >= 0; i--) {
-		res[i] = s.query(a[i] + 1, 0, n - 1, 0) + 1;
-		s.update(res[i] - 1, 0, 0, n - 1, 0);
-	}
+	while (q--) {
+		int o;
+		input(o);
 
-	arrPrint(res);
+		if (o == 1) {
+			int l, r;
+			input(l, r);
+
+			print(s.query(l - 1, r - 1, 0, n - 1, 0).first);
+		}
+		else {
+			int i, x;
+			input(i, x);
+
+			vector<int> a(40);
+			a[x - 1] = 1;
+
+			s.update(i - 1, {0, a}, 0, n - 1, 0);
+		}
+	}
 }

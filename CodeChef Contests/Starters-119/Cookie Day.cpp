@@ -14,71 +14,26 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 
-struct SegTree {
-	vector<int> a;
-
-	SegTree(vector<int> arr) {
-		a.resize(4 * arr.size(), 0);
-		range(i, 0, arr.size()) {
-			update(0, 0, arr.size() - 1, i, arr[i]);
-		}
-	}
-
-	void update(int u, int l, int r, int i, int x) {
-		if (r < i or l > i) {
-			return;
-		}
-
-		if (l == r) {
-			a[u] = x;
-			return;
-		}
-
-		int m = (l + r) / 2;
-		update(2 * u + 1, l, m, i, x);
-		update(2 * u + 2, m + 1, r, i, x);
-		a[u] = a[2 * u + 1] + a[2 * u + 2];
-	}
-
-	int query(int u, int l, int r, int s, int e) {
-		if (s <= l and r <= e) {
-			return a[u];
-		}
-
-		if (r < s or l > e) {
-			return 0;
-		}
-
-		int m = (l + r) / 2;
-		return query(2 * u + 1, l, m, s, e) + query(2 * u + 2, m + 1, r, s, e);
-	}
-};
-
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n, k;
+		input(n, k);
 
-	int n, m;
-	input(n, m);
+		vector<int> a(n);
+		arrPut(a);
 
-	vector<int> a(n);
-	arrPut(a);
+		int res = 1e9;
+		for (int i : a) {
+			if (i >= k) {
+				res = min(res, i % k);
+			}
+		}
 
-	SegTree segTree(a);
-
-	while (m--) {
-		int o;
-		input(o);
-		
-		if (o == 1) {
-			int i, x;
-			input(i, x);
-			segTree.update(0, 0, n - 1, i, x);
+		if (res == 1e9) {
+			print(-1);
 		}
 		else {
-			int l, r;
-			input(l, r);
-
-			print(segTree.query(0, 0, n - 1, l, r - 1));
+			print(res);
 		}
 	}
 }

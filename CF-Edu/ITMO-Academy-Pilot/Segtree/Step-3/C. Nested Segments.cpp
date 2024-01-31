@@ -15,7 +15,26 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	setup();
+
+	int n;
+	input(n);
+
+	vector<int> a(2 * n);
+	arrPut(a);
+
+	ordered_set o;
+	vector<int> v(n, -1);
+	vector<int> res(n);
+	range(i, 0, 2 * n) {
+		if (v[a[i] - 1] == -1) {
+			v[a[i] - 1] = i;
+		}
+		else {
+			res[a[i] - 1] = o.size() - o.order_of_key(v[a[i] - 1]);
+			o.insert(v[a[i] - 1]);
+		}
 	}
+
+	arrPrint(res);
 }

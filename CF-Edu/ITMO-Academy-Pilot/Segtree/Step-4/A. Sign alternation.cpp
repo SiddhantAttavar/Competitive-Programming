@@ -14,71 +14,63 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 
-struct SegTree {
-	vector<int> a;
-
-	SegTree(vector<int> arr) {
-		a.resize(4 * arr.size(), 0);
-		range(i, 0, arr.size()) {
-			update(0, 0, arr.size() - 1, i, arr[i]);
-		}
+template<class T> struct SegTree {
+	vector<T> a;
+	T id;
+	T (*combine) (T, T);
+	SegTree(int n, T i, T func(T, T)) {
+		id = i; combine = func;
+		a = vector<T>(4 * n, id);
 	}
-
-	void update(int u, int l, int r, int i, int x) {
-		if (r < i or l > i) {
-			return;
-		}
-
-		if (l == r) {
-			a[u] = x;
-			return;
-		}
-
-		int m = (l + r) / 2;
-		update(2 * u + 1, l, m, i, x);
-		update(2 * u + 2, m + 1, r, i, x);
-		a[u] = a[2 * u + 1] + a[2 * u + 2];
+	T query(int l, int r, int s, int e, int curr) {
+		if (l > e || r < s)  return id;
+		if (l <= s && r >= e) return a[curr];
+		int mid = (s + e) / 2;
+		return combine(query(l, r, s, mid, 2 * curr + 1),
+			query(l, r, mid + 1, e, 2 * curr + 2));
 	}
-
-	int query(int u, int l, int r, int s, int e) {
-		if (s <= l and r <= e) {
-			return a[u];
-		}
-
-		if (r < s or l > e) {
-			return 0;
-		}
-
-		int m = (l + r) / 2;
-		return query(2 * u + 1, l, m, s, e) + query(2 * u + 2, m + 1, r, s, e);
+	void update(int i, T x, int s, int e, int curr) {
+		if (s > i || e < i) return;
+		if (s == e) { a[curr] = x; return; }
+		int mid = (s + e) / 2;
+		update(i, x, s, mid, 2 * curr + 1);
+		update(i, x, mid + 1, e, 2 * curr + 2);
+		a[curr] = combine(a[2 * curr + 1], a[2 * curr + 2]);
 	}
 };
 
 int32_t main() {
 	setup();
 
-	int n, m;
-	input(n, m);
+	int n;
+	input(n);
 
 	vector<int> a(n);
 	arrPut(a);
 
-	SegTree segTree(a);
+	SegTree<int> s(n, 0, [](int a, int b) {return a + b;});
+	
+	range(i, 0, n) {
+		s.update(i, i % 2 ? -a[i] : a[i], 0, n - 1, 0);
+	}
 
+	int m;
+	input(m);
 	while (m--) {
 		int o;
 		input(o);
-		
-		if (o == 1) {
-			int i, x;
-			input(i, x);
-			segTree.update(0, 0, n - 1, i, x);
+
+		if (o == 0) {
+			int i, j;
+			input(i, j);
+
+			s.update(i - 1, i % 2 ? j : -j, 0, n - 1, 0);
 		}
 		else {
 			int l, r;
 			input(l, r);
 
-			print(segTree.query(0, 0, n - 1, l, r - 1));
+			print(s.query(l - 1, r - 1, 0, n - 1, 0) * (l % 2 ? 1 : -1));
 		}
 	}
 }

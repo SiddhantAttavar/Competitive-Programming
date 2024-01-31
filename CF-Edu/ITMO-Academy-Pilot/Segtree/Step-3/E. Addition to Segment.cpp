@@ -14,8 +14,61 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 
+template<class T> struct SegTree {
+	vector<T> a;
+	T id;
+	T (*combine) (T, T);
+	SegTree(int n, T i, T func(T, T)) {
+		id = i; combine = func;
+		a = vector<T>(4 * n, id);
+	}
+	T query(int l, int r, int s, int e, int curr) {
+		if (l > e || r < s) {
+			return id;
+		}
+		if (l <= s && r >= e) {
+			return a[curr];
+		}
+		int mid = (s + e) / 2;
+		return combine(
+			query(l, r, s, mid, 2 * curr + 1),
+			query(l, r, mid + 1, e, 2 * curr + 2)
+		);
+	}
+	void update(int i, T x, int s, int e, int curr) {
+		if (s > i || e < i) return;
+		if (s == e) { a[curr] += x; return; }
+		int mid = (s + e) / 2;
+		update(i, x, s, mid, 2 * curr + 1);
+		update(i, x, mid + 1, e, 2 * curr + 2);
+		a[curr] = combine(a[2 * curr + 1], a[2 * curr + 2]);
+	}
+};
+
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	setup();
+
+	int n, m;
+	input(n, m);
+
+	SegTree<int> s(n, 0, [](int a, int b) {return a + b;});
+
+	while (m--) {
+		int o;
+		input(o);
+
+		if (o == 1) {
+			int l, r, v;
+			input(l, r, v);
+
+			s.update(r, -v, 0, n - 1, 0);
+			s.update(l, v, 0, n - 1, 0);
+		}
+		else {
+			int i;
+			input(i);
+
+			print(s.query(0, i, 0, n - 1, 0));
+		}
 	}
 }

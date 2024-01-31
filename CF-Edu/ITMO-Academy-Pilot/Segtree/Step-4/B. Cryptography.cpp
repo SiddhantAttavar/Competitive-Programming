@@ -14,71 +14,53 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 
-struct SegTree {
-	vector<int> a;
-
-	SegTree(vector<int> arr) {
-		a.resize(4 * arr.size(), 1e9);
-		range(i, 0, arr.size()) {
-			update(0, 0, arr.size() - 1, i, arr[i]);
-		}
-	}
-
-	void update(int u, int l, int r, int i, int x) {
-		if (r < i or l > i) {
-			return;
-		}
-
-		if (l == r) {
-			a[u] = x;
-			return;
-		}
-
-		int m = (l + r) / 2;
-		update(2 * u + 1, l, m, i, x);
-		update(2 * u + 2, m + 1, r, i, x);
-		a[u] = min(a[2 * u + 1], a[2 * u + 2]);
-	}
-
-	int query(int u, int l, int r, int s, int e) {
-		if (s <= l and r <= e) {
-			return a[u];
-		}
-
-		if (r < s or l > e) {
-			return 1e9;
-		}
-
-		int m = (l + r) / 2;
-		return min(query(2 * u + 1, l, m, s, e), query(2 * u + 2, m + 1, r, s, e));
-	}
+vector<int> mul(vector<int> a, vector<int> b, int r) {
+	return vector<int>({
+		(a[0] * b[0] + a[1] * b[2]) % r,
+		(a[0] * b[1] + a[1] * b[3]) % r,
+		(a[2] * b[0] + a[3] * b[2]) % r,
+		(a[2] * b[1] + a[3] * b[3]) % r
+	});
 };
 
 int32_t main() {
 	setup();
 
-	int n, m;
-	input(n, m);
+	int k, n, m;
+	input(k, n, m);
 
-	vector<int> a(n);
-	arrPut(a);
+	int h = log2(n) + 1;
 
-	SegTree segTree(a);
+	vector<vector<vector<int>>> a(n, vector<vector<int>>(h, vector<int>(4)));
+	range(i, 0, n) {
+		input(a[i][0][0], a[i][0][1], a[i][0][2], a[i][0][3]);
+
+		range(j, 1, h) {
+			if (i + 1 < (1 << j)) {
+				break;
+			}
+
+			a[i][j] = mul(a[i - (1 << (j - 1))][j - 1], a[i][j - 1], k);
+		}
+	}
 
 	while (m--) {
-		int o;
-		input(o);
-		
-		if (o == 1) {
-			int i, x;
-			input(i, x);
-			segTree.update(0, 0, n - 1, i, x);
-		}
-		else {
-			int l, r;
-			input(l, r);
+		int l, r;
+		input(l, r);
 
-			print(segTree.query(0, 0, n - 1, l, r - 1));
+		l--;
+		r--;
+
+		vector<int> res = {1, 0, 0, 1};
+		for (int j = h - 1; j >= 0; j--) {
+			if (r - (1 << j) >= l - 1) {
+				res = mul(a[r][j], res, k);
+				r -= 1 << j;
+			}
 		}
+
+		print(res[0], res[1]);
+		print(res[2], res[3]);
+		print("");
 	}
 }

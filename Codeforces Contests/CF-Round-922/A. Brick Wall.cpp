@@ -13,10 +13,12 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int n, m;
+		input(n, m);
+
+		print(n * (m / 2));
 	}
 }

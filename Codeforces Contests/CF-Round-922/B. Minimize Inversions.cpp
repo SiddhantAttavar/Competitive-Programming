@@ -13,10 +13,28 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int n;
+		input(n);
+
+		vector<pair<int, int>> a(n);
+		range(i, 0, n) {
+			input(a[i].first);
+		}
+		range(i, 0, n) {
+			input(a[i].second);
+		}
+		sort(a.begin(), a.end());
+
+		for (pair<int, int> p : a) {
+			cout << p.first << ' ';
+		}
+		cout << endl;
+		for (pair<int, int> p : a) {
+			cout << p.second << ' ';
+		}
+		cout << endl;
 	}
 }
