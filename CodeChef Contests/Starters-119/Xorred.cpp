@@ -22,5 +22,32 @@ int32_t main() {
 		vector<int> a(n);
 		arrPut(a);
 
+		map<int, vector<int>> m;
+		m[0].push_back(-1);
+
+		vector<int> b(n);
+		int res = 0, x = 0;
+		range(i, 0, n) {
+			x ^= a[i];
+			m[x].push_back(i);
+			b[i] = a[i];
+
+			for (int j = i - 1; j >= 0; j--) {
+				if ((b[j] & a[i]) == b[j]) {
+					break;
+				}
+				b[j] &= a[i];
+			}
+
+			int r = i;
+			while (r >= 0) {
+				int l = lower_bound(b.begin(), b.begin() + r + 1, b[r]) - b.begin();
+				int z = x ^ b[r];
+				res += upper_bound(m[z].begin(), m[z].end(), r - 1) - lower_bound(m[z].begin(), m[z].end(), l - 1);
+				r = l - 1;
+			}
+		}
+
+		print(res);
 	}
 }
