@@ -1,3 +1,6 @@
 [submodule "icpc-templates"]
 	path = ICPC/icpc-templates
 	url = https://github.com/lycogno/icpc-templates
+[submodule "ICPC/icpc-templates"]
+	path = ICPC/icpc-templates
+	url = https://github.com/lycogno/icpc-templates
