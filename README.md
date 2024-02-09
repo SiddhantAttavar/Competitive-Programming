@@ -8,7 +8,7 @@ A repository where I store all my competitive programming related code. This inc
  - CodeChef Contests: solutions from [CodeChef](https://www.codechef.com/) contests I have participated in
  - Codeforces Contests: solutions from [Codeforces](https://codeforces.com/) contests I have participated in
  - DSA Learning Series: Some problems I have attempted from CodeChef's [DSA Learning Series](https://www.codechef.com/LEARNDSA/)
- - Data Structures: A list (cheat sheet?) of some of data structures I have learned
+ - Data Structures: A list (cheat sheet?) of some data structures I have learned
  - ICO: Preparation for various stages of the [Indian Computing Olympiad](https://www.iarcs.org.in/inoi/)
 	- IACRS Sample Problems: my solutions for [IARCS OPC Judge Problems](https://www.codechef.com/IARCSJUD)
 	- ICO20MCK: a [mock ZCO contest](https://www.codechef.com/ICO20MCK)
