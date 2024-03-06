@@ -59,6 +59,7 @@ int32_t main() {
 				}
 			}
 
+
 			n ^= 1ll << i;
 			assert(v[u] > i);
 			n ^= 1ll << v[u];
@@ -66,6 +67,7 @@ int32_t main() {
 			assert(n < res.back() and (n ^ res.back()) < res.back());
 			res.push_back(n);
 		}
+
 
 		if (flag) {
 			print(res.size() - 1);
