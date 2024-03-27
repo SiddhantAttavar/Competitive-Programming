@@ -16,11 +16,32 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n, m;
+		input(n, m);
 
-	int n;
-	input(n);
+		vector<int> s(n), e(n);
+		arrPut(s);
+		arrPut(e);
 
-	vector<int> a(n);
-	arrPut(a);
+		vector<pair<int, int>> v(n);
+		range(i, 0, n) {
+			v[i] = {s[i], e[i]};
+		}
+
+		int res = 0;
+		range(i, 0, m) {
+			int x;
+			input(x);
+
+			int y = lower_bound(v.begin(), v.end(), pair<int, int>{x, 1e9}) - v.begin();
+			if (y) {
+				y--;
+				// print(x, v[y].second);
+				res += v[y].second >= x;
+			}
+		}
+
+		print(m - res);
+	}
 }

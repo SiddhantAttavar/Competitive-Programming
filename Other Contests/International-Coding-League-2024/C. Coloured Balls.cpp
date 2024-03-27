@@ -16,11 +16,31 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n, k;
+		input(n, k);
 
-	int n;
-	input(n);
+		vector<int> a(n), c(n);
+		arrPut(a);
+		arrPut(c);
+		
+		vector<pair<int, int>> v(n);
+		range(i, 0, n) {
+			v[i] = {a[i], c[i]};
+		}
+		sort(v.begin(), v.end());
 
-	vector<int> a(n);
-	arrPut(a);
+		map<int, int> m;
+		range(i, k + 1, n) {
+			m[v[i].second]++;
+		}
+
+		int res = 1e9;
+		for (int i = k; i >= 0; i--) {
+			m[v[i].second]++;
+			res = min(res, max(0ll, n - m[v[i].second] - k));
+		}
+
+		print(res);
+	}
 }
