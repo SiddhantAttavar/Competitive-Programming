@@ -28,24 +28,67 @@ int32_t main() {
 			x += i;
 		}
 
-		int y = c * (m / x);
-		m %= x;
-
-		vector<pair<int, int>> a(n);
-		range(i, 0, n) {
-			a[i] = {w[i], i};
+		if (x <= m) {
+			print(n * c);
+			continue;
 		}
-		sort(a.begin(), a.end());
-		reverse(a.begin(), a.end());
 
-		int res = 1e18;
-		for (int i = n - 1; i >= 0; i--) {
-			if (x >= m) {
-				res = y + c * i;
-				continue;
+		multiset<int> a, b, p, q;
+		for (int i : w) {
+			p.insert(i);
+		}
+
+		x = 0;
+		int res = n * c;
+		range(i, 0, n) {
+			if (p.count(w[i])) {
+				p.erase(p.find(w[i]));
+			}
+			else {
+				x -= w[i];
+				q.erase(q.find(w[i]));
+
+				x += *b.rbegin();
+				a.insert(*b.rbegin());
+				b.erase(b.find(*b.rbegin()));
 			}
 
-			x -= w[i];
+			if (b.size() and w[i] < *b.rbegin()) {
+				x += *b.rbegin();
+				a.insert(*b.rbegin());
+				b.erase(b.find(*b.rbegin()));
+				b.insert(w[i]);
+			}
+			else {
+				x += w[i];
+				a.insert(w[i]);
+			}
+
+			while (a.size() and p.size() and x <= m) {
+				x -= *a.begin();
+				b.insert(*a.begin());
+				a.erase(a.begin());
+
+				x += *p.rbegin();
+				q.insert(*p.rbegin());
+				p.erase(p.find(*p.rbegin()));
+			}
+
+			while (q.size() and (x + *b.rbegin() - *q.begin() > m or *b.rbegin() >= *q.begin())) {
+				x += *b.rbegin();
+				a.insert(*b.rbegin());
+				b.erase(b.find(*b.rbegin()));
+
+				x -= *q.begin();
+				p.insert(*q.begin());
+				q.erase(q.begin());
+			}
+
+			if (x > m) {
+				res = min(res, ((int) i) * c + ((int) b.size()) * s);
+			}
 		}
+
+		print(res);
 	}
 }
