@@ -15,24 +15,26 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7;
 
-bool check(string s) {
-
-}
-
-int solve(int n, string s) {
-	if (s.size() == n) {
-		return check(s);
-	}
-}
-
 int32_t main() {
 	setup();
 
-	int n;
-	input(n);
+	int n, m;
+	input(n, m);
 
-	string s;
-	input(s);
+	vector<int> a(n * m);
+	arrPut(a);
+	sort(a.begin(), a.end());
 
-	print(solve(n, ""));
+	range(k, 0, n) {
+		vector<int> res(m);
+		int p = 0, l = 0;
+		range(j, 0, m) {
+			l += k + 1 - p;
+			res[j] = a[l - 1];
+			int i = lower_bound(a.begin(), a.end(), res[j]) - a.begin();
+			p = max(p, (k + 1) - (l - i));
+		}
+
+		arrPrint(res);
+	}
 }

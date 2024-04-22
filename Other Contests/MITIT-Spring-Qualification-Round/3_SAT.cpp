@@ -20,46 +20,30 @@ int32_t main() {
 		int n, m;
 		input(n, m);
 
-		map<vector<int>, int> s;
+		map<set<int>, int> s;
 		range(i, 0, m) {
 			vector<int> a(3);
 			arrPut(a);
-			sort(a.begin(), a.end());
-			s[a]++;
+			s[set<int>(a.begin(), a.end())]++;
 		}
 
-		vector<set<int>> a(n);
-		for (pair<vector<int>, int> p : s) {
-			if (p.second % 2) {
-				set<int> x(p.first.begin(), p.first.end());
-				for (int i : x) {
-					a[i - 1].insert(p.second);
-				}
+		set<int> l = {0, 1, 2, 3};
+		for (pair<set<int>, int> p : s) {
+			if (p.second % 2 and p.first.size() < l.size()) {
+				l = p.first;
 			}
 		}
 
-		vector<int> res(n, true);
-		if (m % 2) {
-			print("YES");
-			arrPrint(res);
+		if (l.size() == 4) {
+			print("NO");
 			continue;
 		}
 
-		bool flag = false;
-		range(i, 0, n) {
-			if (a[i].size() % 2 == 1) {
-				res[i] = false;
-				flag = true;
-				break;
-			}
+		print("YES");
+		vector<int> res(n, false);
+		for (int i : l) {
+			res[i - 1] = true;
 		}
-
-		if (flag) {
-			print("YES");
-			arrPrint(res);
-		}
-		else {
-			print("NO");
-		}
+		arrPrint(res);
 	}
 }

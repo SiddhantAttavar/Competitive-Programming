@@ -15,61 +15,36 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7;
 
-bool check(string s) {
-	range(i, 0, s.size()) {
-		map<char, int> m;
-		int x = 0;
-		range(j, i, s.size()) {
-			m[s[j]]++;
-			x = max(x, m[s[j]]);
-			if (2 * x < (j - i + 1)) {
-				return false;
-			}
+int solve(int i, vector<int> &a) {
+	vector<int> m(3);
+	int x = 0;
+	for (int j = i - 1; j >= 0; j--) {
+		m[a[j] - 1]++;
+		x = max(x, m[a[j] - 1]);
+		if (2 * x < (i - j)) {
+			return 0;
 		}
 	}
-	return true;
-}
 
-int solve(string s, string a) {
-	// print(s, a);
-	// print(s.size(), a.size());
-	// print(s[a.size()], a + s[a.size()]);
-	if (a.size() == s.size()) {
-		return check(a);
+	if (i == a.size()) {
+		return 1;
 	}
 
-	if (s[a.size()] != '?') {
-		return solve(s, a + s[a.size()]);
-	}
-
-	return (
-		solve(s, a + '1') +
-		solve(s, a + '2') +
-		solve(s, a + '3')
-	) % MOD;
+	a[i] = 1;
+	int res = solve(i + 1, a);
+	a[i] = 2;
+	res = (res + solve(i + 1, a)) % MOD;
+	a[i] = 3;
+	return (res + solve(i + 1, a)) % MOD;
 }
 
 int32_t main() {
 	setup();
 
+	vector<int> res = {0, 3, 9, 21, 51, 111, 249, 531, 1155, 2433, 5205, 10887, 23043, 47979, 100809, 209217, 437283, 905283, 1884717, 3894195, 8082879, 16674285, 34526799, 71132079, 147005679, 302525559};
+
 	int n;
 	input(n);
 
-	string s;
-	input(s);
-
-	print(solve("?", ""));
-	print(solve("??", ""));
-	print(solve("???", ""));
-	print(solve("????", ""));
-	print(solve("?????", ""));
-	print(solve("??????", ""));
-	print(solve("???????", ""));
-	print(solve("????????", ""));
-	print(solve("?????????", ""));
-	print(solve("??????????", ""));
-	print(solve("???????????", ""));
-	print(solve("????????????", ""));
-
-	print(solve(s, ""));
+	print(res[n] % MOD);
 }
