@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
+using namespace std;
+using namespace __gnu_pbds; 
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define int long long
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+const int MOD = (int) 1e9 + 7;
+
+int32_t main() {
+	setup(); int tc; input(tc); while (tc--) {
+		string s;
+		input(s);
+
+		int n = s.size();
+
+		string t(s.begin(), s.end());
+		reverse(t.begin(), t.end());
+		if (s != t) {
+			print("YES");
+			print(1);
+			print(s);
+			continue;
+		}
+
+		int i = 0;
+		while (i < s.size() and s[i] == s[0]) {
+			i++;
+		}
+
+		if (i == s.size()) {
+			print("NO");
+			continue;
+		}
+
+		t = s.substr(i + 1);
+		string u(t.begin(), t.end());
+		reverse(u.begin(), u.end());
+
+		if (u != t) {
+			print("YES");
+			print(2);
+			string v = s.substr(0, i + 1);
+			print(v, t);
+			continue;
+		}
+
+		if (i == 1) {
+			print("NO");
+			continue;
+		}
+
+		if (2 * i + 1 == n) {
+			print("NO");
+			continue;
+		}
+
+		print("YES");
+		print(2);
+		print(s.substr(0, i + 2), s.substr(i + 2));
+	}
+}
