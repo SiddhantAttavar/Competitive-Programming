@@ -10,21 +10,6 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 
-int dfs(int u, int p, vector<vector<int>> &graph) {
-	int res = 0;
-	if (graph[u].size() > 1) {
-		res = u;
-	}
-
-	for (int v : graph[u]) {
-		if (v != p) {
-			res = max(res, dfs(v, u, graph));
-		}
-	}
-
-	return res;
-}
-
 int32_t main() {
 	setup();
 
@@ -33,14 +18,9 @@ int32_t main() {
 	range(i, 0, N + 1) {
 		spf[i] = i;
 	}
-
-	for (int i = 4; i <= N; i += 2) {
-		spf[i] = 2;
-	}
-
-	for (int i = 3; i * i <= N; i++) {
+	range(i, 2, N + 1) {
 		if (spf[i] == i) {
-			for (int j = 2 * i; j <= N; j += i) {
+			for (int j = i; j <= N; j += i) {
 				if (spf[j] == j) {
 					spf[j] = i;
 				}
@@ -54,13 +34,38 @@ int32_t main() {
 	vector<int> a(n);
 	arrPut(a);
 
-	vector<vector<int>> graph(N + 1);
-	for (int i : a) {
-		while (i > 1) {
-			graph[i / spf[i]].push_back(i);
-			i /= spf[i];
+	vector<int> b(a.begin(), a.end());
+
+	vector<vector<int>> d(n, {1});
+	range(i, 0, n) {
+		map<int, int> m;
+		while (a[i] != 1) {
+			m[spf[a[i]]]++;
+			a[i] /= spf[a[i]];
+		}
+
+		for (pair<int, int> p : m) {
+			vector<int> l(d[i].begin(), d[i].end());
+			int x = 1;
+			range(j, 0, p.second) {
+				x *= p.first;
+				for (int k : d[i]) {
+					l.push_back(x * k);
+				}
+			}
+			d[i] = l;
 		}
 	}
 
-	print(dfs(1, -1, graph));
+	vector<int> v(N + 1, 0);
+	int res = 0;
+	range(i, 0, n) {
+		for (int j : d[i]) {
+			v[j]++;
+			if (v[j] >= 2) {
+				res = max(res, j);
+			}
+		}
+	}
+	print(res);
 }
