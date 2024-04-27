@@ -16,10 +16,22 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
-	vector<int> a = {10, 10, 8, 9, 8, 7, 7, 7, 7, 0, 9, 6, 8};
-	int n;
-	input(n);
-	print(a[n]);
+		vector<int> a(n);
+		arrPut(a);
+
+		sort(a.begin(), a.end());
+
+		int x = 0;
+		range(i, (n - 1) / 2, n) {
+			if (a[i] != a[(n - 1) / 2]) {
+				break;
+			}
+			x++;
+		}
+		print(x);
+	}
 }

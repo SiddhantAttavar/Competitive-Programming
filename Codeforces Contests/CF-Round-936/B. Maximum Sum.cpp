@@ -15,11 +15,45 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7;
 
-int32_t main() {
-	setup();
+int mod_pow(int a, int b) {
+	int res = 1;
+	while (b) {
+		if (b & 1) {
+			res = (res * a) % MOD;
+		}
 
-	vector<int> a = {10, 10, 8, 9, 8, 7, 7, 7, 7, 0, 9, 6, 8};
-	int n;
-	input(n);
-	print(a[n]);
+		a = (a * a) % MOD;
+		b >>= 1;
+	}
+	return res;
+}
+
+int mod_div(int a, int b) {
+	return (a * mod_pow(b, MOD - 2)) % MOD;
+}
+
+int32_t main() {
+	setup(); int tc; input(tc); while (tc--) {
+		int n, k;
+		input(n, k);
+
+		vector<int> a(n);
+		arrPut(a);
+
+		int x = 0, y = 0, m = 0;
+		range(i, 0, n) {
+			x += a[i];
+			y = min(y, x);
+			m = max(m, x - y);
+		}
+
+		int res = ((x % MOD) + MOD) % MOD;
+		range(i, 0, k) {
+			res = (res + m) % MOD;
+			m = (m + m) % MOD;
+		}
+		print(res);
+		// cout.flush();
+		// print((x + mod_div((m * ((mod_pow(m, k) + MOD - 1) % MOD)) % MOD, (m + MOD - 1) % MOD)) % MOD);
+	}
 }

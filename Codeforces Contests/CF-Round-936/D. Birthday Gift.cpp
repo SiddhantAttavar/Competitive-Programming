@@ -16,10 +16,51 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n, x;
+		input(n, x);
 
-	vector<int> a = {10, 10, 8, 9, 8, 7, 7, 7, 7, 0, 9, 6, 8};
-	int n;
-	input(n);
-	print(a[n]);
+		vector<int> a(n);
+		arrPut(a);
+
+		vector<int> p(n + 1, 0);
+		range(i, 0, n) {
+			p[i + 1] = p[i] ^ a[i];
+		}
+
+		int res = -1;
+		vector<bool> b(n, true);
+		for (int i = 29; i >= 0; i--) {
+			if (((1 << i) & x) == 0) {
+				range(j, 0, n) {
+					if ((1 << i) & p[j + 1]) {
+						b[j] = false;
+					}
+				}
+				continue;
+			}
+
+			if (b[n - 1] and ((1 << i) & p[n]) == 0) {
+				int c = 0;
+				range(j, 0, n) {
+					if (b[j] and ((1 << i) & p[j + 1]) == 0) {
+						c++;
+					}
+				}
+				res = max(res, c);
+			}
+		}
+
+		if (b[n - 1]) {
+			int c = 0;
+			range(j, 0, n) {
+				if (b[j]) {
+					c++;
+				}
+			}
+			res = max(res, c);
+		}
+
+		print(res);
+	}
 }
