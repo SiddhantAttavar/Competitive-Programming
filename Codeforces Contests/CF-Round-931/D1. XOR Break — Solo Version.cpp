@@ -20,62 +20,38 @@ int32_t main() {
 		int n, m;
 		input(n, m);
 
-		vector<int> v;
-		range(i, 0, 60) {
-			if ((1ll << i) & n) {
-				v.push_back(i);
-			}
+		if (n < m) {
+			print("NO");
+			continue;
 		}
-		reverse(v.begin(), v.end());
 
 		vector<int> res = {n};
-		bool flag = true;
-		range(i, 0, 60) {
-			if ((1ll << i) & n) {
-				v.pop_back();
-			}
-
-			if (((1ll << i) & n) == ((1ll << i) & m)) {
+		int x = n;
+		for (int i = 59; i >= 0; i--) {
+			if (!((1ll << i) & x) or ((1ll << i) & m)) {
 				continue;
 			}
 
-			if ((1ll << i) & n) {
-				n ^= 1ll << i;
-				assert(n < res.back() and (n ^ res.back()) < res.back());
-				res.push_back(n);
-				continue;
+			int j = i - 1;
+			while (j >= 0 and !((1ll << j) & m)) {
+				j--;
 			}
 
-			if (v.size() < 2) {
-				flag = false;
+			int y = (x ^ (1ll << i)) | ((1ll << (j + 1)) - 1);
+			if (max(x ^ y, y) >= x) {
+				res.clear();
 				break;
 			}
-
-			int u = v.size() - 1;
-			for (int j = v.size() - 1; j >= 0; j--) {
-				if (((1ll << v[u]) & m) == 0) {
-					u = j;
-					break;
-				}
-			}
-
-
-			n ^= 1ll << i;
-			assert(v[u] > i);
-			n ^= 1ll << v[u];
-			v.erase(v.begin() + u);
-			assert(n < res.back() and (n ^ res.back()) < res.back());
-			res.push_back(n);
+			x = y;
+			res.push_back(x);
 		}
 
-
-		if (flag) {
-			print(res.size() - 1);
-			assert(res.back() == m);
-			arrPrint(res);
+		if (res.empty() or res.back() != m) {
+			print(-1);
 		}
 		else {
-			print(-1);
+			print(res.size() - 1);
+			arrPrint(res);
 		}
 	}
 }

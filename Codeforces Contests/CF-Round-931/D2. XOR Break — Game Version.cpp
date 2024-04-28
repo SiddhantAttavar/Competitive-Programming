@@ -15,8 +15,55 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7;
 
+int count(int n) {
+	int x = 0;
+	range(i, 0, 60) {
+		x += (n >> i) & 1;
+	}
+	return x;
+}
+
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
+
+		if (count(n) % 2 == 0) {
+			print("first");
+
+			for (int i = 59; i >= 0; i--) {
+				if ((1ll << i) & n) {
+					print(1ll << i, n ^ (1ll << i));
+					break;
+				}
+			}
+		}
+		else {
+			print("second");
+		}
+
+		while (true) {
+			int x, y;
+			input(x, y);
+
+			if (x == -1) {
+				return 0;
+			}
+
+			if (x == 0) {
+				break;
+			}
+
+			if (count(x) % 2) {
+				x = y;
+			}
+
+			for (int i = 59; i >= 0; i--) {
+				if ((1ll << i) & x) {
+					print(1ll << i, x ^ (1ll << i));
+					break;
+				}
+			}
+		}
 	}
 }

@@ -17,6 +17,22 @@ const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int n;
+		input(n);
+
+		string s;
+		input(s);
+
+		int c = 1, l = 0, r = 1;
+		int x = 1;
+		range(i, 1, n) {
+			if (s[i] == s[i - 1]) {
+				x *= -1;
+			}
+			c += x;
+			l = min(l, c);
+			r = max(r, c);
+		}
+		print(r - l);
 	}
 }
