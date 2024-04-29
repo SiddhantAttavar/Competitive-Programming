@@ -24,68 +24,39 @@ int32_t main() {
 		arrPut(a);
 		arrPut(b);
 
-		if (k == 0) {
-			int x = 0;
-			range(i, 0, n) {
-				x += max(0ll, b[i] - a[i]);
-			}
-			print(x);
-			continue;
-		}
-
-		vector<pair<int, int>> c;
+		vector<pair<int, int>> p(n);
 		range(i, 0, n) {
-			if (b[i] > a[i]) {
-				c.push_back({b[i], i});
-			}
+			p[i] = {b[i], a[i]};
 		}
-		sort(c.begin(), c.end());
+		sort(p.begin(), p.end());
 
-		if (c.size() < k) {
-			print(0);
-			continue;
-		}
-		
-		vector<pair<int, int>> dp(c.size());
-		vector<vector<int>> par(n, vector<int>(20, -1));
-		int m = 0;
-		range(i, 0, k) {
-			m -= a[c[i].second];
-			par[i][0] = i - 1;
-			range(j, 1, 20) {
-				if (par[i][j - 1] == -1) {
-					break;
-				}
-				par[i][j] = par[par[i][j - 1]][j - 1];
-			}
+		int x = 0;
+		range(i, 0, n) {
+			x += max(0ll, b[i] - a[i]);
 		}
 
-		dp[k - 1] = {m, k - 1};
-		range(i, k, n) {
-			dp[i] = dp[i - 1];
-
-			par[i][0] = dp[i - 1].second;
-			range(j, 1, 20) {
-				if (par[i][j - 1] == -1) {
-					break;
-				}
-				par[i][j] = par[par[i][j - 1]][j - 1];
-			}
-
-			int u = i;
-			for (int j = 19; j >= 0; j--) {
-				if ((1 << j) & k) {
-					u = par[u][j];
-				}
-			}
-			print(u);
-			cout.flush();
-
-			if (b[u] > a[i]) {
-				dp[i] = {dp[i - 1].first + b[u] - a[i], i - 1};
-			}
+		priority_queue<int, vector<int>, greater<int>> pq;
+		int y = 0;
+		for (int i = n - 1; i >= n - k; i--) {
+			int a, b;
+			tie(b, a) = p[i];
+			pq.push(-a);
+			y += a;
+			x -= max(0ll, b - a);
 		}
 
-		print(max(0ll, dp.back().first));
+		int res = x - y;
+		for (int i = n - k - 1; i >= 0; i--) {
+			int a, b;
+			tie(b, a) = p[i];
+
+			x -= max(0ll, b - a);
+			pq.push(-a);
+			y += a + pq.top();
+			pq.pop();
+			res = max(res, x - y);
+		}
+
+		print(max(0ll, res));
 	}
 }
