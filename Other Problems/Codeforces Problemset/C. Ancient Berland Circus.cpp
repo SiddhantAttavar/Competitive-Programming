@@ -15,44 +15,26 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7;
 
+double dist(double a, double b, double x, double y) {  
+    return sqrt((a - x) * (a - x) + (b - y) * (b - y));
+}
+
+double gcd(double a, double b) {
+    if(fabs(b) < 1e-2) return a;
+    if(fabs(a) < 1e-2) return b;
+    return gcd(b, fmod(a, b));    
+}
+
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		string s;
-		input(s);
-
-		if (s[0] == 'R' and isdigit(s[1])) {
-			int x = -1;
-			string y;
-			bool flag = false;
-			range(i, 2, s.size()) {
-				if (s[i] == 'C') {
-					y = s.substr(1, i - 1);
-					x = stoi(s.substr(i + 1));
-					flag = true;
-					break;
-				}
-			}
-
-			if (flag) {
-				string res;
-				while (x) {
-					res += ((x - 1) % 26) + 'A';
-					x -= (x - 1) % 26;
-					x /= 26;
-				}
-				reverse(res.begin(), res.end());
-				print(res + y);
-				continue;
-			}
-		}
-
-		int res = 0;
-		range(i, 0, s.size()) {
-			if (isdigit(s[i])) {
-				cout << 'R' << s.substr(i) << 'C' << res << endl;
-				break;
-			}
-			res = 26 * res + (s[i] - 'A') + 1;
-		}
-	}
+	setup();
+	double a, b, c, d, e, f;
+	input(a, b, c, d, e, f);
+	double x = dist(a, b, c, d), y = dist(c, d, e, f), z = dist(e, f, a, b);
+	double t = (x + y + z) / 2;
+	double k = sqrt(t * (t - x) * (t - y) * (t - z));
+	double r = x * y * z / (4 * k);
+	double p = acos(1 - (x * x) / (2 * r * r)), q = acos(1 - (y * y) / (2 * r * r)), s = acos(1 - (z * z) / (2 * r * r));
+	s = 2 * acos(-1.0) - p - q;
+	t = gcd(s, gcd(p, q));
+	printf("%.6lf", (acos(-1.0) * r * r * sin(t)) / t);
 }
