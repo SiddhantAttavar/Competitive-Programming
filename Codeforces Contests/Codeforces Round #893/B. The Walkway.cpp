@@ -17,13 +17,30 @@ int32_t main() {
 
 		vector<int> s(m);
 		arrPut(s);
+		s.insert(s.begin(), 1 - d);
+		s.push_back(n + 1);
 
-		int res = 1;
-		int c = 0;
-		int p = 1;
-		for (int i : s) {
-			int x = 
-			p = i;
+		int res = 2e9;
+		vector<int> v;
+		range(i, 1, m + 1) {
+			int a = s[i] - s[i - 1] - 1;
+			int b = s[i + 1] - s[i] - 1;
+			int c = s[i + 1] - s[i - 1] - 1;
+			int y = c / d - (a / d + b / d);
+			if (y < res) {
+				res = y;
+				v.clear();
+			}
+			if (y == res) {
+				v.push_back(s[i]);
+			}
 		}
+
+		range(i, 1, (int) s.size()) {
+			res += (s[i] - s[i - 1] - 1) / d;
+		}
+		res += m - 1;
+
+		print(res, v.size());
 	}
 }

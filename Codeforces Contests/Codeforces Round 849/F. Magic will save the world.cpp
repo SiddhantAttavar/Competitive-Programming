@@ -11,6 +11,7 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
+	int N = 1e6;
 	setup(); int tc; input(tc); while (tc--) {
 		int w, f;
 		input(w, f);
@@ -26,21 +27,19 @@ int32_t main() {
 			c += i;
 		}
 
-		set<int> v;
-		v.insert(0);
+		vector<bool> dp(N + 1, false);
+		dp[0] = true;
 		range(i, 0, n) {
-			set<int> nv;
-			for (int j : v) {
-				nv.insert(j + s[i]);
-			}
-			for (int j : nv) {
-				v.insert(j);
+			for (int j = N; j >= s[i]; j--) {
+				dp[j] = dp[j] or dp[j - s[i]];
 			}
 		}
 
 		int res = 1e9;
-		for (int i : v) {
-			res = min(res, (int) max(ceil(i * 1.0 / w), ceil((c - i) * 1.0 / f)));
+		range(i, 0, N + 1) {
+			if (dp[i]) {
+				res = min(res, max((i + w - 1) / w, (c - i + f - 1) / f));
+			}
 		}
 
 		print(res);
