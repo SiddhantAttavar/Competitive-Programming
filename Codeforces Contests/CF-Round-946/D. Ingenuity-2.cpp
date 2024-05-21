@@ -48,8 +48,54 @@ int32_t main() {
 		int a = 0, b = 0;
 		bool p = true, q = true;
 		if (x == 0 and y == 0) {
-			p = false;
+			if (n == 2) {
+				print("NO");
+				continue;
+			}
+
+			string res;
+			range(i, 0, n) {
+				res += 'R';
+			}
+
+			pair<int, int> p = {-1, -1};
+			range(i, 0, n) {
+				if (s[i] == 'N') {
+					p.first = i;
+				}
+				else if (s[i] == 'S') {
+					p.second = i;
+				}
+			}
+
+			if (p.first != -1) {
+				res[p.first] = 'H';
+				res[p.second] = 'H';
+				print(res);
+				continue;
+			}
+
+			p = {-1, -1};
+			range(i, 0, n) {
+				if (s[i] == 'E') {
+					p.first = i;
+				}
+				else if (s[i] == 'W') {
+					p.second = i;
+				}
+			}
+
+			if (p.first != -1) {
+				res[p.first] = 'H';
+				res[p.second] = 'H';
+				print(res);
+				continue;
+			}
+
+			print("NO");
+			continue;
 		}
+
 		range(i, 0, n) {
 			if (s[i] == 'N') {
 				if (p) {

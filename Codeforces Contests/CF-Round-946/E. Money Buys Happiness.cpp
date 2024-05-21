@@ -17,6 +17,35 @@ const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int m, x;
+		input(m, x);
+
+		vector<int> c(m), h(m);
+		range(i, 0, m) {
+			input(c[i], h[i]);
+		}
+
+		int k = 0;
+		for (int i : h) {
+			k += i;
+		}
+
+		vector<int> dp(k + 1, 1e15);
+		dp[0] = 0;
+		range(i, 0, m) {
+			int y = x * i - c[i];
+			for (int j = k; j >= h[i]; j--) {
+				if (dp[j - h[i]] <= y) {
+					dp[j] = min(dp[j], dp[j - h[i]] + c[i]);
+				}
+			}
+		}
+
+		for (int j = k; j >= 0; j--) {
+			if (dp[j] != 1e15) {
+				print(j);
+				break;
+			}
+		}
 	}
 }
