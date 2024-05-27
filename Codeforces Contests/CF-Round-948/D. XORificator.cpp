@@ -16,6 +16,7 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
+    mt19937_64 rng((int) chrono::steady_clock::now().time_since_epoch().count());
 	setup(); int tc; input(tc); while (tc--) {
 		int n, m;
 		input(n, m);
@@ -29,17 +30,49 @@ int32_t main() {
 			}
 		}
 
-		vector<set<int>> v(n);
-		range(i, 0, m) {
+		vector<int> b(n);
+		range(i, 0, n) {
+			b[i] = rng();
+		}
+
+		map<int, pair<int, int>> s;
+		map<int, int> t;
+		range(j, 0, m) {
 			int c = 0;
-			range(j, 0, n) {
-				c += a[i][j];
+			range(i, 0, n) {
+				if (a[i][j]) {
+					c ^= b[i];
+				}
 			}
-			v[c].insert(i);
+
+			range(i, 0, n) {
+				int x = c ^ b[i];
+				t[x]++;
+				s[x] = {i, j};
+			}
 		}
 
-		range(i, 0, m) {
+		int k = -1;
+		pair<int, int> p = {-1, -1};
+		for (pair<int, int> i : t) {
+			if (i.second <= k) {
+				continue;
+			}
 
+			k = i.second;
+			p = s[i.first];
 		}
+
+		vector<bool> res(n);
+		range(i, 0, n) {
+			res[i] = a[i][p.second];
+		}
+		res[p.first] = !res[p.first];
+
+		print(k);
+		range(i, 0, n) {
+			cout << res[i];
+		}
+		cout << endl;
 	}
 }
