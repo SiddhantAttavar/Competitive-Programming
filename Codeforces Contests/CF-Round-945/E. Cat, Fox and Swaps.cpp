@@ -17,6 +17,39 @@ const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int n;
+		input(n);
+
+		vector<int> p(n);
+		arrPut(p);
+
+		int res = 1;
+		int x = -1;
+		range(i, 1, n) {
+			if (i != p[i] - 1) {
+				if (x == -1) {
+					x = i + p[i];
+				}
+				else if (x != i + p[i]) {
+					res--;
+					break;
+				}
+			}
+		}
+
+		if (x == -1) {
+			print(n * (2 * n + 1));
+			continue;
+		}
+
+		int l = 0, r = 2 * n;
+		range(i, 0, n) {
+			if (i != p[i] - 1) {
+				l = max(l, p[i] + 1);
+				r = min(r, p[i] + n);
+			}
+		}
+
+		print(res + n * (2 * n - 1) - (l - 2) * (l - 1) / 2 - (2 * n - r) * (2 * n - r - 1) / 2);
 	}
 }
