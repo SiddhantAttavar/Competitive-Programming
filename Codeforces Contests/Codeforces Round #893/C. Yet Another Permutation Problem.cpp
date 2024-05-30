@@ -11,62 +11,23 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define int long long
 
 int32_t main() {
-	vector<int> p;
-	vector<bool> s((int) 1e5 + 1, true);
-	range(i, 2, (int) 1e5 + 1) {
-		if (s[i]) {
-			p.push_back(i);
-			for (int j = i * 2; j <= (int) 1e5; j += i) {
-				s[j] = false;
-			}
-		}
-	}
-
-	// setup();
-	int tc; input(tc); while (tc--) {
+	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		/* vector<int> par(n + 1, -1);
-		vector<int> last(n + 1, -1);
-		range(i, 1, n + 1) {
-			last[i] = i;
-		}
+		vector<int> res;
+		vector<bool> a(n, true);
+		range(i, 0, n) {
+			if (!a[i]) {
+				continue;
+			}
 
-		for (int i = n; i > 1; i--) {
-			for (int j : p) {
-				if (i % j == 0) {
-					int x = i / j;
-					par[i] = last[x];
-					last[x] = last[i];
-					break;
-				}
+			for (int j = i + 1; j <= n; j *= 2) {
+				res.push_back(j);
+				a[j - 1] = false;
 			}
 		}
 
-		// arrPrint(par);
-		// arrPrint(last);
-
-		int x = last[1];
-		// print(x);
-		vector<int> res;
-		while (x != -1) {
-			// print(x);
-			res.push_back(x);
-			x = par[x];
-		}
-		reverse(res.begin(), res.end());
-		arrPrint(res); */
-
-		vector<int> res;
-		res.push_back(1);
-		range(i, 2, n / 2 + 1) {
-			res.push_back(i);
-			res.push_back(2 * i);
-		}
-		if (n & 1) {
-			res.push_back(n);
-		}
 		arrPrint(res);
 	}
 }
