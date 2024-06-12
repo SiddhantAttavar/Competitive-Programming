@@ -16,7 +16,15 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	setup();
+
+	int x, y;
+	input(x, y);
+
+	if (y > x) {
+		print("YES");
+	}
+	else {
+		print("NO");
 	}
 }

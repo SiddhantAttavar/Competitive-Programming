@@ -17,6 +17,11 @@ const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int x, y;
+		input(x, y);
+
+		int a = 10 * (y - x);
+		int b = 100 - y;
+		print((a + b - 1) / b);
 	}
 }
