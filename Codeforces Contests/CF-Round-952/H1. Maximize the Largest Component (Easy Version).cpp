@@ -15,29 +15,24 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7;
 
-int sa, sb, sc, sd, se;
+struct DSU {
+	vector<int> e; void init(int N) { e = vector<int>(N,-1); }
+	int get(int x) { return e[x] < 0 ? x : e[x] = get(e[x]); } 
+	bool sameSet(int a, int b) { return get(a) == get(b); }
+	int size(int x) { return -e[get(x)]; }
+	bool unite(int x, int y) { // union by size
+		x = get(x), y = get(y); if (x == y) return 0;
+		if (e[x] > e[y]) swap(x,y);
+		e[x] += e[y]; e[y] = x; return 1;
+	}
+};
 
-void dfs(int x, int y, int n, int m, vector<vector<bool>> &v) {
-	v[x][y] = true;
-	vector<pair<int, int>> l = {{x - 1, y}, {x + 1, y}, {x, y - 1}, {x, y + 1}};
-	sa = min(sa, x);
-	sb = max(sb, x);
-	sc = min(sc, y);
-	sd = max(sd, y);
-	se++;
-	if (x > 0 and !v[x - 1][y]) {
-		dfs(x - 1, y, n, m, v);
-	}
-	if (x < n - 1 and !v[x + 1][y]) {
-		dfs(x + 1, y, n, m, v);
-	}
-	if (y > 0 and !v[x][y - 1]) {
-		dfs(x, y - 1, n, m, v);
-	}
-	if (y < m - 1 and !v[x][y + 1]) {
-		dfs(x, y + 1, n, m, v);
-	}
-}
+/**tcT> T kruskal(int N, vector<pair<T,pi>> ed) {
+	sort(all(ed));
+	T ans = 0; DSU D; D.init(N); // edges that unite are in MST
+	each(a,ed) if (D.unite(a.s.f,a.s.s)) ans += a.f; 
+	return ans;
+}*/
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
@@ -47,58 +42,77 @@ int32_t main() {
 		vector<string> a(n);
 		arrPut(a);
 
-		vector<vector<bool>> v(n, vector<bool>(m));
-		range(i, 0, n) {
-			if (a[i].size() != m) {
-				return 0;
-			}
-			range(j, 0, m) {
-				v[i][j] = a[i][j] == '.';
-			}
-		}
+		DSU d;
+		d.init(n * m);
 
-		vector<vector<int>> l;
 		range(i, 0, n) {
 			range(j, 0, m) {
-				if (!v[i][j]) {
-					sa = n - 1;
-					sb = 0;
-					sc = m - 1;
-					sd = 0;
-					se = 0;
-					dfs(i, j, n, m, v);
-					l.push_back({sa, sb, sc, sd, se});
+				if (a[i][j] == '.') {
+					continue;
+				}
+
+				if (i > 0 and a[i - 1][j] == '#') {
+					d.unite(i * m + j, i * m + j - m);
+				}
+				if (i < n - 1 and a[i + 1][j] == '#') {
+					d.unite(i * m + j, i * m + j + m);
+				}
+				if (j > 0 and a[i][j - 1] == '#') {
+					d.unite(i * m + j, i * m + j - 1);
+				}
+				if (j < m - 1 and a[i][j + 1] == '#') {
+					d.unite(i * m + j, i * m + j + 1);
 				}
 			}
 		}
 
-		vector<int> p(n, 0), q(m, 0);
+		int res = 0;
 		range(i, 0, n) {
+			set<int> s;
+			int c = 0;
 			range(j, 0, m) {
-				p[i] += a[i][j] == '.';
-				q[j] += a[i][j] == '.';
+				if (a[i][j] == '.') {
+					c++;
+				}
+				if (a[i][j] == '#' and !s.count(d.get(i * m + j))) {
+					c += d.size(i * m + j);
+					s.insert(d.get(i * m + j));
+				}
+				if (i > 0 and a[i - 1][j] == '#' and !s.count(d.get(i * m + j - m))) {
+					c += d.size(i * m + j - m);
+					s.insert(d.get(i * m + j - m));
+				}
+				if (i < n - 1 and a[i + 1][j] == '#' and !s.count(d.get(i * m + j + m))) {
+					c += d.size(i * m + j + m);
+					s.insert(d.get(i * m + j + m));
+				}
 			}
+			res = max(res, c);
 		}
 
-		vector<int> r(n + 1, 0), c(m + 1, 0);
-		for (vector<int> i : l) {
-			r[max(0ll, i[0] - 1)] += i[4];
-			r[min(n, i[1] + 2)] -= i[4];
-			c[max(0ll, i[2] - 1)] += i[4];
-			c[min(m, i[3] + 2)] -= i[4];
-		}
-
-		int res = 0, x = 0;
-		range(i, 0, n) {
-			x += r[i];
-			res = max(res, x + p[i]);
-		}
-
-		x = 0;
 		range(j, 0, m) {
-			x += c[j];
-			res = max(res, x + q[j]);
+			set<int> s;
+			int c = 0;
+			range(i, 0, n) {
+				if (a[i][j] == '.') {
+					c++;
+				}
+				if (a[i][j] == '#' and !s.count(d.get(i * m + j))) {
+					c += d.size(i * m + j);
+					s.insert(d.get(i * m + j));
+				}
+				if (j > 0 and a[i][j - 1] == '#' and !s.count(d.get(i * m + j - 1))) {
+					c += d.size(i * m + j - 1);
+					s.insert(d.get(i * m + j - 1));
+				}
+				if (j < m - 1 and a[i][j + 1] == '#' and !s.count(d.get(i * m + j + 1))) {
+					c += d.size(i * m + j + 1);
+					s.insert(d.get(i * m + j + 1));
+				}
+			}
+			res = max(res, c);
 		}
+
 		print(res);
 	}
 }
