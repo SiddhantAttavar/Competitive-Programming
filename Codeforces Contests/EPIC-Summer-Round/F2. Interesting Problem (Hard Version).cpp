@@ -15,8 +15,78 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7;
 
+template<class T> struct SegTree { // cmb(ID,b) = b
+	T ID; T (*cmb)(T a, T b);
+	int n; vector<T> seg;
+	SegTree(int _n, T id, T _cmb(T, T)) {
+		ID = id; cmb = _cmb;
+		for (n = 1; n < _n; ) n *= 2; 
+		seg.assign(2*n,ID); 
+	}
+	void pull(int p) { seg[p] = cmb(seg[2*p],seg[2*p+1]); }
+	void upd(int p, T val) { // set val at position p
+		seg[p += n] = val; for (p /= 2; p; p /= 2) pull(p); }
+	T query(int l, int r) {	// zero-indexed, inclusive
+		T ra = ID, rb = ID;
+		for (l += n, r += n+1; l < r; l /= 2, r /= 2) {
+			if (l&1) ra = cmb(ra,seg[l++]);
+			if (r&1) rb = cmb(seg[--r],rb);
+		}
+		return cmb(ra,rb);
+	}
+	/// int first_at_least(int lo, int val, int ind, int l, int r) { // if seg stores max across range
+	/// 	if (r < lo || val > seg[ind]) return -1;
+	/// 	if (l == r) return l;
+	/// 	int m = (l+r)/2;
+	/// 	int res = first_at_least(lo,val,2*ind,l,m); if (res != -1) return res;
+	/// 	return first_at_least(lo,val,2*ind+1,m+1,r);
+	/// }
+};
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
+
+		vector<int> a(n);
+		arrPut(a);
+
+		vector<vector<int>> dp(n + 1, vector<int>(n + 1, 1e9));
+		range(i, 0, n + 1) {
+			range(j, 0, i) {
+				dp[i][j] = 0;
+			}
+		}
+
+		range(l, 1, n + 1) {
+			range(i, 0, n - l + 1) {
+				if ((a[i] - i) % 2 == 0 or a[i] > i + 1) {
+					continue;
+				}
+
+				int x = (i + 1 - a[i]) / 2, j = i + l - 1;
+				for (int k = i + 1; k <= j; k += 2) {
+					if (dp[i + 1][k - 1] <= x) {
+						dp[i][j] = min(dp[i][j], max(x, dp[k + 1][j] - (k - i + 1) / 2));
+					}
+				}
+			}
+		}
+		// range(i, 0, n + 1) {
+		// 	arrPrint(dp[i]);
+		// }
+
+		vector<int> dp2(n + 1, 0);
+		range(i, 0, n) {
+			dp2[i + 1] = dp2[i];
+			range(j, 0, i + 1) {
+				if (dp[j][i] <= dp2[j]) {
+					dp2[i + 1] = max(dp2[i + 1], dp2[j] + (i - j + 1) / 2);
+				}
+			}
+		}
+		// arrPrint(dp2);
 		
+		print(dp2[n]);
 	}
 }
