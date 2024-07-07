@@ -32,7 +32,6 @@ int32_t main() {
 		a[i] = p % i;
 		int l = p / (i + 1) + 1, r = p / i;
 		int y = ((r - l + 1) * (p % i + p % i + i * (r - l))) / 2;
-		y -= ((r - l + 1) * (2 * p - l - r)) / 2;
 		v.push_back({{l, r}, {i, y}});
 	}
 
@@ -82,20 +81,17 @@ int32_t main() {
 		i--;
 		j++;
 		// print(v[j].first.first, v[j].first.second, v[j].second.first, v[j].second.second);
-		res += ((2 * p - l - r) * (r - l + 1)) / 2;
 		if (i < (int) v.size() and i >= 0 and v[i].first.second >= l) {
 			// print(v[i].first.first, v[i].first.second, v[i].second.first, v[i].second.first);
 			int z = v[i].second.first;
 			int e = l, f = min(r, v[i].first.second), g = v[i].first.second;
 			res += ((f - e + 1) * (p % z + z * (g - f) + p % z + z * (g - e))) / 2;
-			res -= ((f - e + 1) * (2 * p - e - f)) / 2;
 		}
 		if (j >= 0 and j < (int) v.size() and v[j].first.first <= r and v[j].first.first >= l) {
 			// print(v[j].first.first, v[j].first.second, v[j].second.first, v[j].second.second);
 			int e = v[j].first.first, f = r, g = v[j].first.second;
 			int z = v[j].second.first;
 			res += ((f - e + 1) * (p % z + z * (g - f) + p % z + z * (g - e))) / 2;
-			res -= ((f - e + 1) * (2 * p - e - f)) / 2;
 		}
 		print(res);
 	}
