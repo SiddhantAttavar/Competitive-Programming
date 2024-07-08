@@ -52,7 +52,6 @@ int32_t main() {
 		vector<int> v(n);
 		arrPut(v);
 
-
 		int a = 0, b = 0;
 		range(i, 0, k) {
 			a = (a + v[i]) % MOD;
@@ -63,29 +62,13 @@ int32_t main() {
 			continue;
 		}
 
-		a = mod_div(a, k);
 		range(i, k, n) {
 			b = (b + v[i]) % MOD;
 		}
 		b = mod_div(b, n - k);
-		//
-		// vector<int> f(k + 1), g(k + 1, 0);
-		// range(x, 1, k + 1) {
-		// 	f[x] = a * x % MOD;
-		// 	int z = (a * (x * x % MOD)) % MOD;
-		// 	z = (z * fact[x]) % MOD;
-		// 	z = (z * pref_inv[x - 1]) % MOD;
-		// 	int q = (fact[x] * g[x - 1]) % MOD;
-		// 	f[x] = (f[x] + z - q + MOD) % MOD;
-		// 	f[x] = mod_div(f[x], 2);
-		// 	g[x] = (g[x - 1] + f[x]) % MOD;
-		// }
-		// arrPrint(f);
 
 		int l = ((n - k + 1) / 2 * b) % MOD;
-		l = (l + a * mod_div(k, 2)) % MOD;
-		// print(f[k]);
-		// int l = (f[k] + ((n - k + 1) / 2 * b)) % MOD;
-		print(l, (k * a + (n - k) * b - l + MOD) % MOD);
+		l = (l + mod_div((n - k + 2) / 2, n - k + 1) * a) % MOD;
+		print(l, (a + (n - k) * b - l + MOD) % MOD);
 	}
 }
