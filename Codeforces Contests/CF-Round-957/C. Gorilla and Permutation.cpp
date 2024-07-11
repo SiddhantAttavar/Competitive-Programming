@@ -17,51 +17,17 @@ const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, m, k;
+		input(n, m, k);
 
-		vector<int> a(n);
-		arrPut(a);
-
-		vector<int> dp(n, 0);
-		stack<int> s;
-		map<int, int> m;
-		range(i, 0, n) {
-			while (!s.empty() and a[s.top()] <= a[i]) {
-				s.pop();
-			}
-
-			if (s.empty()) {
-				dp[i] = 0;
-				if (m.count(a[i])) {
-					dp[i] += m[a[i]] + 1;
-				}
-				s.push(i);
-				m[a[i]] = i;
-				continue;
-			}
-
-			int j = s.top();
-			dp[i] = dp[j];
-			if (m.count(a[i]) and m[a[i]] > j) {
-				dp[i] += m[a[i]] - j;
-			}
-			s.push(i);
-			m[a[i]] = i;
+		vector<int> res(n);
+		range(i, 0, m) {
+			res[i] = m - i;
 		}
-
-		vector<int> pref(n + 1, 0);
-		range(i, 0, n) {
-			pref[i + 1] = pref[i] + dp[i];
+		range(i, m, n) {
+			res[i] = i + 1;
 		}
-
-		int q;
-		input(q);
-		while (q--) {
-			int k;
-			input(k);
-
-			print(pref[n - k]);
-		}
+		reverse(res.begin(), res.end());
+		arrPrint(res);
 	}
 }
