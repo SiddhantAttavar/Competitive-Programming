@@ -23,30 +23,16 @@ bool check(vector<int> &a, int n, int x, int m) {
 		o.insert(-a[i]);
 	}
 
-	if (s >= 0) {
-		return true;
-	}
-
-	int y = 0;
 	range(i, m, n) {
-		s -= a[i];
-		int k = o.order_of_key(-a[i]);
-		o.insert(-a[i]);
-		int z = *o.find_by_order(i - m);
-		if (k <= (i - m)) {
-			z = -a[i];
-		}
-		if (z < 0) {
-			y -= (z - 1) / 2;
-		}
-		else {
-			y += z;
-		}
-		if ((s + y) >= 0) {
+		if (s >= 0) {
 			return true;
 		}
+		s -= a[i];
+		o.insert(-a[i]);
+		int z = min(-a[i], *o.find_by_order(i - m));
+		s += max((-z + 1) / 2, 0ll);
 	}
-	return false;
+	return s >= 0;
 }
 
 int32_t main() {
@@ -57,7 +43,7 @@ int32_t main() {
 		vector<int> a(n);
 		arrPut(a);
 
-		int l = 0, r = n, res = (x >= 0) - 1;
+		int l = 1, r = n, res = (x >= 0) - 1;
 		while (l <= r) {
 			int m = (l + r) / 2;
 			if (check(a, n, x, m)) {

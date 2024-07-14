@@ -20,12 +20,13 @@ bool check(vector<int> &a, int n, int k, int x) {
 	while ((1 << h) <= n) {
 		h++;
 	}
+	h++;
 
 	vector<vector<int>> p(n, vector<int>(h, -1));
 	range(i, 0, n) {
 		int j = upper_bound(a.begin(), a.end(), a[i + 1] - x) - a.begin() - 1;
 		j = min(j, (int) i);
-		if (j == -1 or a[i + 1] - a[j] < x) {
+		if (j == -1) {
 			continue;
 		}
 
@@ -50,7 +51,6 @@ bool check(vector<int> &a, int n, int k, int x) {
 		}
 
 		if (u != -1 and a[n] - a[i + 1] + a[u + 1] >= x) {
-			// print(i, u, x);
 			return true;
 		}
 	}
@@ -70,7 +70,7 @@ int32_t main() {
 			p[i + 1] = p[i] + a[i];
 		}
 
-		int l = 1, r = 1e14, res = 0;
+		int l = 1, r = 2e14, res = 0;
 		while (l <= r) {
 			int m = (l + r) / 2;
 			if (check(p, n, k, m)) {
