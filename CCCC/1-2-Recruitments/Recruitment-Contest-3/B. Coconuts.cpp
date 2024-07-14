@@ -16,74 +16,24 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
-	int N = 1e5;
-	vector<int> spf(N + 1, 0);
-	range(i, 1, N + 1) {
-		spf[i] = i;
-	}
-	range(i, 2, N + 1) {
-		if (spf[i] != i) {
-			continue;
-		}
-
-		for (int j = i + i; j <= N; j += i) {
-			if (spf[j] == j) {
-				spf[j] = i;
-			}
-		}
-	}
-
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int a, b, k;
+		input(a, b, k);
 
-		vector<int> p(n);
-		arrPut(p);
+		int c = (a * b) / __gcd(a, b);
 
-		vector<pair<int, int>> a(n);
-		range(i, 0, n) {
-			int x = __gcd(p[i], i + 1ll);
-			a[i] = {p[i] / x, (i + 1) / x};
-		}
-
-		vector<vector<int>> b(n, {1});
-		range(i, 0, n) {
-			int x = a[i].first;
-			map<int, int> m;
-			while (x != 1) {
-				m[spf[x]]++;
-				x /= spf[x];
+		int l = 1, r = 3e18, res = 1;
+		while (l <= r) {
+			int m = l + (r - l) / 2;
+			int x = m - m / a - m / b + m / c;
+			if (x >= k) {
+				res = m;
+				r = m - 1;
 			}
-
-			for (pair<int, int> p : m) {
-				vector<int> l;
-				int z = 1;
-				range(i, 0, p.second + 1) {
-					for (int j : b[i]) {
-						l.push_back(j * z);
-					}
-					z *= p.first;
-				}
-				b[i] = l;
+			else {
+				l = m + 1;
 			}
 		}
-		range(i, 0, n) {
-			arrPrint(b[i]);
-		}
-
-		map<int, map<int, int>> m;
-		int res = 0;
-		range(i, 0, n) {
-			for (int j : b[i]) {
-				if (m[a[i].second].count(j)) {
-					res += m[a[i].second][j];
-				}
-			}
-			for (int j : b[i]) {
-				m[j][a[i].second]++;
-			}
-		}
-
 		print(res);
 	}
 }

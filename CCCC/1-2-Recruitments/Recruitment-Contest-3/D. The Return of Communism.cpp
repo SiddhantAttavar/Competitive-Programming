@@ -15,75 +15,72 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7;
 
-int32_t main() {
-	int N = 1e5;
-	vector<int> spf(N + 1, 0);
-	range(i, 1, N + 1) {
-		spf[i] = i;
+bool check(vector<int> &a, int n, int k, int x) {
+	int h = 1;
+	while ((1 << h) <= n) {
+		h++;
 	}
-	range(i, 2, N + 1) {
-		if (spf[i] != i) {
+
+	vector<vector<int>> p(n, vector<int>(h, -1));
+	range(i, 0, n) {
+		int j = upper_bound(a.begin(), a.end(), a[i + 1] - x) - a.begin() - 1;
+		j = min(j, (int) i);
+		if (j == -1 or a[i + 1] - a[j] < x) {
 			continue;
 		}
 
-		for (int j = i + i; j <= N; j += i) {
-			if (spf[j] == j) {
-				spf[j] = i;
+		p[i][0] = j - 1;
+		range(j, 1, h) {
+			if (p[i][j - 1] == -1) {
+				break;
 			}
+			p[i][j] = p[p[i][j - 1]][j - 1];
+		}
+
+		int u = i;
+		range(j, 0, h) {
+			if (!((1 << j) & (k - 1))) {
+				continue;
+			}
+
+			u = p[u][j];
+			if (u == -1) {
+				break;
+			}
+		}
+
+		if (u != -1 and a[n] - a[i + 1] + a[u + 1] >= x) {
+			// print(i, u, x);
+			return true;
 		}
 	}
+	return false;
+}
 
+int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, k;
+		input(n, k);
 
-		vector<int> p(n);
-		arrPut(p);
+		vector<int> a(n);
+		arrPut(a);
 
-		vector<pair<int, int>> a(n);
+		vector<int> p(n + 1, 0);
 		range(i, 0, n) {
-			int x = __gcd(p[i], i + 1ll);
-			a[i] = {p[i] / x, (i + 1) / x};
+			p[i + 1] = p[i] + a[i];
 		}
 
-		vector<vector<int>> b(n, {1});
-		range(i, 0, n) {
-			int x = a[i].first;
-			map<int, int> m;
-			while (x != 1) {
-				m[spf[x]]++;
-				x /= spf[x];
+		int l = 1, r = 1e14, res = 0;
+		while (l <= r) {
+			int m = (l + r) / 2;
+			if (check(p, n, k, m)) {
+				res = m;
+				l = m + 1;
 			}
-
-			for (pair<int, int> p : m) {
-				vector<int> l;
-				int z = 1;
-				range(i, 0, p.second + 1) {
-					for (int j : b[i]) {
-						l.push_back(j * z);
-					}
-					z *= p.first;
-				}
-				b[i] = l;
+			else {
+				r = m - 1;
 			}
 		}
-		range(i, 0, n) {
-			arrPrint(b[i]);
-		}
-
-		map<int, map<int, int>> m;
-		int res = 0;
-		range(i, 0, n) {
-			for (int j : b[i]) {
-				if (m[a[i].second].count(j)) {
-					res += m[a[i].second][j];
-				}
-			}
-			for (int j : b[i]) {
-				m[j][a[i].second]++;
-			}
-		}
-
 		print(res);
 	}
 }
