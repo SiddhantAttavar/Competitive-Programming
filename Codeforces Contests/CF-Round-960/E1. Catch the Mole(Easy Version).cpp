@@ -25,6 +25,8 @@ bool query(int u) {
 
 void dfs(int u, vector<set<int>> &graph, vector<int> &d, vector<int> &s, vector<int> &l) {
 	for (int v : graph[u]) {
+		// print(u, v);
+		// cout.flush();
 		d[v] = d[u] + 1;
 		dfs(v, graph, d, s, l);
 		s[u] += s[v];
@@ -36,6 +38,7 @@ void dfs(int u, vector<set<int>> &graph, vector<int> &d, vector<int> &s, vector<
 void dfs2(int u, vector<set<int>> &graph, vector<int> &p) {
 	for (int v : graph[u]) {
 		graph[v].erase(u);
+		p[v] = u;
 		dfs2(v, graph, p);
 	}
 }
@@ -71,27 +74,36 @@ int32_t main() {
 			d[u] = 0;
 			dfs(u, graph, d, s, l);
 
+			// arrPrint(d);
+			// arrPrint(s);
+			// arrPrint(l);
+			// cout.flush();
+
 			if (s[u] == 1) {
 				break;
 			}
 
 			int v = -1;
 			range(i, 0, n) {
-				if (d[i] != -1 and u != i) {
-					if (v == -1) {
-						v = i;
-						continue;
-					}
+				if (d[i] == -1 or u == i) {
+					continue;
+				}
+				int y = (s[u] - s[i]) - (l[u] - l[i]) - s[i];
+				if (y < 0) {
+					continue;
+				}
 
-					int x = abs((s[u] - s[v]) - (l[u] - l[v]) - s[v]);
-					int y = abs((s[u] - s[i]) - (l[u] - l[i]) - s[i]);
-					if (y < x) {
-						v = i;
-					}
+				if (v == -1) {
+					v = i;
+					continue;
+				}
+
+				int x = (s[u] - s[v]) - (l[u] - l[v]) - s[v];
+				if (y <= x) {
+					v = i;
 				}
 			}
 			assert(v != -1);
-			assert(u != v);
 
 			assert(y < 300);
 			y++;
