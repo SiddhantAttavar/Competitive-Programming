@@ -19,61 +19,33 @@ int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
-		
-		if (n == 1) {
-			print(9999);
-			continue;
-		}
 
-		if (n < 10) {
-			int x = n;
-			vector<pair<int, int>> res;
-			range(l, 1, 7) {
-				if ((x - l) >= (n - 1) and (x - l) % (n - 1) == 0) {
-					int a = (x - l) / (n - 1);
-					if (a <= 1e4 and a - l > 0) {
-						res.push_back({a, a - l});
-					}
-				}
-				x = 10 * x + n;
-			}
-
-			print(res.size());
-			for (pair<int, int> p : res) {
-				print(p.first, p.second);
-			}
-			continue;
-		}
-
+		int x = (n >= 10) + 1;
 		vector<pair<int, int>> res;
-		int x = n / 10, l = 1;
-		while (x < 1e6) {
-			if ((x - l) >= (n - 2) and (x - l) % (n - 2) == 0) {
-				int a = (x - l) / (n - 2);
-				if (a <= 1e4 and 2 * a - l <= 1e4 and 2 * a - l > 0) {
-					res.push_back({a, 2 * a - l});
+		range(a, 1, 10001) {
+			range(b, max(1ll, x * a - 6), min(100000ll, x * a - 1) + 1) {
+				// print(a, b);
+				int y = x * a - b;
+				string s;
+				while (y >= x) {
+					s += to_string(n);
+					y -= x;
+				}
+				if (n == 100 and y == 1) {
+					s += '1';
+				}
+				else if (y) {
+					s += to_string(n / 10);
+				}
+				if (stoi(s) == n * a - b) {
+					res.push_back({a, b});
 				}
 			}
-			x = 100 * x + 10 * (n % 10) + (n / 10);
-			l += 2;
 		}
-
-		x = n;
-		l = 2;
-		while (x < 1e6) {
-			if ((x - l) >= (n - 2) and (x - l) % (n - 2) == 0) {
-				int a = (x - l) / (n - 2);
-				if (a <= 1e4 and 2 * a - l <= 1e4 and 2 * a - l > 0) {
-					res.push_back({a, 2 * a - l});
-				}
-			}
-			x = 100 * x + n;
-			l += 2;
-		}
-
 		print(res.size());
 		for (pair<int, int> p : res) {
 			print(p.first, p.second);
 		}
+		cout.flush();
 	}
 }
