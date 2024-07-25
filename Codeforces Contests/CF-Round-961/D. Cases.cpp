@@ -16,32 +16,49 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
-	int N = 5000;
-	vector<vector<int>> dp(N + 1, vector<int>(N + 1, 0));
-	range(i, 0, N + 1) {
-		dp[i][0] = 1;
-	}
-	range(i, 0, N + 1) {
-		dp[i][i] = 1;
-	}
-	range(i, 2, N + 1) {
-		range(j, 1, i) {
-			dp[i][j] = (dp[i - 1][j] + dp[i - 1][j - 1]) % MOD;
-		}
-	}
-
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, c, k;
+		input(n, c, k);
 
-		int res = 0;
-		range(i, 1, n + 1) {
-			for (int j = 0; 2 * j + 1 <= i; j++) {
-				res = (res + i * ((dp[i - 1][j] * dp[n - i][i - (2 * j + 1)]) % MOD)) % MOD;
+		string s;
+		input(s);
+
+		vector<int> b = {0};
+		vector<int> a(c, 0);
+		range(i, 0, k) {
+			b[0] |= 1 << (s[i] - 'A');
+			a[s[i] - 'A']++;
+		}
+		range(i, k, n) {
+			b.push_back(b.back() | (1 << (s[i] - 'A')));
+			a[s[i] - 'A']++;
+			a[s[i - k] - 'A']--;
+			if (a[s[i - k] - 'A'] == 0) {
+				b.back() ^= 1 << (s[i - k] - 'A');
 			}
 		}
-		for (int i = n + 1 + n % 2; i <= 2 * n + 1; i += 2) {
-			res = (res + i * dp[n][(i - 1) / 2]) % MOD;
+
+		range(i, 0, b.size()) {
+			b[i] ^= (1 << c) - 1;
+		}
+
+		vector<bool> dp(1 << c, true);
+		for (int i : b) {
+			dp[i] = false;
+		}
+
+		int res = c;
+		for (int i = (1 << c) - 1; i >= 0; i--) {
+			if (dp[i]) {
+				if (i & (1 << (s[n - 1] - 'A'))) {
+					res = min(res, (int) __builtin_popcount(i));
+				}
+				continue;
+			}
+
+			range(j, 0, c) {
+				dp[i ^ (1 << j)] = false;
+			}
 		}
 		print(res);
 	}

@@ -16,33 +16,43 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
-	int N = 5000;
-	vector<vector<int>> dp(N + 1, vector<int>(N + 1, 0));
-	range(i, 0, N + 1) {
-		dp[i][0] = 1;
-	}
-	range(i, 0, N + 1) {
-		dp[i][i] = 1;
-	}
-	range(i, 2, N + 1) {
-		range(j, 1, i) {
-			dp[i][j] = (dp[i - 1][j] + dp[i - 1][j - 1]) % MOD;
-		}
-	}
-
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		int res = 0;
-		range(i, 1, n + 1) {
-			for (int j = 0; 2 * j + 1 <= i; j++) {
-				res = (res + i * ((dp[i - 1][j] * dp[n - i][i - (2 * j + 1)]) % MOD)) % MOD;
+		vector<int> a(n);
+		arrPut(a);
+
+		vector<int> res(n, 0);
+		range(i, 1, n) {
+			res[i] += res[i - 1];
+			if (a[i] >= a[i - 1]) {
+				int x = a[i - 1];
+				while (x * x <= a[i] and x != 1) {
+					res[i]--;
+					x *= x;
+				}
+				res[i] = max(res[i], 0ll);
+				continue;
+			}
+
+			if (a[i] == 1) {
+				res[0] = -1;
+				break;
+			}
+
+			int x = a[i];
+			while (x < a[i - 1]) {
+				res[i]++;
+				x *= x;
 			}
 		}
-		for (int i = n + 1 + n % 2; i <= 2 * n + 1; i += 2) {
-			res = (res + i * dp[n][(i - 1) / 2]) % MOD;
+
+		if (res[0] == -1) {
+			print(-1);
 		}
-		print(res);
+		else {
+			print(accumulate(res.begin(), res.end(), 0ll));
+		}
 	}
 }

@@ -16,32 +16,37 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
-	int N = 5000;
-	vector<vector<int>> dp(N + 1, vector<int>(N + 1, 0));
-	range(i, 0, N + 1) {
-		dp[i][0] = 1;
-	}
-	range(i, 0, N + 1) {
-		dp[i][i] = 1;
-	}
-	range(i, 2, N + 1) {
-		range(j, 1, i) {
-			dp[i][j] = (dp[i - 1][j] + dp[i - 1][j - 1]) % MOD;
-		}
-	}
-
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, m;
+		input(n, m);
 
-		int res = 0;
-		range(i, 1, n + 1) {
-			for (int j = 0; 2 * j + 1 <= i; j++) {
-				res = (res + i * ((dp[i - 1][j] * dp[n - i][i - (2 * j + 1)]) % MOD)) % MOD;
-			}
+		vector<int> a(n), c(n);
+		arrPut(a);
+		arrPut(c);
+
+		vector<pair<int, int>> b(n);
+		range(i, 0, n) {
+			b[i] = {a[i], c[i]};
 		}
-		for (int i = n + 1 + n % 2; i <= 2 * n + 1; i += 2) {
-			res = (res + i * dp[n][(i - 1) / 2]) % MOD;
+		sort(b.begin(), b.end());
+
+		int res = min(m - m % b[0].first, b[0].first * b[0].second);
+		range(i, 1, n) {
+			// print(b[i].first, res);
+			res = max(res, min(m - m % b[i].first, b[i].first * b[i].second));
+			if (b[i - 1].first != b[i].first - 1) {
+				continue;
+			}
+
+			int x = b[i - 1].first;
+			int p = b[i - 1].second, q = b[i].second;
+			int k = min(p, m / x);
+			int y = m - k * x;
+			int l = min(q, y / (x + 1));
+			y -= l * (x + 1);
+			int o = min({k, q - l, y});
+			y -= o;
+			res = max(res, m - y);
 		}
 		print(res);
 	}
