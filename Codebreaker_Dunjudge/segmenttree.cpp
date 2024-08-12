@@ -53,7 +53,7 @@ int32_t main() {
 		int x, y, z;
 		input(x, y, z);
 		if (x == 1) {
-			void update(int c, int l, int r, int i, int x) {
+void update(int c, int l, int r, int i, int x) {
 	if (l == r) {
 		segTree[c] = x;
 		return;
