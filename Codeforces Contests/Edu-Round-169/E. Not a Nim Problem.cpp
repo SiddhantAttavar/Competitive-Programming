@@ -17,18 +17,26 @@ const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
 	int N = 1e7;
-	vector<int> spf(N);
+	vector<int> spf(N + 1), dp(N + 1, 0);
 	range(i, 0, N + 1) {
 		spf[i] = i;
 	}
-	range(i, 2, N + 1) {
+
+	int t = 1;
+	dp[1] = 1;
+	for (int i = 2; i <= N; i += 2) {
+		spf[i] = 2;
+	}
+	for (int i = 3; i <= N; i += 2) {
 		if (spf[i] != i) {
 			continue;
 		}
 
-		for (int j = i + i; j <= N; j += i) {
+		t++;
+		for (int j = i; j <= N; j += i + i) {
 			if (spf[j] == j) {
 				spf[j] = i;
+				dp[j] = t;
 			}
 		}
 	}
@@ -40,31 +48,12 @@ int32_t main() {
 		vector<int> a(n);
 		arrPut(a);
 
-		int res = false;
-		map<int, int> m;
+		int res = 0;
 		for (int i : a) {
-			res ^= i == 1;
-			if (i % 2 == 0) {
-				continue;
-			}
-
-			int o = i;
-			set<int> s;
-			while (o != 1) {
-				s.insert(spf[o]);
-				o /= spf[o];
-			}
-			for (int j : s) {
-				m[j]++;
-			}
+			res ^= dp[i];
 		}
 
-		int c = 0;
-		for (pair<int, int> p : m) {
-			c += p.second % 2;
-		}
-
-		if (res == c % 2) {
+		if (res) {
 			print("Alice");
 		}
 		else {
