@@ -16,21 +16,20 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+	setup();
 
-		vector<int> a(n);
-		arrPut(a);
+	string s;
+	input(s);
 
-		int m = 0;
-		range(i, 1, n) {
-			m = max(m, min(a[i], a[i - 1]));
+	int n = s.size();
+	for (int l = n % 2 ? 1 : 2; l <= n; l += 2) {
+		int x = (n + l) / 2;
+		if (s.substr(n - x, x - l) == s.substr(0, x - l) and s.substr(0, l) == s.substr(n - l)) {
+			print("YES");
+			print(s.substr(n - x));
+			return 0;
 		}
-		range(i, 2, n) {
-			m = max(m, min(a[i], a[i - 2]));
-		}
-
-		print(m);
 	}
+
+	print("NO");
 }

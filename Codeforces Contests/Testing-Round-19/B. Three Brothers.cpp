@@ -16,21 +16,8 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
-
-		vector<int> a(n);
-		arrPut(a);
-
-		int m = 0;
-		range(i, 1, n) {
-			m = max(m, min(a[i], a[i - 1]));
-		}
-		range(i, 2, n) {
-			m = max(m, min(a[i], a[i - 2]));
-		}
-
-		print(m);
-	}
+	setup();
+	int a, b;
+	input(a, b);
+	print(6 - a - b);
 }

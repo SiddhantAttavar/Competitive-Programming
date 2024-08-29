@@ -15,22 +15,34 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7;
 
-int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
-
-		vector<int> a(n);
-		arrPut(a);
-
-		int m = 0;
-		range(i, 1, n) {
-			m = max(m, min(a[i], a[i - 1]));
-		}
-		range(i, 2, n) {
-			m = max(m, min(a[i], a[i - 2]));
-		}
-
-		print(m);
+vector<int> z(string s) {
+	int N = size(s), L = 1, R = 0; s += '#';
+	vector<int> ans(N); ans[0] = N; 
+	range(i,1,N) {
+		if (i <= R) ans[i] = min(R-i+1,ans[i-L]);
+		while (s[i+ans[i]] == s[ans[i]]) ++ans[i];
+		if (i+ans[i]-1 > R) L = i, R = i+ans[i]-1;
 	}
+	return ans;
+}
+
+int32_t main() {
+	setup();
+
+	string s;
+	input(s);
+
+	vector<int> a = z(s);
+
+	int n = s.size();
+	for (int l = n % 2 ? 1 : 2; l < n; l += 2) {
+		int x = (n + l) / 2;
+		if (a[n - x] >= x - l and a[n - l] == l) {
+			print("YES");
+			print(s.substr(n - x));
+			return 0;
+		}
+	}
+
+	print("NO");
 }

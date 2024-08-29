@@ -23,14 +23,13 @@ int32_t main() {
 		vector<int> a(n);
 		arrPut(a);
 
-		int m = 0;
-		range(i, 1, n) {
-			m = max(m, min(a[i], a[i - 1]));
+		int res = 0;
+		for (int i = 0; i < n; i += 2) {
+			res += a[i];
 		}
-		range(i, 2, n) {
-			m = max(m, min(a[i], a[i - 2]));
+		for (int i = 1; i < n; i += 2) {
+			res -= a[i];
 		}
-
-		print(m);
+		print(res);
 	}
 }
