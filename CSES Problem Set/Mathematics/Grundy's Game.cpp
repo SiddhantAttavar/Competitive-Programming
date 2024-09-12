@@ -13,10 +13,32 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7; //998244353
+const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
+	int N = 2000;
+	vector<int> dp(N + 1, 0);
+	range(i, 1, N + 1) {
+		set<int> s;
+		for (int j = 1; j < (i - j); j++) {
+			s.insert(dp[j] ^ dp[i - j]);
+		}
+		range(j, 0, s.size() + 1) {
+			if (!s.count(j)) {
+				dp[i] = j;
+				break;
+			}
+		}
+	}
+	arrPrint(dp);
+	range(i, 0, N + 1) {
+		if (!dp[i]) {
+			print(i);
+		}
+	}
+
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int n;
+		input(n);
 	}
 }
