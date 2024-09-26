@@ -15,39 +15,44 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
-void dfs(int u, int p, vector<vector<int>> &graph, vector<int> &f, vector<int> &g) {
-	if (graph[u])
-	int x = 1, y = 1;
-	for (int v : graph[u]) {
-		if (v == p) {
-			continue;
+int lis(vector<int> &a) {
+	vector<int> v;
+	for (int i : a) {
+		vector<int>::iterator j = lower_bound(v.begin(), v.end(), i);
+		if (j == v.end()) {
+			v.push_back(i);
 		}
-
-		dfs(v, u, graph, f, g);
-		x = x * (f[v] + 2 * g[v]) % MOD;
-		y = y * (f[v] + g[v]) % MOD;
+		else {
+			*j = i;
+		}
 	}
-	f[u] = (x - 2 * y + 1) % MOD;
-	g[u] = (x - y + MOD) % MOD;
+	return v.size();
 }
-
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, m;
+		input(n, m);
 
-		vector<vector<int>> graph(n);
-		range(i, 0, n - 1) {
-			int u, v;
-			input(u, v);
+		vector<int> a(n), b(m);
+		arrPut(a);
+		arrPut(b);
 
-			graph[u - 1].push_back(v - 1);
-			graph[v - 1].push_back(u - 1);
+		sort(b.begin(), b.end());
+		reverse(b.begin(), b.end());
+
+		vector<int> c;
+		int l = 0;
+		for (int i : a) {
+			while (l < m and b[l] >= i) {
+				c.push_back(b[l]);
+				l++;
+			}
+			c.push_back(i);
 		}
 
-		vector<int> f(n, 0), g(n, 0);
-		dfs(0, -1, graph, f, g);
-		print((f[0] + 2 * g[0]) % MOD);
+		c.insert(c.end(), b.begin() + l, b.end());
+		arrPrint(c);
+		// assert(lis(c) == lis(a));
 	}
 }

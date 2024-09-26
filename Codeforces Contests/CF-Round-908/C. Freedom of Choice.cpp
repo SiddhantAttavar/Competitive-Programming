@@ -15,39 +15,46 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
-void dfs(int u, int p, vector<vector<int>> &graph, vector<int> &f, vector<int> &g) {
-	if (graph[u])
-	int x = 1, y = 1;
-	for (int v : graph[u]) {
-		if (v == p) {
+int32_t main() {
+	setup(); int tc; input(tc); while (tc--) {
+		int m;
+		input(m);
+
+		map<int, int> v, w;
+		int x = 0, y = 0;
+		range(i, 0, m) {
+			int n, l, r;
+			input(n, l, r);
+
+			x += l;
+			y += r;
+
+			vector<int> a(n), c(n);
+
+			arrPut(a);
+			arrPut(c);
+
+			int z = accumulate(c.begin(), c.end(), 0ll);
+			range(j, 0, n) {
+				v[a[j]] += max(0ll, r - (z - c[j]));
+				w[a[j]] += max(0ll, l - (z - c[j]));
+			}
+		}
+
+		if (y - x + 1 > (int) v.size()) {
+			print(0);
 			continue;
 		}
 
-		dfs(v, u, graph, f, g);
-		x = x * (f[v] + 2 * g[v]) % MOD;
-		y = y * (f[v] + g[v]) % MOD;
-	}
-	f[u] = (x - 2 * y + 1) % MOD;
-	g[u] = (x - y + MOD) % MOD;
-}
+		int res = 1e18;
+		range(i, x, y + 1) {
+			if (!v.count(i)) {
+				res = 0;
+				break;
+			}
 
-
-int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
-
-		vector<vector<int>> graph(n);
-		range(i, 0, n - 1) {
-			int u, v;
-			input(u, v);
-
-			graph[u - 1].push_back(v - 1);
-			graph[v - 1].push_back(u - 1);
+			res = min(res, max(w[i], i - (y - v[i])));
 		}
-
-		vector<int> f(n, 0), g(n, 0);
-		dfs(0, -1, graph, f, g);
-		print((f[0] + 2 * g[0]) % MOD);
+		print(res);
 	}
 }
