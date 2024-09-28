@@ -16,70 +16,53 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
-	int N = 2e6;
 	setup(); int tc; input(tc); while (tc--) {
 		int n, m, k;
 		input(n, m, k);
 
-		vector<pair<int, int>> v(n);
+		vector<pair<int, int>> a(n);
 		range(i, 0, n) {
-			input(v[i].first, v[i].second);
+			input(a[i].first, a[i].second);
 		}
-		v.push_back({N, 0});
+		sort(a.begin(), a.end());
+		a.push_back({1e9, 0});
 
 		int res = 0;
-		deque<int> dq;
-		int t = 1;
+		stack<int> s;
 		range(i, 0, n) {
-			dq.push_back(i);
-			t = v[i].first;
-			while (!dq.empty() and v[dq.front()].first + k < t) {
-				dq.pop_front();
-			}
-
-			while (t < v[i + 1].first and !dq.empty()) {
-				int c = min({v[dq.back()].first + k - t, v[dq.back()].second / m, v[i + 1].first - t});
-				if (c == 0) {
-					break;
-				}
-				res += c;
-				t += c;
-				v[dq.back()].second -= c * m;
-				// print(t, i, c);
-
-				if (t == v[i + 1].first) {
-					break;
+			s.push(i);
+			int c = 0, t = a[i].first;
+			while (!s.empty() and t < a[i + 1].first) {
+				int j = s.top();
+				if (a[j].first + k <= t) {
+					s.pop();
+					continue;
 				}
 
-				if (t >= v[dq.back()].first + k) {
-					dq.clear();
-					break;
+				if (c + a[j].second < m) {
+					c += a[j].second;
+					a[j].second = 0;
+					s.pop();
+					continue;
 				}
 
-				int z = v[dq.back()].second;
-				dq.pop_back();
-				while (z < m and !dq.empty() and t < v[dq.back()].first + k) {
-					// print(z, t, 'd');
-					if (z + v[dq.back()].second >= m) {
-						v[dq.back()].second -= m - z;
-						z = m;
-						break;
+				if (c) {
+					a[j].second -= m - c;
+					c = 0;
+					t++;
+					res++;
+					if (a[j].second == 0) {
+						s.pop();
 					}
-					z += v[dq.back()].second;
-					dq.pop_back();
+					continue;
 				}
-				res += z == m;
-				t++;
-				if (!dq.empty() and t >= v[dq.back()].first + k) {
-					dq.clear();
-					break;
-				}
-				while (!dq.empty() and v[dq.back()].second == 0) {
-					dq.pop_back();
-				}
+
+				int x = min({a[j].second / m, a[i + 1].first - t, a[j].first + k - t});
+				a[j].second -= x * m;
+				res += x;
+				t += x;
 			}
 		}
-
 		print(res);
 	}
 }
