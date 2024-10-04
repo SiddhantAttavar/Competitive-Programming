@@ -17,6 +17,24 @@ const int MOD = (int) 1e9 + 7;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int n, m;
+		input(n, m);
+
+		set<int> s;
+		range(i, 0, m) {
+			int a, b;
+			input(a, b);
+
+			s.insert(a);
+			s.insert(b);
+		}
+
+		int res = n - *s.rbegin() + *s.begin();
+		int x = *s.begin();
+		for (int i : s) {
+			res = max(res, i - x);
+			x = i;
+		}
+		print(n - res);
 	}
 }

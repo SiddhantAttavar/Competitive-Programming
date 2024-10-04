@@ -21,45 +21,10 @@ int32_t main() {
 		input(n, x);
 
 		int res = 0;
-		range(s, 2, x) {
-			print(res, s);
-			int k = x - s;
-
-			int l = 1, r = s / 2, u = 1;
-			if (k <= n - r * (n - r)) {
-				res += (s - 1) * k;
-				continue;
+		range(a, 1, x) {
+			range(b, 1, n / a + 1) {
+				res += max(0ll, min((n - a * b) / (a + b), x - a - b));
 			}
-			while (l <= r) {
-				int m = (l + r) / 2;
-				if (n - m * (s - m) > k) {
-					u = m;
-					l = m + 1;
-				}
-				else {
-					r = m - 1;
-				}
-			}
-
-			l = (s + 1) / 2, r = s - 1;
-			int v = s - 1;
-			while (l <= r) {
-				int m = (l + r) / 2;
-				if (n - m * (s - m) > k) {
-					v = m;
-					r = m - 1;
-				}
-				else {
-					l = m + 1;
-				}
-			}
-
-			int c = k * (v - u - 2);
-			v = s - v;
-			c += n * (u + v);
-			c -= s * (u * (u + 1) + v * (v + 1)) / 2;
-			c += (u * (u + 1) * (2 * u + 1) + v * (v + 1) * (2 * v + 1)) / 6;
-			res += (s - 1) * c;
 		}
 		print(res);
 	}

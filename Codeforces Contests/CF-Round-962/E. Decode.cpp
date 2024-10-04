@@ -24,15 +24,14 @@ int32_t main() {
 
 		int x = 0;
 		map<int, int> a;
+		a[0] = 1;
 		int res = 0;
-		a[1] = 1;
 		range(i, 0, n) {
-			x += s[i] == '1';
-			int k = 2 * x - i;
-			if (a.count(k)) {
-				res += (n - i) * a[k];
+			x += (s[i] == '1') - (s[i] == '0');
+			if (a.count(x)) {
+				res = (res + (n - i) * a[x]) % MOD;
 			}
-			a[k] += i + 2;
+			a[x] += i + 2;
 		}
 		print(res);
 	}
