@@ -15,50 +15,8 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
-void add(string x, int k, int i, vector<string> &v) {
-	if (i == k) {
-		v.push_back(x);
-		return;
-	}
-
-	for (int y = x.back() - '0' - (i == 1); y > 0; y--) {
-		add(x + to_string(y), k, i + 1, v);
-	}
-}
-
-int str_to_int(string s) {
-	int x = 0;
-	for (char c : s) {
-		x = 10 * x + (c - '0');
-	}
-	return x;
-}
-
 int32_t main() {
-	vector<int> v;
-	range(i, 1, 10) {
-		range(k, 1, 10) {
-			vector<string> w;
-			add(to_string(i), k, 1, w);
-			for (string s : w) {
-				for (string t : w) {
-					reverse(t.begin(), t.end());
-					t.pop_back();
-					v.push_back(str_to_int(t + s));
-				}
-			}
-		}
-	}
-
-	setup(); int tc; input(tc); range(t, 0, tc) {
-		int a, b, m;
-		input(a, b, m);
-
-		int res = 0;
-		for (int i : v) {
-			res += i >= a and i <= b and i % m == 0;
-		}
-
-		cout << "Case #" << t + 1 << ": " << res << '\n';
+	setup(); int tc; input(tc); while (tc--) {
+		
 	}
 }
