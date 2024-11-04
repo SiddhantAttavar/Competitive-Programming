@@ -1,46 +1,19 @@
 #include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
 using namespace std;
+using namespace __gnu_pbds; 
 template<typename T> inline void input(T& inVar) {cin >> inVar;}
 template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
 template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
 template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define int long long
 #define range(it, start, end) for (auto it = start; it < end; it++)
 #define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
 #define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define int long long
-
-struct DSU {
-	vector<int> a;
-	
-	DSU(int n) {
-		a.resize(n, -1);
-	}
-
-	int get(int x) {
-		if (a[x] < 0) {
-			return x;
-		}
-		return a[x] = get(a[x]);
-	}
-
-	bool unite(int x, int y) {
-		x = get(x);
-		y = get(y);
-
-		if (x == y) {
-			return false;
-		}
-
-		if (a[x] < a[y]) {
-			swap(x, y);
-		}
-
-		a[y] += a[x];
-		a[x] = y;
-		return true;
-	}
-};
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
 	setup();
@@ -48,22 +21,41 @@ int32_t main() {
 	int n, m;
 	input(n, m);
 
-	vector<pair<int, pair<int, int>>> e(m);
+	vector<vector<pair<int, int>>> graph(n);
 	range(i, 0, m) {
-		input(e[i].second.first, e[i].second.second, e[i].first);
-	}
-	sort(e.begin(), e.end());
+		int u, v, w;
+		input(u, v, w);
 
-	int res = 0, x = n;
-	DSU d(n);
-	for (pair<int, pair<int, int>> p : e) {
-		if (d.unite(p.second.first - 1, p.second.second - 1)) {
-			res += p.first;
-			x--;
+		graph[u - 1].push_back({v - 1, w});
+		graph[v - 1].push_back({u - 1, w});
+	}
+
+	vector<bool> d(n, false);
+	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+	int res = 0, c = n;
+
+	pq.push({0, 0});
+	while (!pq.empty()) {
+		int x, u;
+		tie(x, u) = pq.top();
+		pq.pop();
+
+		if (d[u]) {
+			continue;
+		}
+
+		c--;
+		res += x;
+		d[u] = true;
+
+		for (pair<int, int> p : graph[u]) {
+			if (!d[p.first]) {
+				pq.push({p.second, p.first});
+			}
 		}
 	}
 
-	if (x > 1) {
+	if (c) {
 		print("IMPOSSIBLE");
 	}
 	else {
