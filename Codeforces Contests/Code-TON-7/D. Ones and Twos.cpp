@@ -1,14 +1,19 @@
 #include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
 using namespace std;
+using namespace __gnu_pbds; 
 template<typename T> inline void input(T& inVar) {cin >> inVar;}
 template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
 template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
 template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define int long long
 #define range(it, start, end) for (auto it = start; it < end; it++)
 #define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
 #define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define int long long
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
@@ -18,18 +23,13 @@ int32_t main() {
 		vector<int> a(n);
 		arrPut(a);
 
-		int s = 0;
-		for (int i : a) {
-			s += i;
-		}
 
-
-		int l = -1, r = n;
-		while (l < n - 2 and a[l + 1] == 2) {
-			l++;
-		}
-		while (r > 0 and a[r - 1] == 2) {
-			r--;
+		int z = accumulate(a.begin(), a.end(), 0ll);
+		set<int> s;
+		range(i, 0, n) {
+			if (a[i] == 1) {
+				s.insert(i);
+			}
 		}
 
 		while (q--) {
@@ -39,44 +39,45 @@ int32_t main() {
 			if (o == 1) {
 				int x;
 				input(x);
+				
+				if (x % 2 == z % 2) {
+					if (x <= z) {
+						print("YES");
+					}
+					else {
+						print("NO");
+					}
+					continue;
+				}
 
-				if (x > s) {
+				if (s.empty()) {
 					print("NO");
 					continue;
 				}
 
-				if (x % 2 == s % 2) {
+				int k = z - 1 - 2 * min(*s.begin(), n - 1 - *s.rbegin());
+				if (x <= k) {
 					print("YES");
-					continue;
-				}
-
-				if (max(s - 2 * (l + 1), s - 2 * (n - r)) < x) {
-					print("NO");
 				}
 				else {
-					print("YES");
+					print("NO");
 				}
 			}
 			else {
-				int i, v;
-				input(i, v);
+				int i, x;
+				input(i, x);
 				i--;
 
-				s -= a[i];
-				a[i] = v;
-				s += a[i];
-
-				if (v == 2) {
-					if (l == i - 1) {
-						l = i;
-					}
-					if (r == i + 1) {
-						r = i;
-					}
+				if (a[i] == 1) {
+					s.erase(i);
 				}
-				else {
-					l = min(l, i - 1);
-					r = max(r, i + 1);
+
+				z -= a[i];
+				a[i] = x;
+				z += a[i];
+
+				if (a[i] == 1) {
+					s.insert(i);
 				}
 			}
 		}

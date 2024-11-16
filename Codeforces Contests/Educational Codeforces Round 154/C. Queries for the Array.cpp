@@ -1,83 +1,61 @@
 #include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
 using namespace std;
+using namespace __gnu_pbds; 
 template<typename T> inline void input(T& inVar) {cin >> inVar;}
 template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
 template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
 template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define int long long
 #define range(it, start, end) for (auto it = start; it < end; it++)
 #define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
 #define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define int long long
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
 		string s;
 		input(s);
 
-		int curr_size = 0;
-		int n = s.size();
+		int x = 0, y = 1, z = 0;
 		bool flag = true;
-
-		int min_unsorted_size = n;
-		bool is_unsorted = false;
-
-		stack<int> sorted_sizes;
-		sorted_sizes.push(0);
-		bool is_sorted = true;
-
 		for (char c : s) {
-			if (c == '+') {
-				curr_size++;
-
-				is_sorted = false;
-				while (!sorted_sizes.empty() and curr_size <= sorted_sizes.top()) {
-					sorted_sizes.pop();
+			if (c == '-') {
+				if (x == z) {
+					z--;
 				}
+				x--;
 			}
-			else if (c == '-') {
-				curr_size--;
-
-				if (curr_size < min_unsorted_size) {
-					min_unsorted_size = n;
-					is_unsorted = false;
-				}
-
-				while (!sorted_sizes.empty() and curr_size < sorted_sizes.top()) {
-					sorted_sizes.pop();
-				}
-
-				if (!sorted_sizes.empty() and curr_size <= sorted_sizes.top()) {
-					is_sorted = true;
+			else if (c == '+') {
+				x++;
+				if (x == y) {
+					y++;
 				}
 			}
 			else if (c == '0') {
-				if (is_sorted) {
+				y = min(y, x);
+				if (x < 2 or z >= y) {
 					flag = false;
 					break;
 				}
-
-				min_unsorted_size = min(min_unsorted_size, curr_size);
-				is_unsorted = true;
 			}
-			if (c == '1' or curr_size <= 1) {
-				if (is_unsorted) {
+			else {
+				z = x;
+				if (z >= y) {
 					flag = false;
 					break;
 				}
-
-				while (!sorted_sizes.empty() and curr_size < sorted_sizes.top()) {
-					sorted_sizes.pop();
-				}
-				if (sorted_sizes.empty() or (!sorted_sizes.empty() and curr_size > sorted_sizes.top())) {
-					sorted_sizes.push(curr_size);
-				}
-
-				min_unsorted_size = n;
-				is_sorted = true;
 			}
 		}
 
-		print(flag ? "YES" : "NO");
+		if (flag) {
+			print("YES");
+		}
+		else {
+			print("NO");
+		}
 	}
 }

@@ -1,14 +1,19 @@
 #include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
 using namespace std;
+using namespace __gnu_pbds; 
 template<typename T> inline void input(T& inVar) {cin >> inVar;}
 template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
 template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
 template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define int long long
 #define range(it, start, end) for (auto it = start; it < end; it++)
 #define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
 #define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define int long long
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
@@ -21,49 +26,21 @@ int32_t main() {
 		int k;
 		input(k);
 
-		vector<pair<int, int>> a(n);
-		range(i, 0, n) {
-			a[i] = {c[i], i};
-		}
-		sort(a.begin(), a.end());
-
-		priority_queue<int> v;
-		int x = k;
-		for (pair<int, int> p : a) {
-			while (x >= p.first) {
-				x -= p.first;
-				v.push(p.second);
-			}
+		for (int i = n - 2; i >= 0; i--) {
+			c[i] = min(c[i], c[i + 1]);
 		}
 
-		int j = 0;
-		vector<int> l(n, 0);
-		while (!v.empty()) {
-			int i = v.top();
-			v.pop();
-
-			while (j < n and a[j].second <= i) {
-				j++;
-			}
-			if (j == n) {
-				l[i]++;
+		vector<int> res(n, 0);
+		res[0] = k / c[0];
+		k %= c[0];
+		range(i, 1, n) {
+			if (c[i] == c[i - 1]) {
+				res[i] = res[i - 1];
 				continue;
 			}
 
-			if (x >= (a[j].first - c[i])) {
-				x -= a[j].first - c[i];
-				v.push(a[j].second);
-			}
-			else {
-				l[i]++;
-			}
-		}
-
-		int q = 0;
-		vector<int> res(n);
-		for (int i = n - 1; i >= 0; i--) {
-			q += l[i];
-			res[i] = q;
+			res[i] = min(res[i - 1], k / (c[i] - c[i - 1]));
+			k -= res[i] * (c[i] - c[i - 1]);
 		}
 		arrPrint(res);
 	}
