@@ -15,8 +15,38 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
-int32_t main() {
-    setup(); int tc; input(tc); while (tc--) {
-        
+int cost(vector<int> a, vector<int> b) {
+    set<int> c(a.begin(), a.end());
+    int res = 0;
+    for (int i : b) {
+        res += c.count(i);
     }
+    return res;
+}
+
+int32_t main() {
+    setup();
+    int n;
+    input(n);
+
+    vector<int> c(n);
+    arrPut(c);
+
+    vector<vector<int>> v(n);
+    range(i, 0, n) {
+        v[i].resize(c[i]);
+        arrPut(v[i]);
+    }
+
+    vector<int> f(n, 0), g(n, 0), h(n, 0);
+    g[0] = h[0] = h[1] = 1e18;
+    g[1] = cost(v[0], v[1]);
+    range(i, 2, n) {
+        int x = cost(v[i], v[i - 1]), y = cost(v[i], v[i - 2]);
+        f[i] = min(f[i - 1], g[i - 1]);
+        g[i] = min({f[i - 2] + x + y, g[i - 2] + x, h[i - 2] + x});
+        h[i] = min(g[i - 1] + y, h[i - 1]);
+    }
+
+    print(min(g[n - 1], h[n - 1]));
 }

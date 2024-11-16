@@ -16,7 +16,41 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
-    setup(); int tc; input(tc); while (tc--) {
-        
-    }
+	setup(); int tc; input(tc); while (tc--) {
+		int n, k;
+		input(n, k);
+
+		vector<int> a(n);
+		arrPut(a);
+
+		map<int, int> m;
+		for (int i : a) {
+			m[i]++;
+		}
+
+		multiset<int> v;
+		for (pair<int, int> p : m) {
+			if (p.second > 1) {
+				v.insert(p.second);
+			}
+		}
+
+		range(i, 0, k) {
+			if (v.empty()) {
+				break;
+			}
+
+			int x = *v.rbegin();
+			v.erase(prev(v.end()));
+			if (x > 1) {
+				v.insert(x - 1);
+			}
+		}
+
+		int res = n * (n - 1) / 2;
+		for (int i : v) {
+			res -= i * (i - 1) / 2;
+		}
+		print(res);
+	}
 }

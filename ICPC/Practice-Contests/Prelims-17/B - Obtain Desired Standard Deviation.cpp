@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <cmath>
 #include <ext/pb_ds/assoc_container.hpp> 
 #include <ext/pb_ds/tree_policy.hpp> 
 using namespace std;
@@ -14,9 +15,26 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
+#define double long double
 
 int32_t main() {
-    setup(); int tc; input(tc); while (tc--) {
-        
-    }
+	cout << setprecision(20) << endl;
+	setup(); int tc; input(tc); while (tc--) {
+		double n, x;
+		input(n, x);
+
+		if (n == 1) {
+			if (x == 0) {
+				print(0);
+			}
+			else {
+				print(-1);
+			}
+			continue;
+		}
+
+		vector<double> res(n, 0);
+		res[0] = (n * x) / sqrtl(n - 1);
+		arrPrint(res);
+	}
 }

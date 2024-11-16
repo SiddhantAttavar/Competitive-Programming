@@ -15,8 +15,47 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
+bool check(vector<vector<int>> &a, int i, int j) {
+	range(k, 0, 3) {
+		if (a[i][k] > a[j][k]) {
+			return false;
+		}
+	}
+	range(k, 0, 3) {
+		if (a[i][k] < a[j][k]) {
+			return true;
+		}
+	}
+	return false;
+}
+
 int32_t main() {
-    setup(); int tc; input(tc); while (tc--) {
-        
-    }
+	setup(); int tc; input(tc); while (tc--) {
+		vector<vector<int>> a(3, vector<int>(3));
+		range(i, 0, 3) {
+			arrPut(a[i]);
+		}
+
+		if (check(a, 0, 1) and check(a, 1, 2)) {
+			print("yes");
+		}
+		else if (check(a, 0, 2) and check(a, 2, 1)) {
+			print("yes");
+		}
+		else if (check(a, 1, 0) and check(a, 0, 2)) {
+			print("yes");
+		}
+		else if (check(a, 1, 2) and check(a, 2, 0)) {
+			print("yes");
+		}
+		else if (check(a, 2, 0) and check(a, 0, 1)) {
+			print("yes");
+		}
+		else if (check(a, 2, 1) and check(a, 1, 0)) {
+			print("yes");
+		}
+		else {
+			print("no");
+		}
+	}
 }

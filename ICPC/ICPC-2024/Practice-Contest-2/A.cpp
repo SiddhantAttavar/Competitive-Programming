@@ -16,7 +16,26 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
-    setup(); int tc; input(tc); while (tc--) {
-        
-    }
+	setup();
+
+	int n, m;
+	input(n, m);
+
+	map<int, int> a;
+	range(i, 0, n) {
+		int x, v;
+		input(x, v);
+		a[x * v]++;
+	}
+
+	int res = 0;
+	range(i, 0, m) {
+		int x, v;
+		input(x, v);
+		if (a.count(x * v) and a[x * v]) {
+			res++;
+			a[x * v]--;
+		}
+	}
+	print(res);
 }
