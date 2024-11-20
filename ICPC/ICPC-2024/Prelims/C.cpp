@@ -15,67 +15,64 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
-template<class T> struct SegTree { // cmb(ID,b) = b
-	T ID; T (*cmb)(T a, T b);
-	int n; vector<T> seg;
-	SegTree(int _n, T id, T _cmb(T, T)) {
-		ID = id; cmb = _cmb;
-		for (n = 1; n < _n; ) n *= 2; 
-		seg.assign(2*n,ID); 
-	}
-	void pull(int p) { seg[p] = cmb(seg[2*p],seg[2*p+1]); }
-	void upd(int p, T val) { // set val at position p
-		seg[p += n] = val; for (p /= 2; p; p /= 2) pull(p); }
-	T query(int l, int r) {	// zero-indexed, inclusive
-		T ra = ID, rb = ID;
-		for (l += n, r += n+1; l < r; l /= 2, r /= 2) {
-			if (l&1) ra = cmb(ra,seg[l++]);
-			if (r&1) rb = cmb(seg[--r],rb);
-		}
-		return cmb(ra,rb);
-	}
-	/// int first_at_least(int lo, int val, int ind, int l, int r) { // if seg stores max across range
-	/// 	if (r < lo || val > seg[ind]) return -1;
-	/// 	if (l == r) return l;
-	/// 	int m = (l+r)/2;
-	/// 	int res = first_at_least(lo,val,2*ind,l,m); if (res != -1) return res;
-	/// 	return first_at_least(lo,val,2*ind+1,m+1,r);
-	/// }
-};
+typedef int ftype;
+typedef complex<ftype> point;
+#define x real
+#define y imag
+
+ftype dot(point a, point b) {
+    return (conj(a) * b).x();
+}
+
+ftype cross(point a, point b) {
+    return (conj(a) * b).y();
+}
+
+vector<point> hull, vecs;
+
+void add_line(ftype k, ftype b) {
+    point nw = {k, b};
+    while(!vecs.empty() && dot(vecs.back(), nw - hull.back()) < 0) {
+        hull.pop_back();
+        vecs.pop_back();
+    }
+    if(!hull.empty()) {
+        vecs.push_back(nw - hull.back());
+    }
+    hull.push_back(nw);
+}
+
+int get(ftype x) {
+    point query = {x, 1};
+    auto it = lower_bound(vecs.begin(), vecs.end(), query, [](point a, point b) {
+        return cross(a, b) > 0;
+    });
+    return dot(query, hull[it - vecs.begin()]);
+}
 
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
         int n;
         input(n);
 
-        vector<pair<int, int>> p(n);
+        vector<pair<int, int>> v(n);
         range(i, 0, n) {
-            input(p[i].first, p[i].second);
+            input(v[i].first);
         }
-        sort(p.begin(), p.end());
-
-        vector<int> x(n), a(n);
         range(i, 0, n) {
-            tie(x[i], a[i]) = p[i];
+            input(v[i].second);
         }
+        sort(v.begin(), v.end());
 
-        vector<int> b(a.begin(), a.end());
-        sort(b.begin(), b.end());
-        map<int, int> m;
-        range(i, 0, n) {
-            m[b[i]] = i;
+        vector<int> dp(n, 0);
+        add_line(v[0].second, -v[0].first * v[0].second);
+        range(i, 1, n) {
+            dp[i] = min(v[i].second * (v[i].first - v[i - 1].first), get(v[i].first));
+            add_line(v[i].second, -v[i].first * v[i].second);
         }
+        print(accumulate(dp.begin(), dp.end(), 0ll));
 
-        SegTree<int> s(n, -1e18, [](int a, int b) {
-            return max(a, b);
-        });
-
-        int res = 0;
-        range(i, 0, n) {
-            res += min(a[i] * x[i] - a[i] * s.query(m[a[i]], n - 1), st.query(x[i]));
-            s.upd(m[a[i]], x[i]);
-            st.upd(a[i], x[i]);
-        }
-        print(res);
+        hull.clear();
+        vecs.clear();
     }
 }
