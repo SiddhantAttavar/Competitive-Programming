@@ -17,7 +17,39 @@ const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
-        int n, d, l;
-        input(n, d, l);
+        int n, k;
+        input(n, k);
+
+        vector<int> a(n);
+        arrPut(a);
+
+        vector<int> b;
+        range(i, 0, n) {
+            if ((a[i] & k) == k) {
+                b.push_back(i);
+            }
+        }
+
+        if (b.size() == 0) {
+            print("NO");
+            continue;
+        }
+
+        int x = a[b[0]];
+        range(i, 1, b.size()) {
+            x &= a[b[i]];
+        }
+
+        if (x != k) {
+            print("NO");
+            continue;
+        }
+
+        print("YES");
+        print(b.size());
+        range(i, 0, b.size()) {
+            b[i]++;
+        }
+        arrPrint(b);
     }
 }

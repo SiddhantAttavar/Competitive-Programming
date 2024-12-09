@@ -17,21 +17,6 @@ const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
-        int n, k;
-        input(n, k);
-
-        vector<int> a(n);
-        arrPut(a);
-        sort(a.begin(), a.end());
-
-        k++;
-        vector<int> b(k, 0);
-        int x = 0;
-        range(i, 0, n) {
-            x += a[i];
-            cout << x - b[(i + 1) % k] << ' ';
-            b[i % k] += a[i];
-        }
-        cout << endl;
+        
     }
 }
