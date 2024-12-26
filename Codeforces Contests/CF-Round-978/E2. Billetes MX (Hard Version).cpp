@@ -7,7 +7,7 @@ template<typename T> inline void input(T& inVar) {cin >> inVar;}
 template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
 template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
 template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
-#define int long long
+#define ll long long
 #define range(it, start, end) for (auto it = start; it < end; it++)
 #define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
 #define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
@@ -30,8 +30,8 @@ bool dfs(int u, vector<vector<pair<int, int>>> &graph, vector<int> &c) {
     return true;
 }
 
-int mod_pow(int a, int b) {
-    int res = 1;
+int mod_pow(ll a, int b) {
+    ll res = 1;
     while (b) {
         if (b & 1) {
             res = res * a % MOD;
@@ -71,6 +71,63 @@ struct DSU {
     }
 };
 
+bool check(vector<pair<pair<int, int>, int>> &v, int n, int m) {
+    vector<vector<pair<int, int>>> graph(n);
+    vector<pair<int, int>> a(m, {-1, -1});
+    for (pair<pair<int, int>, int> p : v) {
+        int x, y;
+        tie(x, y) = p.first;
+        if (a[y].first != -1) {
+            graph[x].push_back({a[y].first, a[y].second ^ p.second});
+            graph[a[y].first].push_back({x, a[y].second ^ p.second});
+        }
+        a[y] = {x, p.second};
+    }
+
+    vector<int> c(n, -1);
+    range(i, 0, n) {
+        if (c[i] != -1) {
+            continue;
+        }
+        c[i] = 0;
+        if (!dfs(i, graph, c)) {
+            return false;
+        }
+    }
+
+    graph.clear();
+    graph.resize(m);
+    a.clear();
+    a.resize(n, {-1, -1});
+    for (pair<pair<int, int>, int> p : v) {
+        int x, y;
+        tie(x, y) = p.first;
+        if (a[x].first != -1) {
+            graph[y].push_back({a[x].first, a[x].second ^ p.second});
+            graph[a[x].first].push_back({y, a[x].second ^ p.second});
+        }
+        a[x] = {y, p.second};
+    }
+
+    c.clear();
+    c.resize(m, -1);
+    range(i, 0, m) {
+        if (c[i] != -1) {
+            continue;
+        }
+        c[i] = 0;
+        if (!dfs(i, graph, c)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+ll combine(int x, int y) {
+    return ((ll) x) << 30 | y;
+}
+
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
         int n, m, k, q;
@@ -83,121 +140,6 @@ int32_t main() {
             v[i] = {{x - 1, y - 1}, z};
         }
 
-        vector<set<pair<int, int>>> a(n), b(m);
-        for (pair<pair<int, int>, int> p : v) {
-            a[p.first.first].insert({p.first.second, p.second});
-            b[p.first.second].insert({p.first.first, p.second});
-        }
-
-        bool flag = true;
-        vector<vector<pair<int, int>>> graph1(n);
-        range(j, 0, m) {
-            if (b[j].empty()) {
-                continue;
-            }
-            set<pair<int, int>>::iterator i = b[j].begin();
-            while (next(i) != b[j].end()) {
-                set<pair<int, int>>::iterator k = next(i);
-                int x = i->second ^ k->second;
-                graph1[i->first].push_back({k->first, x});
-                graph1[k->first].push_back({i->first, x});
-                i++;
-            }
-        }
-
-        vector<int> c1(n, -1);
-        range(j, 0, n) {
-            if (c1[j] != -1) {
-                continue;
-            }
-            c1[j] = 0;
-            if (!dfs(j, graph1, c1)) {
-                flag = false;
-                break;
-            }
-        }
-
-        vector<vector<pair<int, int>>> graph2(m);
-        range(j, 0, n) {
-            if (a[j].empty()) {
-                continue;
-            }
-            set<pair<int, int>>::iterator i = a[j].begin();
-            while (next(i) != a[j].end()) {
-                set<pair<int, int>>::iterator k = next(i);
-                int x = i->second ^ k->second;
-                graph2[i->first].push_back({k->first, x});
-                graph2[k->first].push_back({i->first, x});
-                i++;
-            }
-        }
-
-        vector<int> c2(m, -1);
-        range(i, 0, m) {
-            if (c2[i] != -1) {
-                continue;
-            }
-            c2[i] = 0;
-            if (!dfs(i, graph2, c2)) {
-                flag = false;
-                break;
-            }
-        }
-
-        map<int, int> hash;
-        range(i, 0, k) {
-            hash[v[i].first.first << 30 | v[i].first.second] = i;
-        }
-
-        DSU d(k + q);
-        range(i, 0ll, n) {
-            if (a[i].empty()) {
-                continue;
-            }
-            set<pair<int, int>>::iterator j = a[i].begin();
-            while (next(j) != a[i].end()) {
-                int u = hash[i << 30 | j->first];
-                j++;
-                int v = hash[i << 30 | j->first];
-                d.unite(u, v);
-            }
-        }
-        range(i, 0ll, m) {
-            if (b[i].empty()) {
-                continue;
-            }
-            set<pair<int, int>>::iterator j = b[i].begin();
-            while (next(j) != b[i].end()) {
-                int u = hash[j->first << 30 | i];
-                j++;
-                int v = hash[j->first << 30 | i];
-                d.unite(u, v);
-            }
-        }
-
-        vector<set<int>> s(k), t(k);
-        range(i, 0, k) {
-            int u = d.get(i);
-            s[u].insert(v[i].first.first);
-            t[u].insert(v[i].first.second);
-        }
-
-        int r = 0, p = 0, l = 0;
-        range(i, 0, k) {
-            if (!s[i].empty()) {
-                r += s[i].size();
-                p += t[i].size();
-                l++;
-            }
-        }
-
-        if (flag) {
-            print(mod_pow(2, 30 * (n + m - r - p + l - 1)));
-        }
-        else {
-            print(0);
-        }
-
         vector<pair<pair<int, int>, int>> w(q);
         range(i, 0, q) {
             int x, y, z;
@@ -205,59 +147,102 @@ int32_t main() {
             w[i] = {{x - 1, y - 1}, z};
         }
 
-        if (!flag) {
-            range(i, 0, q) {
+        if (!check(v, n, m)) {
+            range(i, 0, q + 1) {
                 print(0);
             }
             continue;
         }
 
-        l = 0, r = q - 1;
-        int res = q;
-        while (l <= r) {
-            int m = (l + r) / 2;
-            vector<pair<int, int>> u(v.begin(), v.end());
-            u.insert(u.end(), w.begin(), w.begin() + m + 1);
-            if (check(u)) {
-                l = m + 1;
+        map<ll, int> hash;
+        range(i, 0, k) {
+            hash[combine(v[i].first.first, v[i].first.second)] = i;
+        }
+        range(i, 0, q) {
+            hash[combine(w[i].first.first, w[i].first.second)] = i + k;
+        }
+
+        vector<int> a(n, -1), b(m, -1);
+        DSU d(k + q);
+        int s = 0, t = 0;
+        int c = 0;
+        for (pair<pair<int, int>, int> p : v) {
+            int x, y;
+            tie(x, y) = p.first;
+            vector<pair<int, int>> l;
+            if (a[x] != -1) {
+                l.push_back({x, a[x]});
             }
             else {
-                res = m;
-                r = m - 1;
+                s++;
+            }
+
+            if (b[y] != -1) {
+                l.push_back({b[y], y});
+            }
+            else {
+                t++;
+            }
+
+            c++;
+            for (pair<int, int> q : l) {
+                ll u = hash[combine(x, y)];
+                ll v = hash[combine(q.first, q.second)];
+                c -= d.unite(u, v);
+            }
+
+            a[x] = y;
+            b[y] = x;
+        }
+
+        print(mod_pow(2, 30 * (n - s + m - t + c - 1)));
+
+        int l = 0, r = q - 1, res = -1;
+        while (l <= r) {
+            int k = (l + r) / 2;
+            vector<pair<pair<int, int>, int>> u(v.begin(), v.end());
+            u.insert(u.end(), w.begin(), w.begin() + k + 1);
+            if (check(u, n, m)) {
+                res = k;
+                l = k + 1;
+            }
+            else {
+                r = k - 1;
             }
         }
 
-        range(i, k, k + q) {
-            int x, y, z;
-            input(x, y, z);
-            x--;
-            y--;
-
-            if (!flag) {
-                print(0);
-                continue;
+        range(j, 0, res + 1) {
+            int x, y;
+            tie(x, y) = w[j].first;
+            vector<pair<int, int>> l;
+            if (a[x] != -1) {
+                l.push_back({x, a[x]});
+            }
+            else {
+                s++;
             }
 
-            hash[x << 30 | y] = i;
-
-            vector<pair<int, int>> v;
-            set<pair<int, int>>::iterator j = a[x].lower_bound({y, 0});
-            if (j != a[x].begin()) {
-                v.push_back({x, prev(j)->first});
+            if (b[y] != -1) {
+                l.push_back({b[y], y});
             }
-            if (j != a[x].end()) {
-                v.push_back({x, j->first});
+            else {
+                t++;
             }
 
-            j = b[y].lower_bound({x, 0});
-            if (j != b[y].begin()) {
-                v.push_back({prev(j)->first, y});
-            }
-            if (j != b[y].end()) {
-                v.push_back({j->first, y});
+            c++;
+            for (pair<int, int> q : l) {
+                ll u = hash[combine(x, y)];
+                ll v = hash[combine(q.first, q.second)];
+                c -= d.unite(u, v);
             }
 
-            print(mod_pow(2, 30 * (n + m - r - p + l - 1)));
+            a[x] = y;
+            b[y] = x;
+
+            print(mod_pow(2, 30 * (n - s + m - t + c - 1)));
+        }
+        range(i, res + 1, q) {
+            print(0);
         }
     }
 }
