@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <bits/extc++.h>
 #include <ext/pb_ds/assoc_container.hpp> 
 #include <ext/pb_ds/tree_policy.hpp> 
 using namespace std;
@@ -46,20 +47,22 @@ struct MCMF {
 		fill(all(dist), INF);
 		dist[s] = 0; ll di;
 
-		priority_queue<pair<ll, int>> q;
+		__gnu_pbds::priority_queue<pair<ll, int>> q;
+		vector<decltype(q)::point_iterator> its(N);
 		q.push({ 0, s });
 
 		while (!q.empty()) {
-            int x = q.top().first;
 			s = q.top().second; q.pop();
-            if (-x != dist[s]) continue;
 			seen[s] = 1; di = dist[s] + pi[s];
 			for (edge& e : ed[s]) if (!seen[e.to]) {
 				ll val = di - pi[e.to] + e.cost;
 				if (e.cap - e.flow > 0 && val < dist[e.to]) {
 					dist[e.to] = val;
 					par[e.to] = &e;
-                    q.push({ -dist[e.to], e.to });
+					if (its[e.to] == q.end())
+						its[e.to] = q.push({ -dist[e.to], e.to });
+					else
+						q.modify(its[e.to], { -dist[e.to], e.to });
 				}
 			}
 		}
@@ -99,11 +102,23 @@ struct MCMF {
 int32_t main() {
     setup();
 
-    int n, m;
-    input(n, m);
+    int n, m, k;
+    input(n, m, k);
 
+    MCMF s(n + 2);
     range(i, 0, m) {
-        int u, v;
-        input(u, v);
+        int a, b, r, c;
+        input(a, b, r, c);
+        s.addEdge(a - 1, b - 1, r, c);
+    }
+    s.addEdge(n, 0, k, 0);
+    s.addEdge(n - 1, n + 1, k, 0);
+
+    pair<int, int> res = s.maxflow(n, n + 1);
+    if (res.first < k) {
+        print(-1);
+    }
+    else {
+        print(res.second);
     }
 }
