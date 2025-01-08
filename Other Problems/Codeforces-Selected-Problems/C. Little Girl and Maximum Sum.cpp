@@ -15,27 +15,35 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
-int query(int i) {
-    print('?', i + 1);
-    cout.flush();
-    int x;
-    input(x);
-    return x - 1;
-}
-
 int32_t main() {
-    int n;
-    input(n);
+    setup();
 
-    int l = 0, r = n - 1;
-    while (l < r) {
-        int m = (l + r) / 2;
-        if (query(m) < query(m + 1)) {
-            r = m;
-        }
-        else {
-            l = m + 1;
-        }
+    int n, q;
+    input(n, q);
+
+    vector<int> a(n);
+    arrput(a);
+
+    vector<int> b(n + 1, 0);
+    while (q--) {
+        int l, r;
+        input(l, r);
+
+        b[l - 1]++;
+        b[r]--;
     }
-    print('!', l + 1);
+
+    range(i, 0, n) {
+        b[i + 1] += b[i];
+    }
+    b.pop_back();
+
+    sort(b.begin(), b.end());
+    sort(a.begin(), a.end());
+
+    int res = 0;
+    range(i, 0, n) {
+        res += a[i] * b[i];
+    }
+    print(res);
 }

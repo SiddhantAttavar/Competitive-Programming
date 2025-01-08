@@ -15,27 +15,43 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
-int query(int i) {
-    print('?', i + 1);
-    cout.flush();
-    int x;
-    input(x);
-    return x - 1;
-}
-
 int32_t main() {
-    int n;
-    input(n);
+    setup(); int tc; input(tc); while (tc--) {
+        int n;
+        input(n);
 
-    int l = 0, r = n - 1;
-    while (l < r) {
-        int m = (l + r) / 2;
-        if (query(m) < query(m + 1)) {
-            r = m;
+        vector<int> a(n);
+        arrput(a);
+
+        int h = 60;
+        vector<vector<int>> v(n, vector<int>(h, n));
+        for (int i = n - 2; i >= 0; i--) {
+            range(j, 0, h) {
+                if ((a[i] ^ a[i + 1]) >> j) {
+                    v[i][j] = i + 1;
+                }
+                else {
+                    v[i][j] = v[i + 1][j];
+                }
+            }
         }
-        else {
-            l = m + 1;
+        
+        int res = 0;
+        range(i, 0, n) {
+            int l = i, c = n - 1;
+            range(j, 0, h) {
+                int r = min(n - 1, l + (1ll << j) - 1);
+                if (v[i][j + 1] <= r) {
+                    c = v[i][j + 1] - 1;
+                    break;
+                }
+                l = r + 1;
+                if (l == n) {
+                    break;
+                }
+            }
+            res += c - i + 1;
         }
+        print(res);
     }
-    print('!', l + 1);
 }
