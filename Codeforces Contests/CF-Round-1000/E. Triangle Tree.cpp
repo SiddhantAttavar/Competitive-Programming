@@ -17,7 +17,6 @@ const int MOD = (int) 1e9 + 7; //998244353
 
 void dfs(int u, int p, vector<vector<int>> &graph, vector<int> &l, vector<int> &s, vector<int> &a, vector<int> &b) {
     s[u] = 1;
-    b[u] = 0;
     for (int v : graph[u]) {
         if (v == p) {
             continue;
@@ -29,12 +28,15 @@ void dfs(int u, int p, vector<vector<int>> &graph, vector<int> &l, vector<int> &
         s[u] += s[v];
         a[u] += a[v] + s[v];
     }
+
+    int x = 0;
     for (int v : graph[u]) {
         if (v != p) {
-            b[u] += (a[v] + s[v]) * (a[u] - a[v] - s[v]);
+            x += (a[v] + s[v]) * (s[u] - s[v] - 1) + (a[u] - a[v] - s[v]) * s[v];
             b[u] += a[v] + s[v];
         }
     }
+    b[u] += x / 2;
 }
 
 int32_t main() {
@@ -61,7 +63,7 @@ int32_t main() {
         }
 
         int res = 0;
-        res += accumulate(b.begin(), b.end(), 0);
+        res += accumulate(b.begin(), b.end(), 0ll);
         int y = 0, z = 0;
         range(i, 0, n) {
             res -= (z * i - y) * x[i];
@@ -69,7 +71,7 @@ int32_t main() {
             z += x[i];
         }
         res -= n * (n - 1) / 2;
-        res += accumulate(s.begin(), s.end(), 0) - n;
+        res += accumulate(s.begin(), s.end(), 0ll) - n;
 
         print(res);
     }

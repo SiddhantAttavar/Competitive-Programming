@@ -29,40 +29,44 @@ int32_t main() {
             swap(a, b);
         }
 
-        int t = m;
-        if (m >= (n - m)) {
-            int x = 2 * m - n;
-            t = n - m + 2 * x / 3 + (x % 3 == 2);
-        }
-
-        print(t);
-
         sort(a.begin(), a.end());
         sort(b.begin(), b.end());
 
-        vector<int> pa(n + 1, 0), pb(m + 1, 0);
-        range(i, 0, n) {
-            pa[i + 1] = pa[i] + a[i];
-        }
-        range(i, 0, m) {
-            pb[i + 1] = pb[i] + b[i];
-        }
-
         vector<int> u(n / 2 + 1, 0), v(m / 2 + 1, 0);
-        range(x, 0, n / 2 + 1) {
-            u[x] = pa[n] - pa[n - x] - pa[x];
+        range(x, 0, n / 2) {
+            u[x + 1] = u[x] + a[n - x - 1] - a[x];
         }
-        range(y, 0, m / 2 + 1) {
-            v[y] = pb[m] - pb[m - y] - pb[y];
+        range(y, 0, m / 2) {
+            v[y + 1] = v[y] + b[m - y - 1] - b[y];
         }
 
-        range(k, 1ll, t + 1) {
-            int res = 0;
-            range(x, max(0ll, 2 * k - m), min(k, n - k) + 1) {
-                res = max(res, u[x] + v[k - x]);
+        int k = 1;
+        vector<int> res;
+        while (true) {
+            int c = 0;
+            int l = max(0ll, 2 * k - m), r = min(k, n - k);
+            if (l > r) {
+                break;
             }
-            cout << res << ' ';
+            while (l <= r) {
+                int m1 = l + (r - l) / 3, m2 = r - (r - l) / 3;
+                int x = u[m1] + v[k - m1], y = u[m2] + v[k - m2];
+                c = max({c, x, y});
+                if (x == y) {
+                    l = m1 + 1;
+                    r = m2 - 1;
+                }
+                else if (x > y) {
+                    r = m2 - 1;
+                }
+                else {
+                    l = m1 + 1;
+                }
+            }
+            k++;
+            res.push_back(c);
         }
-        cout << endl;
+        print(res.size());
+        arrprint(res);
     }
 }
