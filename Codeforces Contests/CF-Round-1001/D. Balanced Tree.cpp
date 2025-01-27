@@ -15,59 +15,25 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
-const int N = 1e9;
-struct Node {
-	int x, y;
-	Node *l, *r;
-	Node(int _x, int _y) : x(_x), y(_y), l(nullptr), r(nullptr) {}
-	Node(Node* _l, Node* _r) : l(_l), r(_r) {
-		x = 0, y = 0;
-		if(l) x += l->x, y += l->y;
-		if(r) x += r->x, y += r->y;
-	}
-	Node(Node *v) : x(v->x), y(v->y), l(v->l), r(v->r) {}
-};
-Node* root;
-Node* update(Node* node, int l, int r, int pos, pair<int, int> val) {
-	if(l == r) return new Node(val.first, val.second);
-	int m = (l + r)/2;
-	if(pos <= m) return new Node(update(node->l, l, m, pos, val), node->r);
-	return new Node(node->l, update(node->r, m + 1, r, pos, val));
-}
-pair<int, int> cmb(pair<int, int> a, pair<int, int> b) {
-    return {a.first + a.second, b.first + b.second};
-}
-pair<int, int> query(Node* node, int l, int r, int ql, int qr) {
-    if (node == nullptr) return {0, 0};
-	if(qr < l || ql > r) return {0, 0};
-	if(ql <= l && qr >= r) return {node->x, node->y};
-	int m = (l + r)/2;
-	return cmb(query(node->l, l, m, ql, qr), query(node->r, m + 1, r, ql, qr));
-}
-
-int dfs(int u, int p, vector<vector<int>> &graph, vector<int> &l) {
-    pair<int, int> x = query(root, 1, N, 0, l[u]);
-    int res = x.second * l[u] - x.first;
-    update(root, 1, N, l[u], cmb(query(root, 1, N, l[u], l[u]), make_pair(l[u], 1)));
+int dfs(int u, int p, vector<vector<int>> &graph, vector<int> &l, vector<int> &r, vector<int> &a) {
+    int res = 0;
     for (int v : graph[u]) {
-        if (v == p) {
-            continue;
+        if (v != p) {
+            res += dfs(v, u, graph, l, r, a);
+            a[u] = max(a[u], a[v]);
         }
-
-        res += dfs(v, u, graph, l);
     }
-    update(root, 1, N, l[u], cmb(query(root, 1, N, l[u], l[u]), make_pair(-l[u], -1)));
+    a[u] = min(max(a[u], l[u]), r[u]);
+    for (int v : graph[u]) {
+        if (v != p) {
+            res += max(0ll, a[v] - a[u]);
+        }
+    }
     return res;
 }
 
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
-        root = (Node*) malloc(sizeof(Node));
-        root->x = 0;
-        root->y = 0;
-        root->l = nullptr;
-        root->r = nullptr;
-
         int n;
         input(n);
 
@@ -85,6 +51,7 @@ int32_t main() {
             graph[v - 1].push_back(u - 1);
         }
 
-        print(dfs(0, -1, graph, l));
+        vector<int> a(n);
+        print(dfs(0, -1, graph, l, r, a) + a[0]);
     }
 }
