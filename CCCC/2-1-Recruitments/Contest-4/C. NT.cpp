@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
+using namespace std;
+using namespace __gnu_pbds; 
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define int long long
+#define range(it, start, end) for (auto it = start; it < end; it++)
+#define arrput(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrprint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+const int MOD = (int) 1e9 + 7; //998244353
+
+int32_t main() {
+    int N = 1e7;
+    vector<int> spf(N + 1);
+    range(i, 0, N + 1) {
+        spf[i] = i;
+    }
+    range(i, 2, N + 1) {
+        if (spf[i] != i) {
+            continue;
+        }
+
+        for (int j = i + i; j <= N; j += i) {
+            if (spf[j] == j) {
+                spf[j] = i;
+            }
+        }
+    }
+
+    setup(); int tc; input(tc); while (tc--) {
+        int l, r;
+        input(l, r);
+
+        if (r < 4) {
+            print(-1);
+            continue;
+        }
+
+        if (l == r) {
+            if (spf[l] == l) {
+                print(-1);
+            }
+            else {
+                print(spf[l], l - spf[l]);
+            }
+            continue;
+        }
+
+        print(r / 2, r / 2);
+    }
+}
