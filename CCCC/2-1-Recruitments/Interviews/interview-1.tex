@@ -1,0 +1,143 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{amsmath, amssymb}
+\usepackage{enumitem}
+\usepackage{graphics}
+
+\title{\textbf{CCCC Interviews 2024}}
+\author{Coding Club Competitive Coding}
+\date{January 31, 2025}
+
+\begin{document}
+
+\maketitle
+\hrulefill
+
+\section*{Instructions}
+\begin{itemize}
+    \item There are 6 questions in this paper, some of which have multiple subparts
+    \item After solving a question/subpart, you must explain your solution to one of the CCCC members listed at the end of the question
+    \item The number of points allotted to each subpart is inversely proportional to the number of people who solve it
+    \item Duration: 3 hours.
+\end{itemize}
+
+\hrulefill
+
+\section*{Question 1}
+Let's start with a famous problem:
+
+\begin{enumerate}[label=\alph*)]
+    \item Given an array $A$ of integers of size $N$. Count the number of subarrays that sum to $0$.Can you generalize it for any given target sum $K$?
+
+\item You are given an array $a_1, a_2, \dots, a_n$ consisting of integers from $0$ to $9$. A subarray $a_l, a_{l+1}, a_{l+2}, \dots, a_{r-1}, a_r$ is good if the sum of elements of this subarray is equal to the length of this subarray
+    \begin {center}
+    $\sum_{i=l}^{r}a_i = r - l + 1$.
+    \end {center}
+    For example, if $a = [1, 2, 0]$, then there are $3$ good subarrays: $a_{1 \dots 1} = [1], a_{2 \dots 3} = [2, 0], a_{1 \dots 3}=[1, 2, 0]$. Calculate the number of good subarrays of the array $a$.
+
+\item You are given an integer array $a_1, a_2, \dots, a_n (1 \le a_i \le n)$. Find the number of subarrays of $a$ whose $XOR$ has an even number of divisors. In other words, find all pairs of indices $(i \le j)$ such that $a_i \oplus a_{i+1} \oplus \dots \oplus a_j$ has an even number of divisors.
+
+For example, numbers 2, 3, 5 or 6 have an even number of divisors, while 1 and 4 — odd. Consider that 0 has an odd number of divisors in this task.
+\end{enumerate}
+
+\textbf{[Answer to Vansh/Ashish]}
+
+\hrulefill
+
+\section*{Question 2}
+
+A group of $N$ people are on a hiking trip. It starts raining heavily and the group starts looking for places where they can be protected from the rain. There are $2$ enclosures nearby where people can find shelter. Let’s call them $A$ and B. Enclosure $A$ can accommodate $X$ people, and Enclosure $B$ can accommodate $Y$ people. It is guaranteed that $(X + Y) \ge N$, and so everyone can be accommodated. The people are numbered from $1$ to $N$ . We know how far each person is from each enclosure. More specifically, for person $i$, $A_{dist}[i]$ denotes how far the $ith$ person is from $A$ and $B_{dist}[i]$ denotes how far the $ith$ person is from $B$. The group has genuine camaraderie, so they decide that they want to minimize the total distance traveled by their group members altogether to reach their respective enclosures. Given $N , X, Y$ and the distances $(A_{dist}[i], B_{dist}[i]), 1 \le i \le N$, your aim is to compute this minimum value.
+
+For example, if $N = 4, X = 2, Y = 2$, and the distances are:
+\begin{center}
+    $A_{dist} = [10, 23, 15, 5]$
+
+    $B_{dist} = [12, 20, 8, 20]$
+\end{center}
+Then the optimal strategy would be for $1$ and $4$ to go to $A$ and for $2$ and $3$ to go to $B$. In this case the total distance traveled is $10 + 5 + 20 + 8 = 43$
+
+\textbf{[Answer to Siddhant/Ashish]}
+
+\hrulefill
+
+\section*{Question 3}
+ Consider a grid representation of an art gallery, where the layout is defined by a non-increasing sequence $A = [A_1, A_2, \dots, A_N]$. The $ith$ row from the top contains $A_i$ tiles, aligned to the left. 
+ \begin{enumerate}[label=\roman*.]
+    \item A camera can be placed on any tile.
+    \item A camera can face either downward or to the right.
+    \item A downward-facing camera monitors the tile it is placed on and all tiles below it in the same column.
+    \item A right-facing camera monitors the tile it is placed on and all tiles to the right in the same row.
+    \item Each tile must be monitored by at least one camera.
+    \item No camera should monitor another camera.
+    \item Each tile can contain at most one camera.
+\end{enumerate}
+
+\noindent
+Determine the number of valid placements of cameras modulo $10^9 + 7$.
+\begin{enumerate}[label=\alph*)]
+    \item Solve this in time complexity $O(N \cdot max(A_i))$
+    \item Solve this in time complexity $O(N + max(A_i))$
+\end{enumerate}
+For clarification on time complexity and big $O$ notation, contact an invigilator.
+
+\begin{figure}
+    \begin{center}
+    \includegraphics{image.jpg}
+
+    Example of art gallery. where $A = [4, 3, 1]$
+    \end{center}
+\end{figure}
+
+\textbf{[Answer to Pramit/Abheek]}
+
+\hrulefill
+
+\section*{Question 4}
+There are $N$ safes and $N$ keys. Each key can open only one safe, and each safe can be opened by only one key. We randomly place one key into each safe. $N - M$ safes are then randomly chosen, and then locked. What is the probability that we can open all the safes with the $M$ keys in the $M$ remaining safes? Note: Once a safe is opened, the key inside the safe can be used to open another safe.
+
+\noindent
+Sub parts:
+\begin{enumerate}[label=\alph*)]
+    \item Solve this for the case where $M = 2 \le N$
+    \item Solve this for the general case where $M \le N$ is any integer
+\end{enumerate}
+
+
+\textbf{[Answer to Kanav/Siddhant]}
+
+\hrulefill
+
+\section*{Question 5}
+You have a number that is formed by concatenating the decimal representations of the first $N$ integers. This number is given to the digit adder machine. The digit adder machines takes a number $X$ as input and outputs the sum of its digits. However today the machine is stuck and will keep feeding the output back into the input until there is only 1 digit left. Find this digit for a given $N$.
+
+For example, if $N = 12$, we have $X = 123456789101112$. This number after passing into the digit adder machine first becomes 78, 15 and then finally 6.
+
+\noindent
+Sub parts:
+\begin{enumerate}[label=\alph*)]
+    \item Solve this in time complexity $O(log^2N)$
+    \item Solve this in time complexity $O(1)$
+\end{enumerate}
+For clarification on time complexity and big $O$ notation, contact an invigilator.
+
+\textbf{[Answer to Vansh/Pramit]}
+
+\hrulefill
+
+\section*{Question 6}
+\begin{enumerate}[label=\alph*)]
+    \item There is a long hallway which is 2 feet wide and $N$ feet long. You have to tile the entire hallway using $1 \times 2$ and $2 \times 1$ tiles. Find the number of ways of tiling the entire grid such that the entire hallway is tiles and no two tiles are overlapping.
+    \item The tile shop you buy tiles from has now introduced a new tile of $1 \times 1$ feet$^2$. Find the new number of ways of tiling the hallway.
+    \item You have a new hallway which is 3 feet wide and $M$ feet long. Find the number of ways of tiling it using only $1 \times 2$ and $2 \times 1$ tiles
+\end{enumerate}
+
+\textbf{[Answer to Abheek/Kanav]}
+
+\hrulefill
+
+\begin{center}
+    Best of Luck
+\end{center}
+
+\end{document}

@@ -15,8 +15,29 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
+map<pair<int, int>, pair<int, int>> memo;
+
+pair<int, int> solve(int n, int k) {
+    if (n < k) {
+        return {0, 0};
+    }
+
+    if (memo.count({n, k})) {
+        return memo[{n, k}];
+    }
+
+    pair<int, int> p = solve(n / 2, k);
+    return memo[{n, k}] = {
+        2 * p.first + p.second * (n / 2 + n % 2) + (n % 2) * (n / 2 + 1),
+        2 * p.second + (n % 2)
+    };
+}
+
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
-        
+        int n, k;
+        input(n, k);
+
+        print(solve(n, k).first);
     }
 }

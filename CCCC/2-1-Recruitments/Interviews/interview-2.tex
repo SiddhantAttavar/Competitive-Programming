@@ -1,0 +1,137 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{amsmath, amssymb}
+\usepackage{enumitem}
+\usepackage{graphics}
+\usepackage{float}
+
+\title{\textbf{CCCC Interviews 2024}}
+\author{Coding Club Competitive Coding}
+\date{February 3, 2025}
+
+\begin{document}
+
+\maketitle
+\hrulefill
+
+\section*{Instructions}
+\begin{itemize}
+    \item There are 6 questions in this paper, some of which have multiple subparts
+    \item After solving a question/subpart, you must explain your solution to one of the CCCC members listed at the end of the question
+    \item The number of points allotted to each subpart is inversely proportional to the number of people who solve it
+    \item Duration: 3 hours.
+\end{itemize}
+
+\hrulefill
+
+\section*{Question 1}
+Consider a \textbf{XOR} pyramid where each number is the \textbf{XOR} of lower-left and lower-right numbers. Here is an example pyramid:
+
+\begin{figure}[H]
+    \begin{center}
+    \includegraphics{pyramid.png}
+    \end{center}
+\end{figure}
+
+Given the bottom row of the pyramid, your task is to find:
+\begin{enumerate}[label=\alph*)]
+    \item The topmost number of the pyramid
+    \item Any arbitrary number specified by coordinates $(i, j)$ which represent the $j_{th}$ number on the $i_{th}$ row
+    \item How to calculate the values if \textbf{OR} or \textbf{AND} were used instead of \textbf{XOR}
+\end{enumerate}
+
+\textbf{[Answer to Kanav/Abheek]}
+
+\hrulefill
+
+\section*{Question 2}
+
+You are in charge of a counting shipping containers at a wharf. This wharf contains $N$ stacks of containers all of which are initially empty. A total of $K$ ships come to the wharf to unload their containers. The $i_{th}$ $(1 \le i \le K)$ ship unloads $l_i$ shipping containers. These shipping containers are picked up by a crane and placed in $l_i$ different stacks. In particular, for the $i_{th}$ ship, the first container is placed at position $a_i$ and every subsequent container is placed $d_i$ stacks to the right of the previous, i.e. at positions $a_i, a_i + d_i, \dots, a_i + (l_i - 1)d_i$. It is guaranteed that all $l_i$ containers can be placed in the $n$ stacks $(a_i + (l_i - 1)d_i \le N)$. Find the number of shipping containers in each of the $N$ stacks after all $K$ ships have been unloaded.
+
+\noindent
+Sub parts:
+\begin{enumerate}[label=\alph*)]
+    \item Solve this in time complexity $O(NK)$
+    \item Solve this in time complexity $O(N + K)$ if it given that $d_1 = d_2 = \dots = d_k$
+    \item Solve this in time complexity $O((N + K) \cdot \sqrt{N})$
+\end{enumerate}
+For clarification on time complexity and big $O$ notation, contact an invigilator.
+
+\textbf{[Answer to Ashish/Siddhant]}
+
+\hrulefill
+
+\section*{Question 3}
+$N$ people came to a birthday party. Then those, who had no friends among people at the party, left. Then those, who had exactly 1 friend among those who stayed, left as well. Then those, who had exactly $2, 3, \dots, N - 1$ friends among those who stayed by the moment of their leaving, did the same.
+
+Devise an algorithm to calculate the maximum possible people that could be left in the end.
+
+\textbf{[Answer to Vansh/Siddhant]}
+
+\hrulefill
+
+\section*{Question 4}
+
+\begin{enumerate}[label=\alph*)]
+    \item You are climbing a staircase with $N$ steps. At each step, you can either take 1 step or 2 steps at a time. Find the number of distinct ways to reach the top.
+
+    \item Now, you are given an additional option: You can also take a jump of exactly 3 steps at a time. However the jump of exactly 3 steps can only be taken if the previous jump wasn't also a 3 step jump Find the new number of ways to reach the top.
+
+    \item Consider a more general case where you have a staircase with $N$ steps, and at each step, you can take either 1, 2, or any of the first $K$ natural number steps. Find the number of distinct ways to reach the top. Note: there is no restriction on when you can take a certain like in the part $(b)$
+\end{enumerate}
+For all subtasks you are expected to find an algorithm which has a time complexity of $O(N)$. 
+For clarification on time complexity and big $O$ notation, contact an invigilator.
+
+\textbf{[Answer to Abheek/Vansh]}
+
+\hrulefill
+
+\section*{Question 5}
+
+There are $N$ slimes standing on a number line. The $i_{th}$ slime from the left is at position $X_i$. It is guaranteed that the positions of the slimes for a strictly increasing sequences, i.e. $1 \le X_1 < X_2 < \dots < X_N$.
+
+Gautam will perform $N - 1$ operations. The $i_{th}$ operation consists of the following procedures:
+\begin{itemize}
+    \item Choose an integer $k$ between 1 and $N - i$ (inclusive) with equal probability.
+    \item Move the $k_{th}$ slime from the left, to the position of the neighboring slime to the right.
+    \item Fuse the two slimes at the same position into one slime. 
+\end{itemize}
+
+Find the total distance traveled by the slimes multiplied by $(N - 1)!$.  If a slime is born by a fuse and that slime moves, we count it as just one slime.
+
+\noindent
+Sub parts:
+\begin{enumerate}[label=\alph*)]
+    \item Solve this in time complexity $O(N^2)$
+    \item Solve this in time complexity $O(N)$
+\end{enumerate}
+For clarification on time complexity and big $O$ notation, contact an invigilator.
+
+\textbf{[Answer to Gautam/Kanav]}
+
+\hrulefill
+
+\section*{Question 6}
+
+You are given $n$ numbers $a_1, a_2, \dots, a_n$. Find a value of $x$ that minimizes the sum
+\begin{center}
+    $\sum_1^n {|a_i - x|^c} = |a_1 - x|^c + |a_2 - x|^c + \dots + |a_n - x|^c$
+\end{center}
+
+Sub parts:
+\begin{enumerate}[label=\alph*)]
+    \item Solve this for the case where $c = 1$
+    \item Solve this for the case where $c = 2$
+    \item Solve this for the general case where $c \in \mathbb{N}$
+\end{enumerate}
+
+\textbf{[Answer to Gautam/Nikhil]}
+
+\hrulefill
+
+\begin{center}
+    Best of Luck
+\end{center}
+
+\end{document}

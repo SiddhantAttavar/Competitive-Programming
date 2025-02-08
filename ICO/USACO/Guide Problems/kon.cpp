@@ -9,8 +9,9 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << endl
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 
-long long v[100001];
-int dp[100001][300];
+const int N = 1e5 + 1, K = 320;
+int v[N];
+int dp[N][K];
 
 int32_t main() {
 	setup();
@@ -18,33 +19,32 @@ int32_t main() {
 	int n, q;
 	input(n, q);
 
-	int k = 300;
-
 	while (q--) {
 		int a, l, d;
 		input(a, l, d);
 
-		if (d >= k) {
+		if (d >= K) {
 			range(i, 0, l) {
-				v[a + (i * d)]++;
+				v[a + i * d]++;
 			}
 		}
 		else {
 			dp[a][d]++;
-			dp[a + (d * l)][d]--;
+			dp[a + d * l][d]--;
 		}
 	}
 
-	range(j, 1, k) {
-		range(i, j, n + 1) {
+	range(j, 1, K) {
+		range(i, 1, j + 1) {
+			v[i] += dp[i][j];
+		}
+		range(i, j + 1, n + 1) {
 			dp[i][j] += dp[i - j][j];
+			v[i] += dp[i][j];
 		}
 	}
 
 	range(i, 1, n + 1) {
-		range(j, 1, k) {
-			v[i] += dp[i][j];
-		}
 		cout << v[i] << ' ';
 	}
 }

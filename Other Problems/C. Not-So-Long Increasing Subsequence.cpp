@@ -17,33 +17,52 @@ const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
-        int n;
-        input(n);
+        int n, k;
+        input(n, k);
 
-        vector<int> l(n), r(n);
+        vector<int> a(n);
+        arrput(a);
+
+        vector<vector<int>> v;
         range(i, 0, n) {
-            input(l[i], r[i]);
+            int l = 0, r = v.size() - 1, x = v.size();
+            while (l <= r) {
+                int m = (l + r) / 2;
+                if (a[i] < a[v[m].back()]) {
+                    x = m;
+                    r = m - 1;
+                }
+                else {
+                    l = m + 1;
+                }
+            }
+
+            if (x == v.size()) {
+                v.push_back({});
+            }
+            v[x].push_back(i);
         }
 
-        vector<int> a(2 * n + 1, 0);
-        range(i, 0, n) {
-            if (l[i] == r[i]) {
-                a[l[i]]++;
-            }
+        sort(v.begin(), v.end(), [](vector<int> &a, vector<int> &b) {
+            return a.size() > b.size();
+        });
+
+        vector<int> l;
+        range(i, 0, min((k + 1) / 2, (int) v.size())) {
+            l.insert(l.end(), v[i].begin(), v[i].end());
         }
 
-        vector<int> b(2 * n + 1);
-        range(i, 1, 2 * n + 1) {
-            b[i] = b[i - 1] + (a[i] > 0);
+        if (l.size() < k) {
+            print("NO");
+            continue;
         }
-        range(i, 0, n) {
-            if (l[i] == r[i]) {
-                cout << (a[l[i]] == 1);
-            }
-            else {
-                cout << (b[r[i]] - b[l[i] - 1] < r[i] - l[i] + 1);
-            }
+
+        print("YES");
+        vector<int> res(k);
+        range(i, 0, k) {
+            res[i] = l[i] + 1;
         }
-        cout << endl;
+        sort(res.begin(), res.end());
+        arrprint(res);
     }
 }

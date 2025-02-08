@@ -22,5 +22,20 @@ int32_t main() {
 
         vector<int> a(n);
         arrput(a);
+
+        bool flag = false;
+        range(i, 1, a.size()) {
+            if (2 * a[i - 1] > a[i] and 2 * a[i] > a[i - 1]) {
+                flag = true;
+                break;
+            }
+        }
+
+        if (flag) {
+            print("YES");
+        }
+        else {
+            print("NO");
+        }
     }
 }
