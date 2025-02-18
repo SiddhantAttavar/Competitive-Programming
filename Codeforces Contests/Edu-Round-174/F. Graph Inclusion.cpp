@@ -17,27 +17,6 @@ const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
-        int n, m;
-        input(n, m);
-
-        vector<pair<pair<int, int>, int>> e(m);
-        range(i, 0, m) {
-            input(e[i].first.first, e[i].first.second, e[i].second);
-            e[i].first.first--;
-            e[i].first.second--;
-        }
-
-        vector<vector<vector<int>>> dp(n, vector<vector<int>>(n, vector<int>(n, 1e9)));
-        for (pair<pair<int, int>, int> p : e) {
-            dp[0][p.first.first][p.first.second] = p.second;
-        }
-        range(k, 1, n) {
-            range(u, 0, n - 1) {
-                for (pair<pair<int, int>, int> p : e) {
-                    if (p.second >= dp[k][])
-                    dp[0][p.first.first][p.first.second] = p.second;
-                }
-            }
-        }
+        
     }
 }

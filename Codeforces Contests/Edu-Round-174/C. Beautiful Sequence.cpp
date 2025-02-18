@@ -13,31 +13,46 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define arrprint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7; //998244353
+const int MOD = 998244353;
+
+int mod_pow(int a, int b) {
+    int res = 1;
+    while (b) {
+        if (b & 1) {
+            res = res * a % MOD;
+        }
+
+        a = a * a % MOD;
+        b >>= 1;
+    }
+    return res;
+}
 
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
-        int n, m;
-        input(n, m);
+        int n;
+        input(n);
 
-        vector<pair<pair<int, int>, int>> e(m);
-        range(i, 0, m) {
-            input(e[i].first.first, e[i].first.second, e[i].second);
-            e[i].first.first--;
-            e[i].first.second--;
+        vector<int> a(n);
+        arrput(a);
+
+        vector<int> p(n + 1, 0);
+        range(i, 0, n) {
+            p[i + 1] = p[i] + (a[i] == 2);
         }
 
-        vector<vector<vector<int>>> dp(n, vector<vector<int>>(n, vector<int>(n, 1e9)));
-        for (pair<pair<int, int>, int> p : e) {
-            dp[0][p.first.first][p.first.second] = p.second;
-        }
-        range(k, 1, n) {
-            range(u, 0, n - 1) {
-                for (pair<pair<int, int>, int> p : e) {
-                    if (p.second >= dp[k][])
-                    dp[0][p.first.first][p.first.second] = p.second;
-                }
+        int res = 0;
+        int x = 0, y = 0;
+        range(i, 0, n) {
+            if (a[i] == 1) {
+                x = (x + mod_pow(2, (MOD - 1 - p[i]) % MOD)) % MOD;
+                y++;
+            }
+            else if (a[i] == 3) {
+                res = (res + x * mod_pow(2, p[i])) % MOD;
+                res = (res - y + MOD) % MOD;
             }
         }
+        print(res);
     }
 }
