@@ -17,27 +17,14 @@ const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
-        int n;
-        input(n);
+        int x, y;
+        input(x, y);
 
-        vector<int> a(n);
-        arrput(a);
-
-        vector<int> p(n + 1, 0);
-        range(i, 0, n) {
-            p[i + 1] = p[i] ^ a[i];
+        if ((x + 1) >= y and (x + 1 - y) % 9 == 0) {
+            print("Yes");
         }
-
-        map<int, int> dp;
-        dp[0] = 1;
-        range(i, 0, n) {
-            dp[p[i]] = (3 * dp[p[i]] + 2 * dp[p[i + 1]]) % MOD;
+        else {
+            print("No");
         }
-
-        int res = 0;
-        for (pair<int, int> p : dp) {
-            res = (res + p.second) % MOD;
-        }
-        print(res);
     }
 }

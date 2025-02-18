@@ -24,56 +24,36 @@ int32_t main() {
         arrput(a);
 
         int res = 0;
-        range(i, 0, n) {
-            if (a[i] > 0) {
-                res++;
-            }
+        for (int i : a) {
+            res += i > 0;
         }
 
-        vector<int> d(n);
-        if (a[0] == 0) {
-            d[0] = 1e9;
-        }
-        else {
-            d[0] = a[0];
-        }
-        range(i, 1, n) {
-            if (a[i] == 0) {
-                d[i] = d[i - 1];
-            }
-            else {
-                d[i] = min(d[i - 1], a[i]);
-            }
-        }
-
-        bool flag = false;
         set<int> s;
-        int x = 1;
-        for (int i = n - 1; i >= 0; i--) {
-            if (a[i] > 0) {
-                s.insert(a[i]);
-                while (s.count(x)) {
-                    x++;
-                }
-                continue;
+        vector<int> v(n);
+        v[n - 1] = a[n - 1] == 0;
+        s.insert(a[n - 1]);
+        for (int i = n - 2; i >= 0; i--) {
+            v[i] = v[i + 1];
+            s.insert(a[i]);
+            while (s.count(v[i])) {
+                v[i]++;
             }
+        }
 
-            int l = i - 1;
-            while (l >= 0 and a[l] != 0 and d[l] >= x) {
-                s.insert(a[l]);
-                while (s.count(x)) {
-                    x++;
-                }
-                l--;
-            }
-
-            if (l < 0 or a[l] == 0) {
-                flag = true;
+        bool flag = true;
+        int x = 1e9;
+        range(i, 0, n) {
+            if (a[i] == 0) {
                 break;
             }
 
-            i = l + 1;
+            x = min(x, a[i]);
+            if (i == n - 1 or x < v[i + 1]) {
+                flag = false;
+                break;
+            }
         }
+
         print(res + flag);
     }
 }

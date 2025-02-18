@@ -20,23 +20,15 @@ int32_t main() {
         int n;
         input(n);
 
-        vector<int> a(n);
-        arrput(a);
-
-        vector<int> p(n + 1, 0);
-        range(i, 0, n) {
-            p[i + 1] = p[i] ^ a[i];
-        }
-
-        map<int, int> dp;
-        dp[0] = 1;
-        range(i, 0, n) {
-            dp[p[i]] = (3 * dp[p[i]] + 2 * dp[p[i + 1]]) % MOD;
-        }
-
-        int res = 0;
-        for (pair<int, int> p : dp) {
-            res = (res + p.second) % MOD;
+        int res = 7;
+        range(i, 0, 10) {
+            int x = n - i;
+            while (x) {
+                if (x % 10 <= 7 and 7 - x % 10 <= i) {
+                    res = min(res, (int) i);
+                }
+                x /= 10;
+            }
         }
         print(res);
     }

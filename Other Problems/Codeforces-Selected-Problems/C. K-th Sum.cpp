@@ -15,29 +15,37 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
-int32_t main() {
-    setup(); int tc; input(tc); while (tc--) {
-        int n;
-        input(n);
-
-        vector<int> a(n);
-        arrput(a);
-
-        vector<int> p(n + 1, 0);
-        range(i, 0, n) {
-            p[i + 1] = p[i] ^ a[i];
-        }
-
-        map<int, int> dp;
-        dp[0] = 1;
-        range(i, 0, n) {
-            dp[p[i]] = (3 * dp[p[i]] + 2 * dp[p[i + 1]]) % MOD;
-        }
-
-        int res = 0;
-        for (pair<int, int> p : dp) {
-            res = (res + p.second) % MOD;
-        }
-        print(res);
+int solve(vector<int> &a, vector<int> &b, int k) {
+    int res = 0;
+    for (int i : a) {
+        res += upper_bound(b.begin(), b.end(), k - i) - b.begin();
     }
+    return res;
+}
+
+int32_t main() {
+    setup();
+
+    int n, k;
+    input(n, k);
+
+    vector<int> a(n), b(n);
+    arrput(a);
+    arrput(b);
+
+    sort(a.begin(), a.end());
+    sort(b.begin(), b.end());
+
+    int l = 0, r = 2e9, res = -1;
+    while (l <= r) {
+        int m = (l + r) / 2;
+        if (solve(a, b, m) >= k) {
+            res = m;
+            r = m - 1;
+        }
+        else {
+            l = m + 1;
+        }
+    }
+    print(res);
 }

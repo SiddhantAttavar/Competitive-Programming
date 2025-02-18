@@ -23,21 +23,27 @@ int32_t main() {
         vector<int> a(n);
         arrput(a);
 
-        vector<int> p(n + 1, 0);
-        range(i, 0, n) {
-            p[i + 1] = p[i] ^ a[i];
+        vector<int> v(n, 0);
+        for (int i : a) {
+            v[i - 1]++;
         }
 
-        map<int, int> dp;
-        dp[0] = 1;
-        range(i, 0, n) {
-            dp[p[i]] = (3 * dp[p[i]] + 2 * dp[p[i + 1]]) % MOD;
+        bool flag = true;
+        range(i, 0, n - 1) {
+            if (v[i] == 1) {
+                flag = false;
+                break;
+            }
+            if (v[i] > 0) {
+                v[i + 1] += v[i] - 2;
+            }
         }
 
-        int res = 0;
-        for (pair<int, int> p : dp) {
-            res = (res + p.second) % MOD;
+        if (flag and v[n - 1] % 2 == 0) {
+            print("Yes");
         }
-        print(res);
+        else {
+            print("No");
+        }
     }
 }

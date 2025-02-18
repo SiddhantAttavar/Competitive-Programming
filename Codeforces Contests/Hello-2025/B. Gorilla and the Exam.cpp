@@ -17,26 +17,38 @@ const int MOD = (int) 1e9 + 7; //998244353
 
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
-        int n;
-        input(n);
+        int n, k;
+        input(n, k);
 
         vector<int> a(n);
         arrput(a);
 
-        vector<int> p(n + 1, 0);
-        range(i, 0, n) {
-            p[i + 1] = p[i] ^ a[i];
+        if (k == n) {
+            print(1);
+            continue;
         }
 
-        map<int, int> dp;
-        dp[0] = 1;
-        range(i, 0, n) {
-            dp[p[i]] = (3 * dp[p[i]] + 2 * dp[p[i + 1]]) % MOD;
+        map<int, int> m;
+        for (int i : a) {
+            m[i]++;
         }
 
-        int res = 0;
-        for (pair<int, int> p : dp) {
-            res = (res + p.second) % MOD;
+        vector<int> v;
+        for (pair<int, int> p : m) {
+            v.push_back(p.second);
+        }
+        sort(v.begin(), v.end());
+
+        int x = 0;
+        int res = v.size();
+        range(i, 0, v.size()) {
+            if (x + v[i] <= k) {
+                x += v[i];
+            }
+            else {
+                res -= i;
+                break;
+            }
         }
         print(res);
     }
