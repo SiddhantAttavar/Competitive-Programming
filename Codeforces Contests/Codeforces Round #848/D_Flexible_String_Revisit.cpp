@@ -12,28 +12,20 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 
 int m = 998244353;
 
-int modPow(int a, int b) {
-	int x = a;
+int mod_pow(int a, int b) {
+	int res = 1;
 	while (b) {
 		if (b & 1) {
-			a = (a * x) % m;
+			res = res * a % m;
 		}
-		x = (x * x) % m;
+		a = a * a % m;
 		b /= 2;
 	}
-	return a;
+	return res;
 }
 
-int modInv(int a) {
-	return modPow(a, m - 2);
-}
-
-int modDiv(int a, int b) {
-	return (a * modInv(b)) % m;
-}
-
-int solve(int c, int n) {
-	return modDiv(solve(c - 1, n) * c + solve(c + 1, n) * (n - c) + n, n);
+int mod_div(int a, int b) {
+	return (a * mod_pow(b, m - 2)) % m;
 }
 
 int32_t main() {
@@ -44,11 +36,21 @@ int32_t main() {
 		string a, b;
 		input(a, b);
 
+		vector<int> x(n);
+		x[0] = 1;
+		range(i, 1, n) {
+			x[i] = mod_div((n + i * x[i - 1]) % m, n - i);
+		}
+
 		int c = 0;
 		range(i, 0, n) {
 			c += a[i] != b[i];
 		}
 
-		print(solve(c, n));
+		int res = 0;
+		range(i, n - c, n) {
+			res = (res + x[i]) % m;
+		}
+		print(res);
 	}
 }

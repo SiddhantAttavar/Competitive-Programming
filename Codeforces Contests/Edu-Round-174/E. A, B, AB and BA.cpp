@@ -15,40 +15,32 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
-bool f(string s, int i, int a, int b, int c, int d, int x) {
-    if (i >= s.size()) {
-        return true;
+bool solve(int x, int y, int z, int a, int c, int d) {
+    if (y <= c) {
+        c -= y;
     }
-
-    if (s[i] == 'A') {
-        if (i == s.size() - 1 or s[i + 1] == 'A') {
-            return a > 0 and f(s, i + 1, a - 1, b, c, d, x);
+    else {
+        y -= c;
+        a -= y;
+        c = 0;
+        if (a < 0) {
+            return false;
         }
+    }
 
-        if (c > 0 and f(s, i + 2, a, b, c - 1, d, x)) {
-            return true;
+    if (z <= d) {
+        d -= z;
+    }
+    else {
+        z -= d;
+        a -= z;
+        d = 0;
+        if (a < 0) {
+            return false;
         }
-
-        if (c == 0 and a > 0 and b > 0 and f(s, i + 2, a - 1, b - 1, c, d, x)) {
-            return true;
-        }
-
-        return a > 0 and x > 0 and f(s, i + 1, a - 1, b, c, d, x - 1);
     }
 
-    if (i == s.size() - 1 or s[i + 1] == 'B') {
-        return b > 0 and f(s, i + 1, a, b - 1, c, d, x);
-    }
-
-    if (d > 0 and f(s, i + 2, a, b, c, d - 1, x)) {
-        return true;
-    }
-
-    if (d == 0 and a > 0 and b > 0 and f(s, i + 2, a - 1, b - 1, c, d, x)) {
-        return true;
-    }
-
-    return b > 0 and x > 0 and f(s, i + 1, a, b - 1, c, d, x - 1);
+    return a + c + d >= x;
 }
 
 int32_t main() {
@@ -59,7 +51,65 @@ int32_t main() {
         int a, b, c, d;
         input(a, b, c, d);
 
-        if (f(s, 0, a, b, c, d, 2)) {
+        vector<pair<char, int>> v = {{s[0], 1}};
+        range(i, 1, s.size()) {
+            if (s[i] == s[i - 1]) {
+                v.push_back({s[i], 1});
+            }
+            else {
+                v.back().second++;
+            }
+        }
+
+        vector<int> p, q;
+        int x = 0, y = 0, z = 0;
+        for (pair<char, int> i : v) {
+            if (i.second % 2 == 1) {
+                if (i.first == 'A') {
+                    a--;
+                }
+                else {
+                    b--;
+                }
+                x += (i.second - 1) / 2;
+            }
+            else {
+                if (i.first == 'A') {
+                    p.push_back(i.second / 2);
+                    y += i.second / 2;
+                }
+                else {
+                    q.push_back(i.second / 2);
+                    z += i.second / 2;
+                }
+            }
+        }
+        a = min(a, b);
+
+        if (a < 0) {
+            print("NO");
+            continue;
+        }
+
+        bool res = solve(x, y, z, a, c, d);
+        sort(p.begin(), p.end());
+        reverse(p.begin(), p.end());
+        sort(q.begin(), q.end());
+        reverse(q.begin(), q.end());
+
+        int t = 0;
+        range(i, 0, min({a, b, (int) p.size()})) {
+            t += p[i];
+            res |= solve(x + t - i - 1, y - t, z, a - i - 1, c, d);
+        }
+
+        t = 0;
+        range(i, 0, min({a, b, (int) q.size()})) {
+            t += q[i];
+            res |= solve(x + t - i - 1, y, z - t, a - i - 1, c, d);
+        }
+
+        if (res) {
             print("YES");
         }
         else {
