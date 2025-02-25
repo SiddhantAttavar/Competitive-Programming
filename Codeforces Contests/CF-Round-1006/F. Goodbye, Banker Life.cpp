@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp> 
+#include <ext/pb_ds/tree_policy.hpp> 
+using namespace std;
+using namespace __gnu_pbds; 
+template<typename T> inline void input(T& inVar) {cin >> inVar;}
+template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
+template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
+template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
+#define int long long
+#define rep(it, start, end) for (auto it = start; it < end; it++)
+#define arrput(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrprint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+const int MOD = (int) 1e9 + 7; //998244353;
+
+int32_t main() {
+    int N = 1e6;
+    vector<int> dp(N + 1, 0);
+    rep(i, 1, N + 1) {
+        dp[i] = dp[i - 1];
+        int o = i;
+        while (o % 2 == 0) {
+            o >>= 1;
+            dp[i]++;
+        }
+    }
+
+    setup(); int tc; input(tc); while (tc--) {
+        int n, k;
+        input(n, k);
+
+        n--;
+        rep(i, 0, n + 1) {
+            if (dp[n] > dp[i] + dp[n - i]) {
+                cout << "0 ";
+            }
+            else {
+                cout << k << ' ';
+            }
+        }
+        cout << endl;
+    }
+}
