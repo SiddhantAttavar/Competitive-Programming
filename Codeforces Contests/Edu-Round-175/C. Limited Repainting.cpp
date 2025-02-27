@@ -15,15 +15,48 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+int solve(int m, vector<int> &a, string &s) {
+    bool flag = false;
+    int n = s.size();
+    int res = 0;
+    rep(i, 0, n) {
+        if (a[i] <= m) {
+            continue;
+        }
+
+        if (s[i] == 'R' and flag) {
+            flag = false;
+        }
+        else if (s[i] == 'B' and !flag) {
+            flag = true;
+            res++;
+        }
+    }
+    return res;
+}
+
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
         int n, k;
         input(n, k);
 
-        n--;
-        rep(i, 0, n + 1) {
-            cout << ((n & i) == i) * k << ' ';
+        string s;
+        input(s);
+
+        vector<int> a(n);
+        arrput(a);
+
+        int l = 0, r = 1e9, res = 1e9;
+        while (l <= r) {
+            int m = (l + r) / 2;
+            if (solve(m, a, s) <= k) {
+                res = m;
+                r = m - 1;
+            }
+            else {
+                l = m + 1;
+            }
         }
-        cout << endl;
+        print(res);
     }
 }

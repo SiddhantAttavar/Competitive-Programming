@@ -12,18 +12,28 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define arrput(var) for (auto &inVar : var) {cin >> inVar;}
 #define arrprint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+#define ordered_set tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-    setup(); int tc; input(tc); while (tc--) {
-        int n, k;
-        input(n, k);
+    setup();
+    int n;
+    input(n);
 
-        n--;
-        rep(i, 0, n + 1) {
-            cout << ((n & i) == i) * k << ' ';
-        }
-        cout << endl;
+    string s;
+    input(s);
+
+    ordered_set o;
+    map<int, int> m;
+    int p = 0, res = 0;
+    rep(i, 0, n) {
+        int q = p + (s[i] == '1');
+        res += o.order_of_key(i - 4 * q) + m[i - 4 * q + 2];
+        // print(i, o.order_of_key(i - 4 * q) + m[i - 4 * q + 2], i - 4 * p);
+        // arrprint(o);
+        m[i - 4 * p]++;
+        o.insert(i - 4 * p);
+        p = q;
     }
+    print(res);
 }

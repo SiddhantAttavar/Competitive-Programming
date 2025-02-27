@@ -17,13 +17,18 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
-        int n, k;
-        input(n, k);
+        int n, m;
+        input(n, m);
 
-        n--;
-        rep(i, 0, n + 1) {
-            cout << ((n & i) == i) * k << ' ';
+        vector<string> v(m);
+        arrput(v);
+
+        vector<int> a(n);
+        arrput(a);
+
+        int z = 0;
+        rep(i, 0, n) {
+            z |= (a[i] & 1) << i;
         }
-        cout << endl;
     }
 }

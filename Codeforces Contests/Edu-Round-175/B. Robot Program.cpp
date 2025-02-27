@@ -17,13 +17,51 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
     setup(); int tc; input(tc); while (tc--) {
-        int n, k;
-        input(n, k);
+        int n, x, k;
+        input(n, x, k);
 
-        n--;
-        rep(i, 0, n + 1) {
-            cout << ((n & i) == i) * k << ' ';
+        string s;
+        input(s);
+
+        int j = -1;
+        rep(i, 0, n) {
+            if (s[i] == 'L') {
+                x--;
+            }
+            else {
+                x++;
+            }
+            if (x == 0) {
+                j = i;
+                break;
+            }
         }
-        cout << endl;
+
+        if (j == -1 or j >= k) {
+            print(0);
+            continue;
+        }
+
+        k -= j + 1;
+        j = -1;
+        rep(i, 0, n) {
+            if (s[i] == 'L') {
+                x--;
+            }
+            else {
+                x++;
+            }
+            if (x == 0) {
+                j = i;
+                break;
+            }
+        }
+
+        if (j == -1) {
+            print(1);
+        }
+        else {
+            print(1 + k / (j + 1));
+        }
     }
 }
