@@ -15,62 +15,70 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
 
-#define ll int
-#define all(x) begin(x), end(x)
+map<int, vector<int>> fact;
+vector<int> primes;
+const int N = 1e6;
+int spf[N + 1];
 
-typedef unsigned long long ull;
-ull modmul(ull a, ull b, ull M) {
-	ll ret = a * b - M * ull(1.L / M * a * b);
-	return ret + M * (ret < 0) - M * (ret >= (ll)M);
+vector<int> factor(int n) {
+    if (fact.count(n)) {
+        return fact[n];
+    }
+    int o = n;
+
+    if (n <= N) {
+        map<int, int> m;
+        while (n > 1) {
+            m[spf[n]]++;
+            n /= spf[n];
+        }
+
+        vector<int> v = {1};
+        for (pair<int, int> p : m) {
+            vector<int> nv(v.begin(), v.end());
+            int z = 1;
+            rep(i, 0, p.second) {
+                z *= p.first;
+                for (int j : v) {
+                    nv.push_back(j * z);
+                }
+            }
+            v = nv;
+        }
+        return fact[o] = v;
+    }
+
+    map<int, int> m;
+    for (int i : primes) {
+        if (i > n) {
+            break;
+        }
+
+        while (n % i == 0) {
+            m[i]++;
+            n /= i;
+        }
+    }
+    if (n > 1) {
+        m[n]++;
+    }
+
+    vector<int> v = {1};
+    for (pair<int, int> p : m) {
+        vector<int> nv(v.begin(), v.end());
+        int z = 1;
+        rep(i, 0, p.second) {
+            z *= p.first;
+            for (int j : v) {
+                nv.push_back(j * z);
+            }
+        }
+        v = nv;
+    }
+    return fact[o] = v;
 }
 
-ull modpow(ull b, ull e, ull mod) {
-	ull ans = 1;
-	for (; e; b = modmul(b, b, mod), e /= 2)
-		if (e & 1) ans = modmul(ans, b, mod);
-	return ans;
-}
-
-bool isPrime(ull n) {
-	if (n < 2 || n % 6 % 4 != 1) return (n | 1) == 3;
-	ull A[] = {2, 325, 9375, 28178, 450775, 9780504, 1795265022},
-	    s = __builtin_ctzll(n-1), d = n >> s;
-	for (ull a : A) {   // ^ count trailing zeroes
-		ull p = modpow(a%n, d, n), i = s;
-		while (p != 1 && p != n - 1 && a % n && i--)
-			p = modmul(p, p, n);
-		if (p != n-1 && i != s) return 0;
-	}
-	return 1;
-}
-
-ull pollard(ull n) {
-	ull x = 0, y = 0, t = 30, prd = 2, i = 1, q;
-	auto f = [&](ull x) { return modmul(x, x, n) + i; };
-	while (t++ % 40 || __gcd(prd, n) == 1) {
-		if (x == y) x = ++i, y = f(x);
-		if ((q = modmul(prd, max(x,y) - min(x,y), n))) prd = q;
-		x = f(x), y = f(f(y));
-	}
-	return __gcd(prd, n);
-}
-vector<ull> factor(ull n) {
-	if (n == 1) return {};
-	if (isPrime(n)) return {n};
-	ull x = pollard(n);
-	auto l = factor(x), r = factor(n / x);
-	l.insert(l.end(), all(r));
-	return l;
-}
-int32_t main() {
-    setup();
-
-    int n;
-    input(n);
-
-    vector<int> a(n);
-    arrput(a);
-
+int solve(vector<int> &a) {
     map<int, int> m;
     for (int i : a) {
         m[i]++;
@@ -78,33 +86,80 @@ int32_t main() {
 
     map<int, int> dp;
     for (pair<int, int> p : m) {
-        vector<ull> l = factor(p.first);
-        map<int, int> s;
-        for (ull i : l) {
-            s[i]++;
-        }
-        set<int> r = {1};
-        for (pair<int, int> q : s) {
-            int z = 1;
-            set<int> t(r.begin(), r.end());
-            rep(i, 0, q.second) {
-                z *= q.first;
-                for (int j : r) {
-                    t.insert(z * j);
-                }
-            }
-            r = t;
-        }
-        for (int i : r) {
+        for (int i : factor(p.first)) {
             dp[i] += p.second;
         }
     }
 
-    int res = 1;
+    int res = -1;
     for (pair<int, int> p : dp) {
-        if (2 * p.second >= n) {
+        if (2 * p.second >= a.size()) {
             res = p.first;
         }
     }
+    return res;
+}
+
+bool check(vector<int> &a, int x) {
+    if (x == -1) {
+        return false;
+    }
+    int c = 0;
+    for (int i : a) {
+        c += i % x == 0;
+    }
+    return 2 * c >= a.size();
+}
+
+int32_t main() {
+    setup();
+
+    rep(i, 0, N + 1) {
+        spf[i] = i;
+    }
+
+    rep(i, 2, N + 1) {
+        if (spf[i] != i) {
+            continue;
+        }
+
+        primes.push_back(i);
+        for (int j = i; j <= N; j += i) {
+            if (spf[j] == j) {
+                spf[j] = i;
+            }
+        }
+    }
+
+    int n;
+    input(n);
+
+    vector<int> a(n);
+    arrput(a);
+
+    int k = 100, l = 10000;
+    if (a.size() <= k) {
+        print(solve(a));
+        return 0;
+    }
+
+    mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+    int x = -1, y = 10;
+    int res = 0;
+    while(y > 0) {
+        vector<int> b(k), c(l);
+        rep(i, 0, k) {
+            b[i] = a[rng() % n];
+        }
+        rep(i, 0, l) {
+            c[i] = a[rng() % n];
+        }
+        x = solve(b);
+        if (check(c, x)) {
+            res = max(res, x);
+            y--;
+        }
+    }
     print(res);
+
 }

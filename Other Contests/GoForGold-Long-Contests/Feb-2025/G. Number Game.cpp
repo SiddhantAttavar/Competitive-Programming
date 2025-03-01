@@ -84,21 +84,5 @@ int32_t main() {
     int n;
     input(n);
 
-    print(modLog(42, 960002411612632915, MOD));
-    return 0;
-
-    int m = MOD;
-    int o = 960002411612632915;
-    int x = o;
-    int c = 0;
-    int k = 42;
-    do {
-        if (c % 1000000 == 0) {
-            print(c, x);
-            cout.flush();
-        }
-        x = mod_pow(k, x, m);
-        c++;
-    } while (x != o);
-    print(c);
+    print(mod_pow(42, MOD - 2, MOD));
 }
