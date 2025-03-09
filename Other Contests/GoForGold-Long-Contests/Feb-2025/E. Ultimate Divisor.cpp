@@ -20,30 +20,75 @@ mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 int32_t main() {
     setup();
 
+    int N = 1e6;
+    vector<int> p;
+    vector<int> spf(N + 1);
+    rep(i, 0, N + 1) {
+        spf[i] = i;
+    }
+    rep(i, 2, N + 1) {
+        if (spf[i] != i) {
+            continue;
+        }
+
+        p.push_back(i);
+        for (int j = i; j <= N; j += i) {
+            if (spf[j] == j) {
+                spf[j] = i;
+            }
+        }
+    }
+
     int n;
     input(n);
 
     vector<int> a(n);
     arrput(a);
 
-    int res = 0;
-    rep(i, 0, 10) {
+    int res = 1;
+    rep(i, 0, 8) {
         int x = a[rng() % n];
+
+        if (x <= res) {
+            continue;
+        }
+
+        map<int, int> s;
+        int o = x;
+        for (int j : p) {
+            while (o % j == 0) {
+                o /= j;
+                s[j]++;
+            }
+        }
+        if (o > 1) {
+            s[o] = 1;
+        }
+
+        vector<int> v = {1};
+        for (pair<int, int> p : s) {
+            int z = 1;
+            vector<int> l(v.begin(), v.end());
+            rep(j, 0, p.second) {
+                z *= p.first;
+                for (int k : v) {
+                    l.push_back(k * z);
+                }
+            }
+            v = l;
+        }
 
         map<int, int> m;
         for (int j : a) {
             m[__gcd(j, x)]++;
         }
 
-        vector<int> v;
-        for (int j = 1; j * j <= x; j++) {
-            if (x % j == 0) {
-                v.push_back(j);
-                v.push_back(x / j);
-            }
-        }
-
+        sort(v.begin(), v.end());
+        reverse(v.begin(), v.end());
         for (int j : v) {
+            if (j <= res) {
+                break;
+            }
             int c = 0;
             for (pair<int, int> p : m) {
                 if (p.first % j == 0) {
@@ -52,6 +97,7 @@ int32_t main() {
             }
             if (2 * c >= n) {
                 res = max(res, j);
+                break;
             }
         }
     }
