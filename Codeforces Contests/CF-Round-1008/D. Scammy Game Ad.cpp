@@ -16,61 +16,57 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-    setup(); int tc; input(tc); while (tc--) {
-        int n;
-        input(n);
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
-        vector<pair<int, bool>> a(n), b(n);
-        rep(i, 0, n) {
-            char c, d;
-            int x, y;
-            input(c, x, d, y);
+		vector<pair<bool, int>> a(n), b(n);
+		rep(i, 0, n) {
+			char c, d;
+			int x, y;
+			input(c, x, d, y);
 
-            a[i] = {c == '+', x};
-            b[i] = {d == '+', y};
-        }
+			a[i] = {c == '+', x};
+			b[i] = {d == '+', y};
+		}
 
-        int p = 1, q = 1;
-        rep(i, 0, n) {
-            if (!a[i].first) {
-                p *= a[i].second;
-            }
-            if (!b[i].first) {
-                q *= b[i].second;
-            }
-        }
-
-        int x = 1, y = 1;
-        rep(i, 0, n) {
-            int z = 0;
-            if (a[i].first) {
-                z += a[i].second;
-            }
-            else {
-                z += (a[i].second - 1) * x;
+		vector<int> f(n + 1, 1), g(n + 1, 1);
+		for (int i = n - 1; i >= 0; i--) {
+            f[i] = f[i + 1];
+			if (!a[i].first) {
+                f[i] += (a[i].second - 1) * max(f[i + 1], g[i + 1]);
             }
 
-            if (b[i].first) {
-                z += b[i].second;
-            }
-            else {
-                z += (b[i].second - 1) * y;
-            }
+            g[i] = g[i + 1];
+			if (!b[i].first) {
+                g[i] += (b[i].second - 1) * max(f[i + 1], g[i + 1]);
+			}
+		}
 
-            if (!a[i].first) {
-                p /= a[i].second;
-            }
-            if (!b[i].first) {
-                q /= b[i].second;
-            }
+		int x = 1, y = 1;
+		rep(i, 0, n) {
+			int z = 0;
+			if (a[i].first) {
+				z += a[i].second;
+			}
+			else {
+				z += (a[i].second - 1) * x;
+			}
 
-            if (p > q) {
-                x += z;
-            }
-            else {
-                y += z;
-            }
-        }
-        print(x + y);
-    }
+			if (b[i].first) {
+				z += b[i].second;
+			}
+			else {
+				z += (b[i].second - 1) * y;
+			}
+
+			if (f[i + 1] > g[i + 1]) {
+				x += z;
+			}
+			else {
+				y += z;
+			}
+		}
+		print(x + y);
+	}
 }

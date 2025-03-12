@@ -16,63 +16,48 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-    int tc; input(tc); while (tc--) {
-        print(0);
-        cout.flush();
+    int x = 0;
+    for (int i = 0; i < 30; i += 2) {
+        x |= 1 << i;
+    }
 
-        int x;
-        input(x);
+	int tc; input(tc); while (tc--) {
         print(x);
         cout.flush();
+        int a, b;
+        input(a);
 
-        int y;
-        input(y);
+        print(x * 2);
+        cout.flush();
+        input(b);
 
-        vector<int> v(30, 0);
-        bool flag = x >> 30 & 1;
-        for (int i = 29; i >= 0; i--) {
-            if ((1 << i) & x) {
-                if (flag) {
-                    v[i] = 2;
-                    flag = true;
-                }
-                else {
-                    if ((y - x) >= (1 << i)) {
-                        v[i] = 0;
-                        flag = true;
-                    }
-                    else {
-                        v[i] = 1;
-                        flag = false;
-                    }
-                }
-                x -= 1 << i;
-                y -= (2 - v[i]) * (1 << i);
+        vector<int> v(30);
+        rep(i, 1, 30) {
+            if (i % 2 == 1) {
+                v[i] = (a >> i & 3) - 1;
             }
             else {
-                if (flag) {
-                    if ((y - x) >= (1 << i)) {
-                        v[i] = 1;
-                        flag = true;
-                    }
-                    else {
-                        v[i] = 2;
-                        flag = false;
-                    }
-                }
-                else {
-                    v[i] = 0;
-                    flag = false;
-                }
+                v[i] = (b >> i & 3) - 1;
             }
-            print(v[i], i, flag, y);
         }
+        v[0] = b & 3;
 
         print('!');
         cout.flush();
 
         int m;
         input(m);
-        arrprint(v);
-    }
+
+        int res = 0;
+        rep(i, 0, 30) {
+            if ((1 << i) & m) {
+                res += 2 << i;
+            }
+            else {
+                res += v[i] << i;
+            }
+        }
+        print(res);
+        cout.flush();
+	}
 }
