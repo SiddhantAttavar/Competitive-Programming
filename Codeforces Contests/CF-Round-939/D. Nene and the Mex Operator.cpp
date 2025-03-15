@@ -8,83 +8,122 @@ template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin
 template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
 template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
 #define int long long
-#define range(it, start, end) for (auto it = start; it < end; it++)
-#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+#define rep(it, start, end) for (auto it = start; it < end; it++)
+#define arrput(var) for (auto &inVar : var) {cin >> inVar;}
+#define arrprint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7;
+const int MOD = (int) 1e9 + 7; //998244353;
 
-void solve(vector<int> &a, int i, vector<pair<int, int>> &res, int l) {
-	if (i == l) {
+void get(int l, int r, vector<vector<int>> &dp, vector<int> &a, vector<pair<int, int>> &v) {
+	int x = r - l + 1;
+	if (x == 1 or dp[l][r] == x * x) {
+		v.push_back({l, r});
 		return;
 	}
 
-	solve(a, i - 1, res, l);
-	if (a[i] == i - l - 1) {
+	rep(s, l, r) {
+		if (dp[l][r] == dp[l][s] + dp[s + 1][r]) {
+			get(l, s, dp, a, v);
+			get(s + 1, r, dp, a, v);
+			return;
+		}
+	}
+}
+
+void solve(int l, int r, int k, vector<pair<int, int>> &res) {
+	if (k == 0) {
 		return;
 	}
 
-	a[i] = i - l - 1;
-	res.push_back({l + 2, i + 1});
-	solve(a, i - 1, res, l);
+	solve(l, r, k - 1, res);
+	res.push_back({l, r});
+	res.push_back({l, r - 1});
+	solve(l, r - 1, k - 1, res);
+}
+
+int check(vector<int> &a, vector<pair<int, int>> &res) {
+	// print("");
+	for (pair<int, int> p : res) {
+		int l, r;
+		tie(l, r) = p;
+
+		set<int> s(a.begin() + l, a.begin() + r + 1);
+		int x = 0;
+		while (s.count(x)) {
+			x++;
+		}
+		// arrprint(s);
+		// print(x, l, r);
+
+		rep(i, l, r + 1) {
+			a[i] = x;
+		}
+		// arrprint(a);
+	}
+	return accumulate(a.begin(), a.end(), 0ll);
 }
 
 int32_t main() {
 	setup();
+
 	int n;
 	input(n);
 
 	vector<int> a(n);
-	arrPut(a);
+	arrput(a);
 
-	int res = 0, m = 0;
-	range(i, 0, 1 << n) {
-		int x = 0, c = 0;
-		range(j, 0, n) {
-			if ((1 << j) & i) {
-				c++;
+	vector<vector<int>> dp(n, vector<int>(n));
+	rep(i, 0, n) {
+		dp[i][i] = max(1ll, a[i]);
+	}
+	rep(i, 0, n - 1) {
+		dp[i][i + 1] = max(4ll, a[i] + a[i + 1]);
+	}
+	rep(l, 2, n + 1) {
+		rep(i, 0, n - l + 1) {
+			int j = i + l - 1;
+			dp[i][j] = l * l;
+			rep(k, i, j) {
+				dp[i][j] = max(dp[i][j], dp[i][k] + dp[k + 1][j]);
 			}
-			else {
-				x += c * c + a[j];
-				c = 0;
-			}
-		}
-		x += c * c;
-
-		if (x > res) {
-			res = x;
-			m = i;
 		}
 	}
 
-	vector<pair<int, int>> l;
-	int c = 0;
-	range(j, 0, n) {
-		if ((1 << j) & m) {
-			c++;
+	// rep(i, 0, n) {
+	// 	arrprint(dp[i]);
+	// }
+	// cout.flush();
+
+	vector<pair<int, int>> v;
+	get(0, n - 1, dp, a, v);
+
+	vector<pair<int, int>> res;
+	for (pair<int, int> p : v) {
+		int l, r;
+		tie(l, r) = p;
+
+		int k = r - l + 1;
+		if (accumulate(a.begin() + l, a.begin() + r + 1, 0ll) >= k * k) {
+			continue;
 		}
-		else {
-			if (c) {
-				solve(a, j - 1, l, j - 1 - c);
-				l.push_back({j - c + 1, j});
-				range(i, j - c, j) {
-					a[i] = c;
-				}
-			}
-			c = 0;
+
+		res.push_back({l, r});
+		if (*min_element(a.begin() + l, a.begin() + r + 1) == 0) {
+			res.push_back({l, r});
 		}
-	}
-	if (c) {
-		solve(a, n - 1, l, n - 1 - c);
-		l.push_back({n - c + 1, n});
-		range(i, n - c, n) {
-			a[i] = c;
-		}
+
+		solve(l, r, k - 1, res);
+		res.push_back({l, r});
 	}
 
-	print(res, l.size());
-	for (pair<int, int> p : l) {
-		print(p.first, p.second);
+	print(dp[0][n - 1], res.size());
+	for (pair<int, int> p : res) {
+		print(p.first + 1, p.second + 1);
 	}
+
+	// vector<int> b(a.begin(), a.end());
+	// print(check(b, res), dp[0][n - 1]);
+	// cout.flush();
+	assert(check(a, res) == dp[0][n - 1]);
 }

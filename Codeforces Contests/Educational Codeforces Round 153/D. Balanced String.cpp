@@ -30,28 +30,15 @@ int32_t main() {
 		}
 	}
 
-	vector<int> m;
+	vector<int> p, q;
 	range(i, 0, n) {
-		range(j, i + 1, n) {
-			if (s[i] == '0' and s[j] == '1') {
-				m.push_back(j - i);
-			}
-			else if (s[i] == '1' and s[j] == '0') {
-				m.push_back(i - j);
-			}
+		if (s[i] == '0') {
+			p.push_back(i);
+		}
+		else {
+			q.push_back(i);
 		}
 	}
 
-	vector<vector<int>> dp(m.size() + 1, vector<int>(6000, 1e15));
-	dp[0][3000] = 0;
-	range(i, 1, (int) m.size() + 1) {
-		range(j, 0, 6000) {
-			dp[i][j] = dp[i - 1][j];
-		}
-		range(j, max(0ll, m[i - 1]), min(6000ll, 6000 + m[i - 1])) {
-			dp[i][j] = min(dp[i][j], dp[i][j - m[i - 1]] + 1);
-		}
-	}
-
-	print(dp[m.size()][3000 + y - x]);
+	vector<int> dp(n * n);
 }
