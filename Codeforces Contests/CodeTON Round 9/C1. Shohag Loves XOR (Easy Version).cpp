@@ -16,44 +16,15 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int x, m;
+		input(x, m);
 
-	int n;
-	input(n);
-
-	int x = n * (n + 1) / 2;
-	if (x & 1) {
-		print("NO");
-		return 0;
-	}
-	x >>= 1;
-
-	set<int> s;
-	for (int i = n; i > 0; i--) {
-		if (x >= i) {
-			x -= i;
-			s.insert(i);
+		int res = 0;
+		rep(z, 1, x) {
+			int y = x ^ z;
+			res += (x % z == 0 or y % z == 0) and y <= m;
 		}
+		print(res);
 	}
-
-	if (x) {
-		print("NO");
-		return 0;
-	}
-
-	vector<int> a, b;
-	rep(i, 1, n + 1) {
-		if (s.count(i)) {
-			a.push_back(i);
-		}
-		else {
-			b.push_back(i);
-		}
-	}
-
-	print("YES");
-	print(a.size());
-	arrprint(a);
-	print(b.size());
-	arrprint(b);
 }

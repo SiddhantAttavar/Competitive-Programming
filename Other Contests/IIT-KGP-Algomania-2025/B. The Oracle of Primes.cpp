@@ -16,44 +16,22 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup();
+	vector<int> p;
+	int N = 2e5;
+	vector<bool> seive(N + 1, true);
+	rep(i, 2, N + 1) {
+		if (!seive[i]) {
+			continue;
+		}
 
-	int n;
-	input(n);
-
-	int x = n * (n + 1) / 2;
-	if (x & 1) {
-		print("NO");
-		return 0;
-	}
-	x >>= 1;
-
-	set<int> s;
-	for (int i = n; i > 0; i--) {
-		if (x >= i) {
-			x -= i;
-			s.insert(i);
+		p.push_back(i);
+		for (int j = i; j <= N; j += i) {
+			seive[j] = false;
 		}
 	}
-
-	if (x) {
-		print("NO");
-		return 0;
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
+		print(*lower_bound(p.begin(), p.end(), n));
 	}
-
-	vector<int> a, b;
-	rep(i, 1, n + 1) {
-		if (s.count(i)) {
-			a.push_back(i);
-		}
-		else {
-			b.push_back(i);
-		}
-	}
-
-	print("YES");
-	print(a.size());
-	arrprint(a);
-	print(b.size());
-	arrprint(b);
 }

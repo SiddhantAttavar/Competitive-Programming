@@ -13,47 +13,59 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define arrprint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7; //998244353;
+const int MOD = 998244353;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
-	int n;
-	input(n);
-
-	int x = n * (n + 1) / 2;
-	if (x & 1) {
-		print("NO");
-		return 0;
-	}
-	x >>= 1;
-
-	set<int> s;
-	for (int i = n; i > 0; i--) {
-		if (x >= i) {
-			x -= i;
-			s.insert(i);
+		if (n == 2) {
+			print(1);
+			continue;
 		}
-	}
 
-	if (x) {
-		print("NO");
-		return 0;
-	}
-
-	vector<int> a, b;
-	rep(i, 1, n + 1) {
-		if (s.count(i)) {
-			a.push_back(i);
+		vector<vector<int>> dp(n + 2, vector<int>(n * n + 1));
+		int p = n * (n - 1) / 2 - 3;
+		if (n == 2) {
+			p = 0;
 		}
-		else {
-			b.push_back(i);
+		else if (n == 3) {
+			p = 1;
 		}
-	}
+		rep(i, 1, p + 1) {
+			dp[n][i] = 1;
+		}
+		for (int l = n - 1; l > 0; l--) {
+			rep(x, 1, n * n + 1) {
+				rep(j, 0, l) {
+					if (x + j <= n * n) {
+						dp[l][x] += dp[l + 1][x + j];
+					}
+				}
+				dp[l][x] %= MOD;
+			}
+		}
+		rep(i, 1, n + 1) {
+			arrprint(dp[i]);
+		}
 
-	print("YES");
-	print(a.size());
-	arrprint(a);
-	print(b.size());
-	arrprint(b);
+		int res = 1;
+		rep(x, 2, n + 1) {
+			rep(y, 2, n - x + 1) {
+				rep(z, 0, n - (x + y) + 1) {
+					res += dp[x + y + z][y];
+				}
+			}
+		}
+		rep(x, 1, n + 1) {
+			rep(y, 2, n - x + 1) {
+				rep(z, 0, n - (x + y) + 1) {
+					res += dp[x + y + z][y];
+				}
+			}
+		}
+		res %= MOD;
+		print(res);
+	}
 }

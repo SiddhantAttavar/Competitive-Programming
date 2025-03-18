@@ -16,44 +16,39 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int x, m;
+		input(x, m);
 
-	int n;
-	input(n);
-
-	int x = n * (n + 1) / 2;
-	if (x & 1) {
-		print("NO");
-		return 0;
-	}
-	x >>= 1;
-
-	set<int> s;
-	for (int i = n; i > 0; i--) {
-		if (x >= i) {
-			x -= i;
-			s.insert(i);
+		int res = 0;
+		rep(y, 1, min(m, x) + 1) {
+			res += (x ^ y) % y == 0;
 		}
-	}
 
-	if (x) {
-		print("NO");
-		return 0;
-	}
-
-	vector<int> a, b;
-	rep(i, 1, n + 1) {
-		if (s.count(i)) {
-			a.push_back(i);
+		if (m <= x) {
+			print(res);
+			continue;
 		}
-		else {
-			b.push_back(i);
-		}
-	}
 
-	print("YES");
-	print(a.size());
-	arrprint(a);
-	print(b.size());
-	arrprint(b);
+		int j = -1;
+		rep(i, 0, 30) {
+			if ((1ll << i) & x) {
+				j = i;
+			}
+		}
+
+		int k = 1ll << (j + 1);
+		int l = m & ((1ll << 60) - k);
+
+		if (l < k) {
+			print(res);
+			continue;
+		}
+
+		res += (l - 1) / x - (k - 1) / x;
+		rep(y, l, m + 1) {
+			res += (x ^ y) % x == 0;
+		}
+		print(res);
+	}
 }

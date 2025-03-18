@@ -21,39 +21,14 @@ int32_t main() {
 	int n;
 	input(n);
 
-	int x = n * (n + 1) / 2;
-	if (x & 1) {
-		print("NO");
-		return 0;
-	}
-	x >>= 1;
-
-	set<int> s;
-	for (int i = n; i > 0; i--) {
-		if (x >= i) {
-			x -= i;
-			s.insert(i);
+	string res;
+	rep(i, 1, 1 << n) {
+		int x = 0, o = i;
+		while (!(o & 1)) {
+			o >>= 1;
+			x++;
 		}
+		res += 'A' + x;
 	}
-
-	if (x) {
-		print("NO");
-		return 0;
-	}
-
-	vector<int> a, b;
-	rep(i, 1, n + 1) {
-		if (s.count(i)) {
-			a.push_back(i);
-		}
-		else {
-			b.push_back(i);
-		}
-	}
-
-	print("YES");
-	print(a.size());
-	arrprint(a);
-	print(b.size());
-	arrprint(b);
+	cout << res;
 }

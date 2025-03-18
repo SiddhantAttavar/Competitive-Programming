@@ -21,39 +21,18 @@ int32_t main() {
 	int n;
 	input(n);
 
-	int x = n * (n + 1) / 2;
-	if (x & 1) {
-		print("NO");
-		return 0;
-	}
-	x >>= 1;
+	vector<int> a(n);
+	arrput(a);
 
-	set<int> s;
-	for (int i = n; i > 0; i--) {
-		if (x >= i) {
-			x -= i;
-			s.insert(i);
-		}
-	}
+	int x = accumulate(a.begin(), a.end(), 0);
 
-	if (x) {
-		print("NO");
-		return 0;
+	if (2 * x == n) {
+		print("TIE");
 	}
-
-	vector<int> a, b;
-	rep(i, 1, n + 1) {
-		if (s.count(i)) {
-			a.push_back(i);
-		}
-		else {
-			b.push_back(i);
-		}
+	else if (2 * x > n) {
+		print("BOB");
 	}
-
-	print("YES");
-	print(a.size());
-	arrprint(a);
-	print(b.size());
-	arrprint(b);
+	else {
+		print("ALICE");
+	}
 }

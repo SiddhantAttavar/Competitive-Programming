@@ -18,42 +18,34 @@ const int MOD = (int) 1e9 + 7; //998244353;
 int32_t main() {
 	setup();
 
-	int n;
-	input(n);
+	int n, k;
+	input(n, k);
 
-	int x = n * (n + 1) / 2;
-	if (x & 1) {
-		print("NO");
-		return 0;
-	}
-	x >>= 1;
+	string s;
+	input(s);
 
-	set<int> s;
-	for (int i = n; i > 0; i--) {
-		if (x >= i) {
-			x -= i;
-			s.insert(i);
+	vector<int> a(n);
+	arrput(a);
+
+	vector<int> f(n + 1, 0), g(n + 1, 0), h(n + 1, 0);
+	int j = n, l = n;
+	for (int i = n - 1; i >= 0; i--) {
+		int r = min(n, i + k);
+		if (j >= r) {
+			l = r;
 		}
-	}
-
-	if (x) {
-		print("NO");
-		return 0;
-	}
-
-	vector<int> a, b;
-	rep(i, 1, n + 1) {
-		if (s.count(i)) {
-			a.push_back(i);
+		g[i] = min(f[l], g[i + 1] + a[i]);
+		if (s[i] == '1') {
+			f[i] = g[i];
+			j = i;
 		}
 		else {
-			b.push_back(i);
+			f[i] = f[i + 1] + a[i];
 		}
 	}
-
-	print("YES");
-	print(a.size());
 	arrprint(a);
-	print(b.size());
-	arrprint(b);
+	arrprint(f);
+	arrprint(g);
+
+	print(f[0]);
 }

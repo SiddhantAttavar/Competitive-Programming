@@ -15,45 +15,42 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-int32_t main() {
-	setup();
-
-	int n;
-	input(n);
-
-	int x = n * (n + 1) / 2;
-	if (x & 1) {
-		print("NO");
-		return 0;
-	}
-	x >>= 1;
-
-	set<int> s;
-	for (int i = n; i > 0; i--) {
-		if (x >= i) {
-			x -= i;
-			s.insert(i);
-		}
-	}
-
-	if (x) {
-		print("NO");
+int solve(vector<int> &a, int l, int r) {
+	if (l == r) {
 		return 0;
 	}
 
-	vector<int> a, b;
-	rep(i, 1, n + 1) {
-		if (s.count(i)) {
-			a.push_back(i);
+	int m = (l + r) / 2;
+	int res = solve(a, l, m) + solve(a, m + 1, r);
+
+	int i = l, j = m + 1;
+	vector<int> b;
+	while (i <= m or j <= r) {
+		if (j <= r and (i > m or a[j] <= a[i])) {
+			b.push_back(a[j]);
+			res += m - i + 1;
+			j++;
 		}
 		else {
-			b.push_back(i);
+			b.push_back(a[i]);
+			i++;
 		}
 	}
 
-	print("YES");
-	print(a.size());
-	arrprint(a);
-	print(b.size());
-	arrprint(b);
+	rep(i, 0, b.size()) {
+		a[i + l] = b[i];
+	}
+	return res;
+}
+
+int32_t main() {
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
+
+		vector<int> a(n);
+		arrput(a);
+
+		print(solve(a, 0, n - 1));
+	}
 }

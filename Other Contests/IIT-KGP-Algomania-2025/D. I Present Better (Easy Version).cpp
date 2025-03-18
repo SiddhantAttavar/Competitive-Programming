@@ -12,48 +12,50 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define arrput(var) for (auto &inVar : var) {cin >> inVar;}
 #define arrprint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+#define ordered_set tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup();
+	int n, a, b;
+	input(n, a, b);
 
-	int n;
-	input(n);
+	vector<int> p(n);
+	arrput(p);
+	p.push_back(-1);
 
-	int x = n * (n + 1) / 2;
-	if (x & 1) {
-		print("NO");
-		return 0;
-	}
-	x >>= 1;
-
-	set<int> s;
-	for (int i = n; i > 0; i--) {
-		if (x >= i) {
-			x -= i;
-			s.insert(i);
-		}
+	vector<int> f, g;
+	ordered_set x;
+	rep(i, 0, n + 1) {
+		int k = x.order_of_key(a) - (x.size() - x.order_of_key(a + 1));
+		f.push_back(k);
+		x.insert(p[i]);
 	}
 
-	if (x) {
-		print("NO");
-		return 0;
+	x.clear();
+	rep(i, 0, n + 1) {
+		int k = x.order_of_key(b) - (x.size() - x.order_of_key(b + 1));
+		g.push_back(k);
+		x.insert(p[i]);
 	}
 
-	vector<int> a, b;
-	rep(i, 1, n + 1) {
-		if (s.count(i)) {
-			a.push_back(i);
-		}
-		else {
-			b.push_back(i);
-		}
+	int res = 0;
+	rep(i, 0, n + 1) {
+		res += (f[i] - (a < b) + (a > b)) > g[i];
+		res += f[i] > (g[i] + (a < b) - (a > b));
 	}
 
-	print("YES");
-	print(a.size());
-	arrprint(a);
-	print(b.size());
-	arrprint(b);
+	x.clear();
+	rep(i, 0, n + 1) {
+		res += x.order_of_key(f[i] - (a < b) + (a > b));
+		x.insert(g[i]);
+	}
+
+	x.clear();
+	rep(i, 0, n + 1) {
+		res += x.size() - x.order_of_key(g[i] + (a < b) - (a > b) + 1);
+		x.insert(f[i]);
+	}
+
+	print(res);
 }

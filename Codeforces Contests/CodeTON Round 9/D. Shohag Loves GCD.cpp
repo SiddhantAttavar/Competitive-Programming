@@ -16,44 +16,39 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n, m;
+		input(n, m);
 
-	int n;
-	input(n);
+		vector<int> s(m);
+		arrput(s);
 
-	int x = n * (n + 1) / 2;
-	if (x & 1) {
-		print("NO");
-		return 0;
-	}
-	x >>= 1;
+		sort(s.begin(), s.end());
+		reverse(s.begin(), s.end());
 
-	set<int> s;
-	for (int i = n; i > 0; i--) {
-		if (x >= i) {
-			x -= i;
-			s.insert(i);
+		vector<set<int>> a(n + 1);
+		vector<int> res(n);
+		bool flag = true;
+		rep(i, 1, n + 1) {
+			int l = 0;
+			while (a[i].count(l)) {
+				l++;
+			}
+			if (l >= m) {
+				flag = false;
+				break;
+			}
+			res[i - 1] = s[l];
+			for (int j = 2 * i; j <= n; j += i) {
+				a[j].insert(l);
+			}
 		}
-	}
 
-	if (x) {
-		print("NO");
-		return 0;
-	}
-
-	vector<int> a, b;
-	rep(i, 1, n + 1) {
-		if (s.count(i)) {
-			a.push_back(i);
+		if (flag) {
+			arrprint(res);
 		}
 		else {
-			b.push_back(i);
+			print(-1);
 		}
 	}
-
-	print("YES");
-	print(a.size());
-	arrprint(a);
-	print(b.size());
-	arrprint(b);
 }

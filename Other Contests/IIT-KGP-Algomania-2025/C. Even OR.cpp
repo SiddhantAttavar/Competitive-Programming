@@ -17,43 +17,32 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup();
-
 	int n;
 	input(n);
 
-	int x = n * (n + 1) / 2;
-	if (x & 1) {
-		print("NO");
-		return 0;
-	}
-	x >>= 1;
+	vector<int> a(n);
+	arrput(a);
 
-	set<int> s;
-	for (int i = n; i > 0; i--) {
-		if (x >= i) {
-			x -= i;
-			s.insert(i);
+	if (n % 2 == 0) {
+		int res = 0;
+		for (int i : a) {
+			res |= i;
 		}
-	}
-
-	if (x) {
-		print("NO");
+		print(res);
 		return 0;
 	}
 
-	vector<int> a, b;
-	rep(i, 1, n + 1) {
-		if (s.count(i)) {
-			a.push_back(i);
-		}
-		else {
-			b.push_back(i);
-		}
+	vector<int> p(n + 1, 0), s(n + 1, 0);
+	rep(i, 0, n) {
+		p[i + 1] = p[i] | a[i];
+	}
+	for (int i = n - 1; i >= 0; i--) {
+		s[i] = s[i + 1] | a[i];
 	}
 
-	print("YES");
-	print(a.size());
-	arrprint(a);
-	print(b.size());
-	arrprint(b);
+	int res = 0;
+	rep(i, 0, n) {
+		res = max(res, p[i] | s[i + 1]);
+	}
+	print(res);
 }
