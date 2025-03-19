@@ -15,42 +15,39 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-void dfs1(int u, int p, vector<vector<int>> &graph, vector<int> &s, vector<int> &dp) {
-	for (int v : graph[u]) {
-		if (v != p) {
-			dfs1(v, u, graph, s, dp);
-			s[u] += s[v];
-			dp[u] += dp[v] + s[v];
-		}
+bool check(vector<int> &a) {
+	if (a.size() == 1) {
+		return true;
 	}
-}
-
-void dfs2(int u, int p, vector<vector<int>> &graph, vector<int> &s, vector<int> &dp) {
-	for (int v : graph[u]) {
-		if (v != p) {
-			dp[v] = dp[u] + graph.size() - 2 * s[v];
-			dfs2(v, u, graph, s, dp);
+	vector<int> b(a.size() - 1);
+	rep(i, 0, a.size() - 1) {
+		if (a[i + 1] <= a[i]) {
+			return false;
 		}
+		b[i] = a[i + 1] - a[i];
 	}
+	return check(b);
 }
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
-	int n;
-	input(n);
+		vector<int> a(n);
+		arrput(a);
 
-	vector<vector<int>> graph(n);
-	rep(i, 0, n - 1) {
-		int u, v;
-		input(u, v);
+		if (n > 50) {
+			print(string(n, '0'));
+			continue;
+		}
 
-		graph[u - 1].push_back(v - 1);
-		graph[v - 1].push_back(u - 1);
+		string res(n, '0');
+		rep(i, 0, n) {
+			vector<int> b(a.begin(), a.end());
+			b.erase(b.begin() + i);
+			res[i] = check(b) ? '1' : '0';
+		}
+		print(res);
 	}
-
-	vector<int> s(n, 1), dp(n, 0);
-	dfs1(0, -1, graph, s, dp);
-	dfs2(0, -1, graph, s, dp);
-	arrprint(dp);
 }

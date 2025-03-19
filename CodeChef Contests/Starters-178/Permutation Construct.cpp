@@ -15,42 +15,37 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-void dfs1(int u, int p, vector<vector<int>> &graph, vector<int> &s, vector<int> &dp) {
-	for (int v : graph[u]) {
-		if (v != p) {
-			dfs1(v, u, graph, s, dp);
-			s[u] += s[v];
-			dp[u] += dp[v] + s[v];
-		}
-	}
-}
-
-void dfs2(int u, int p, vector<vector<int>> &graph, vector<int> &s, vector<int> &dp) {
-	for (int v : graph[u]) {
-		if (v != p) {
-			dp[v] = dp[u] + graph.size() - 2 * s[v];
-			dfs2(v, u, graph, s, dp);
-		}
-	}
-}
-
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n, k;
+		input(n, k);
 
-	int n;
-	input(n);
+		if (k * 2 > n) {
+			print(-1);
+			continue;
+		}
 
-	vector<vector<int>> graph(n);
-	rep(i, 0, n - 1) {
-		int u, v;
-		input(u, v);
-
-		graph[u - 1].push_back(v - 1);
-		graph[v - 1].push_back(u - 1);
+		vector<vector<int>> a(k);
+		rep(i, 0, n) {
+			a[(i + 1) % k].push_back(i + 1);
+		}
+		rep(i, 0, k) {
+			a[i].insert(a[i].begin(), a[i].back());
+			a[i].pop_back();
+			reverse(a[i].begin(), a[i].end());
+		}
+		vector<int> p(n);
+		rep(i, 0, n) {
+			p[i] = a[(i + 1) % k].back();
+			a[(i + 1) % k].pop_back();;
+		}
+		arrprint(p);
+		cout.flush();
+		rep(i, 0, n) {
+			assert(p[i] != i + 1);;
+			assert(p[i] % k == (i + 1) % k);
+		}
+		set<int> s(p.begin(), p.end());
+		assert(s.size() == n);
 	}
-
-	vector<int> s(n, 1), dp(n, 0);
-	dfs1(0, -1, graph, s, dp);
-	dfs2(0, -1, graph, s, dp);
-	arrprint(dp);
 }
