@@ -17,6 +17,18 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int x1, y1, x2, y2, x3, y3;
+		input(x1, y1, x2, y2, x3, y3);
+
+		int k = (y3 - y1) * (x2 - x1) - (y2 - y1) * (x3 - x1);
+		if (k < 0) {
+			print("RIGHT");
+		}
+		else if (k > 0) {
+			print("LEFT");
+		}
+		else {
+			print("TOUCH");
+		}
 	}
 }
