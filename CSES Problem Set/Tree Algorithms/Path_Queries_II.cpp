@@ -14,11 +14,11 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
-
+ 
 #define vi vector<int>
 #define sz(x) (int) x.size()
 #define all(x) x.begin(), x.end()
-
+ 
 template<typename T> struct SegTree { // cmb(ID,b) = b
 	T ID; T (*cmb)(T a, T b);
 	int n; vector<T> seg;
@@ -39,7 +39,7 @@ template<typename T> struct SegTree { // cmb(ID,b) = b
 		return cmb(ra,rb);
 	}
 };
-
+ 
 template <typename T, bool VALS_EDGES, int SZ> struct HLD {
 	int N, tim = 0;
 	vector<vi> adj;
@@ -87,37 +87,37 @@ template <typename T, bool VALS_EDGES, int SZ> struct HLD {
 		return tree.query(pos[v] + VALS_EDGES, pos[v] + siz[v] - 1);
 	}
 };
-
+ 
 signed main() {
 	setup();
-
+ 
 	int n, q;
 	input(n, q);
-
+ 
 	vector<int> v(n);
 	arrput(v);
-
+ 
 	vector<vector<int>> graph(n);
 	rep(i, 0, n - 1) {
 		int u, v;
 		input(u, v);
-
+ 
 		graph[u - 1].push_back(v - 1);
 		graph[v - 1].push_back(u - 1);
 	}
-
+ 
 	HLD<int, false, 1 << 18> h(graph, 0, [](int x, int y) {
 		return max(x, y);
 	});
-
+ 
 	rep(i, 0, n) {
 		h.modify(i, v[i]);
 	}
-
+ 
 	while (q--) {
 		int o, x, y;
 		input(o, x, y);
-
+ 
 		if (o == 1) {
 			h.modify(x - 1, y);
 		}

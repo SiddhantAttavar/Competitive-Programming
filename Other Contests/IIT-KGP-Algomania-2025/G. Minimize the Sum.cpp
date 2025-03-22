@@ -15,6 +15,27 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+template<typename T> struct SegTree {
+	T ID; T (*cmb)(T a, T b);
+	int n; vector<T> seg;
+	SegTree(int _n, T id, T _cmb(T, T)) {
+		ID = id; cmb = _cmb;
+		for (n = 1; n < _n; ) n *= 2; 
+		seg.assign(2*n,ID); 
+	}
+	void pull(int p) { seg[p] = cmb(seg[2*p],seg[2*p+1]); }
+	void upd(int p, T val) { // set val at position p
+		seg[p += n] = val; for (p /= 2; p; p /= 2) pull(p); }
+	T query(int l, int r) {	// zero-indexed, inclusive
+		T ra = ID, rb = ID;
+		for (l += n, r += n+1; l < r; l /= 2, r /= 2) {
+			if (l&1) ra = cmb(ra,seg[l++]);
+			if (r&1) rb = cmb(seg[--r],rb);
+		}
+		return cmb(ra,rb);
+	}
+};
+
 int32_t main() {
 	setup();
 
@@ -27,25 +48,38 @@ int32_t main() {
 	vector<int> a(n);
 	arrput(a);
 
-	vector<int> f(n + 1, 0), g(n + 1, 0), h(n + 1, 0);
-	int j = n, l = n;
-	for (int i = n - 1; i >= 0; i--) {
-		int r = min(n, i + k);
-		if (j >= r) {
-			l = r;
-		}
-		g[i] = min(f[l], g[i + 1] + a[i]);
+	vector<int> p(n + 1, 0);
+	rep(i, 0, n) {
+		p[i + 1] = p[i] + a[i];
+	}
+
+	vector<int> l(n + 1, -1);
+	rep(i, 0, n) {
 		if (s[i] == '1') {
-			f[i] = g[i];
-			j = i;
+			l[i + 1] = i;
 		}
 		else {
-			f[i] = f[i + 1] + a[i];
+			l[i + 1] = l[i];
 		}
 	}
-	arrprint(a);
-	arrprint(f);
-	arrprint(g);
 
-	print(f[0]);
+	SegTree<int> t(n + 1, 0, [](int a, int b) {
+		return max(a, b);
+	});
+
+	vector<int> dp(n + 1, 0), m(n + 1, 0);
+	rep(i, 0, n) {
+		int x = p[min(n, i + k)];
+		if (l[i + 1] < 0) {
+			m[i + 1] = m[i];
+			continue;
+		}
+		dp[i + 1] = max(x - p[i], x + t.query(max(1ll, i + k), l[i + 1] + 1));
+		if (min(i - k + 1, l[i + 1]) > 0) {
+			dp[i + 1] = max(dp[i + 1], x + m[min(i - k + 1, l[i + 1])] - p[i]);
+		}
+		t.upd(i + 1, dp[i + 1] - x);
+		m[i + 1] = max(m[i], dp[i]);
+	}
+	print(p[n] - m[n]);
 }

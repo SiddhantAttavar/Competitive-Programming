@@ -16,18 +16,30 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup();
-	int n, q;
-	input(n, q);
+	setup(); int tc; input(tc); while (tc--) {
+		int n, k;
+		input(n, k);
+		k++;
 
-	vector<int> a(n);
-	arrput(a);
+		vector<int> a(n);
+		arrput(a);
 
-	while (q--) {
-		int l, r;
-		input(l, r);
+		priority_queue<int, vector<int>, greater<int>> pq;
+		for (int i = n - 1; i >= 0; i--) {
+			if ((n - i) % k == 0) {
+				pq.push(a[i]); 
+			}
+			else {
+				pq.push(a[i]);
+				pq.pop();
+			}
+		}
 
-		l--;
-		r--;
+		int res = 0;
+		while (!pq.empty()) {
+			res += pq.top();
+			pq.pop();
+		}
+		print(res);
 	}
 }
