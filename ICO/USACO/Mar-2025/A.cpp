@@ -15,71 +15,57 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-bool insert(int x, vector<int> &b) {
-	for (int i = 30; i >= 0; i--) {
-		if ((x & (1 << i)) == 0) {
-			continue;
+int mod_pow(int a, int b) {
+	int res = 1;
+	while (b) {
+		if (b & 1) {
+			res = res * a % MOD;
 		}
-		if (b[i] == 0) {
-			b[i] = x;
-			return true;
-		}
-		x ^= b[i];
-	}
-	return false;
-}
-
-int query(vector<int> &b, int k) {
-	int res = 0;
-	for (int i = 30; i >= 0; i--) {
-		if (b[i] and !(res & (1 << i))) {
-			res ^= b[i];
-		}
+		a = a * a % MOD;
+		b >>= 1;
 	}
 	return res;
 }
 
+int mod_div(int a, int b) {
+	return a * mod_pow(b, MOD - 2) % MOD;
+}
+
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+	setup();
 
-		int k = 0;
-		vector<int> b(31, 0);
+	int N = 1e6;
+	vector<int> fact(N + 1, 1);
+	rep(i, 2, N + 1) {
+		fact[i] = i * fact[i - 1] % MOD;
+	}
 
-		vector<int> a(n);
-		arrput(a);
-		sort(a.begin(), a.end());
+	int k, n, l;
+	input(k, n, l);
 
-		int x = 0;
-		if (a[0] == 0) {
-			rep(i, 1, n) {
-				if (a[i] > a[i - 1] + 1) {
-					x = a[i - 1] + 1;
-					break;
-				}
-			}
-			if (x == 0) {
-				x = a[n - 1] + 1;
-			}
+	string s;
+	input(s);
+
+	int res = 1, x = 0;
+	for (int i = n - 1; i >= 0; i--) {
+		if (s[i] == 'O') {
+			x++;
+			continue;
 		}
 
-		rep(i, 1, n) {
-			if (a[i] < x and a[i] == a[i - 1]) {
-				k += insert(a[i], b);
-			}
+		if (x < k) {
+			res = 0;
+			break;
 		}
 
-		int j = lower_bound(a.begin(), a.end(), x) - a.begin();
-		rep(i, j, n) {
-			k += insert(a[i], b);
-		}
+		res = res * mod_div(fact[x], fact[k] * fact[x - k] % MOD) % MOD;
+		x -= k;
+	}
 
-		int res = x + query(b, k);
-		for (int i = x - 1; i >= 0; i--) {
-			k += insert(i, b);
-			res = max(res, i + query(b, k));
-		}
-		print(res);
+	if (x > 00) {
+		print(0);
+	}
+	else {
+		print(mod_pow(res, l));
 	}
 }

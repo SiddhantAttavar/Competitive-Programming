@@ -15,71 +15,37 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-bool insert(int x, vector<int> &b) {
-	for (int i = 30; i >= 0; i--) {
-		if ((x & (1 << i)) == 0) {
-			continue;
-		}
-		if (b[i] == 0) {
-			b[i] = x;
-			return true;
-		}
-		x ^= b[i];
-	}
-	return false;
-}
-
-int query(vector<int> &b, int k) {
-	int res = 0;
-	for (int i = 30; i >= 0; i--) {
-		if (b[i] and !(res & (1 << i))) {
-			res ^= b[i];
+int dfs(int u, int p, vector<vector<int>> &graph, vector<vector<int>> &dp) {
+	int res = 0, k = dp[0].size() - 1;
+	dp[u][0] = 1;
+	for (int v : graph[u]) {
+		if (v != p) {
+			res += dfs(v, u, graph, dp);
+			rep(i, 0, k) {
+				res += dp[v][i] * dp[u][k - i - 1];
+			}
+			rep(i, 0, k) {
+				dp[u][i + 1] += dp[v][i];
+			}
 		}
 	}
 	return res;
 }
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+	setup();
+	int n, k;
+	input(n, k);
 
-		int k = 0;
-		vector<int> b(31, 0);
+	vector<vector<int>> graph(n);
+	rep(i, 0, n - 1) {
+		int u, v;
+		input(u, v);
 
-		vector<int> a(n);
-		arrput(a);
-		sort(a.begin(), a.end());
-
-		int x = 0;
-		if (a[0] == 0) {
-			rep(i, 1, n) {
-				if (a[i] > a[i - 1] + 1) {
-					x = a[i - 1] + 1;
-					break;
-				}
-			}
-			if (x == 0) {
-				x = a[n - 1] + 1;
-			}
-		}
-
-		rep(i, 1, n) {
-			if (a[i] < x and a[i] == a[i - 1]) {
-				k += insert(a[i], b);
-			}
-		}
-
-		int j = lower_bound(a.begin(), a.end(), x) - a.begin();
-		rep(i, j, n) {
-			k += insert(a[i], b);
-		}
-
-		int res = x + query(b, k);
-		for (int i = x - 1; i >= 0; i--) {
-			k += insert(i, b);
-			res = max(res, i + query(b, k));
-		}
-		print(res);
+		graph[u - 1].push_back(v - 1);
+		graph[v - 1].push_back(u - 1);
 	}
+
+	vector<vector<int>> dp(n, vector<int>(k + 1, 0));
+	print(dfs(0, -1, graph, dp));
 }

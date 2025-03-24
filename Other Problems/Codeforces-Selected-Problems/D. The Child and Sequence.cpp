@@ -32,16 +32,24 @@ template<typename T, int SZ> struct SegTree {
 		if (s == e) {seg[c] = x; return;}
 		int mid = (s + e) / 2;
 		update(i, x, s, mid, 2*c);
-		update(i, x, mid + 1, e, 2*c);
+		update(i, x, mid + 1, e, 2*c+1);
 		seg[c] = cmb(seg[2*c], seg[2*c+1]);
 	}
 	void update2(int l, int r, int x, int s=0, int e=SZ-1, int c=1) {
 		if (s > r || e < l) return;
-		if (s == e) {seg[c] = x; return;}
-		int mid = (s + e) / 2;
-		update2(i, x, s, mid, 2*c);
-		update2(i, x, mid + 1, e, 2*c);
-		seg[c] = cmb(seg[2*c], seg[2*c+1]);
+		if (l <= s and e <= r) {
+			if (seg[c].second < x) return;
+			if (s == e) {
+				seg[c].first %= x;
+				seg[c].second %= x;
+			}
+		}
+		if (s != e) {
+			int mid = (s + e) / 2;
+			update2(l, r, x, s, mid, 2*c);
+			update2(l, r, x, mid + 1, e, 2*c+1);
+			seg[c] = cmb(seg[2*c], seg[2*c+1]);
+		}
 	}
 };
 
@@ -69,7 +77,7 @@ int32_t main() {
 		if (o == 1) {
 			int l, r;
 			input(l, r);
-			print(s.query(l - 1, r - 1));
+			print(s.query(l - 1, r - 1).first);
 		}
 		else if (o == 2) {
 			int l, r, x;
