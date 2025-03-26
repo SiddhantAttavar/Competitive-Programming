@@ -17,47 +17,42 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int s, k;
-		input(s, k);
+		int n, m;
+		input(n, m);
 
-		if (s > k * k) {
-			if (s % k == 0) {
-				print(k);
+		vector<string> a(n);
+		arrput(a);
+
+		vector<int> x(n, 0), y(m, 0);
+		rep(i, 0, n) {
+			while (x[i] < m and a[i][x[i]] == '1') {
+				x[i]++;
 			}
-			else {
-				print(max(1ll, k - 2));
+		}
+		rep(j, 0, m) {
+			while (y[j] < n and a[y[j]][j] == '1') {
+				y[j]++;
 			}
-			continue;
 		}
 
-		vector<bool> v(s + 1, false);
-		for (int i = 0; i <= s; i += k) {
-			v[i] = true;
-		}
-		if (v[s]) {
-			print(k);
-			continue;
-		}
-
-		int res = 1;
-		for (int i = k - 1; i > 0; i--) {
-			vector<bool> w(s + 1, false);
-			if (i % 2 == k % 2) {
-				rep(j, i, s + 1) {
-					w[j] = v[j - i] or w[j - i];
+		bool flag = true;
+		rep(i, 0, n) {
+			rep(j, 0, m) {
+				if (a[i][j] == '1' and j > x[i] and i > y[j]) {
+					flag = false;
+					break;
 				}
 			}
-			else {
-				for (int j = s - i; j >= 0; j--) {
-					w[j] = v[j + i] or w[j + i];
-				}
-			}
-			v = w;
-			if (v[s]) {
-				res = i;
+			if (!flag) {
 				break;
 			}
 		}
-		print(res);
+
+		if (flag) {
+			print("YES");
+		}
+		else {
+			print("NO");
+		}
 	}
 }

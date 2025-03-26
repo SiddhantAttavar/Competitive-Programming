@@ -16,48 +16,49 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
+	vector<pair<int, pair<int, int>>> v, w;
+	int N = 1e3;
+	rep(i, 1, N) {
+		if (i % 3 == 0) {
+			continue;
+		}
+		rep(j, 1, N) {
+			if (j % 3 == 0) {
+				continue;
+			}
+			v.push_back({i + j + 2 * (min(i % 3, j % 3) == 2), {i, j}});
+			if (i % 3 == 1 and j % 3 == 1) {
+				w.push_back({i + j, {i, j}});
+			}
+		}
+	}
+	sort(v.begin(), v.end());
+	sort(w.begin(), w.end());
+
 	setup(); int tc; input(tc); while (tc--) {
-		int s, k;
-		input(s, k);
+		int n;
+		input(n);
 
-		if (s > k * k) {
-			if (s % k == 0) {
-				print(k);
+		vector<int> t(n);
+		arrput(t);
+
+		set<pair<int, int>> s;
+		int l = 0, r = 0;
+		for (int i : t) {
+			if (i) {
+				while (s.count(v[l].second)) {
+					l++;
+				}
+				print(v[l].second.first, v[l].second.second);
+				s.insert(v[l].second);
 			}
 			else {
-				print(max(1ll, k - 2));
-			}
-			continue;
-		}
-
-		vector<bool> v(s + 1, false);
-		for (int i = 0; i <= s; i += k) {
-			v[i] = true;
-		}
-		if (v[s]) {
-			print(k);
-			continue;
-		}
-
-		int res = 1;
-		for (int i = k - 1; i > 0; i--) {
-			vector<bool> w(s + 1, false);
-			if (i % 2 == k % 2) {
-				rep(j, i, s + 1) {
-					w[j] = v[j - i] or w[j - i];
+				while (s.count(w[r].second)) {
+					r++;
 				}
-			}
-			else {
-				for (int j = s - i; j >= 0; j--) {
-					w[j] = v[j + i] or w[j + i];
-				}
-			}
-			v = w;
-			if (v[s]) {
-				res = i;
-				break;
+				print(w[r].second.first, w[r].second.second);
+				s.insert(w[r].second);
 			}
 		}
-		print(res);
 	}
 }

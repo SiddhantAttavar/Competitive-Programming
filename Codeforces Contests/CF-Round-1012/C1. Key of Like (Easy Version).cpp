@@ -15,49 +15,45 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+int mod_pow(int a, int b) {
+	int res = 1;
+	while (b) {
+		if (b & 1) {
+			res = res * a % MOD;
+		}
+
+		a = a * a % MOD;
+		b >>= 1;
+	}
+	return res;
+}
+
+int mod_div(int a, int b) {
+	return a * mod_pow(b, MOD - 2) % MOD;
+}
+
 int32_t main() {
+	int N = 1e5;
+	vector<int> fact(N + 1, 1);
+	rep(i, 2ll, N + 1) {
+		fact[i] = i * fact[i - 1] % MOD;
+	}
+
 	setup(); int tc; input(tc); while (tc--) {
-		int s, k;
-		input(s, k);
+		int n, l, k;
+		input(n, l, k);
 
-		if (s > k * k) {
-			if (s % k == 0) {
-				print(k);
+		rep(i, 0, n) {
+			int a = 0, b = 0;
+			rep(j, 0, i + 1) {
+				int k = mod_div(fact[i], fact[j] * fact[i - j] % MOD);
+				// print(i, j, k);
+				a = (a + k * j) % MOD;
+				b = (b + k) % MOD;
 			}
-			else {
-				print(max(1ll, k - 2));
-			}
-			continue;
+			// print(a, b);
+			cout << mod_div(a, b) << ' ';
 		}
-
-		vector<bool> v(s + 1, false);
-		for (int i = 0; i <= s; i += k) {
-			v[i] = true;
-		}
-		if (v[s]) {
-			print(k);
-			continue;
-		}
-
-		int res = 1;
-		for (int i = k - 1; i > 0; i--) {
-			vector<bool> w(s + 1, false);
-			if (i % 2 == k % 2) {
-				rep(j, i, s + 1) {
-					w[j] = v[j - i] or w[j - i];
-				}
-			}
-			else {
-				for (int j = s - i; j >= 0; j--) {
-					w[j] = v[j + i] or w[j + i];
-				}
-			}
-			v = w;
-			if (v[s]) {
-				res = i;
-				break;
-			}
-		}
-		print(res);
+		cout << endl;
 	}
 }

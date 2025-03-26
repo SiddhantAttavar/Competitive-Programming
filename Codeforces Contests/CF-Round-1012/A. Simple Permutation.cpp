@@ -16,48 +16,52 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
+	int N = 1e5;
+	vector<int> spf(N + 1);
+	vector<int> primes;
+	rep(i, 0, N + 1) {
+		spf[i] = i;
+	}
+	rep(i, 2, N + 1) {
+		if (spf[i] != i) {
+			continue;
+		}
+
+		primes.push_back(i);
+		for (int j = i; j <= N; j += i) {
+			if (spf[j] == j) {
+				spf[j] = i;
+			}
+		}
+	}
+
 	setup(); int tc; input(tc); while (tc--) {
-		int s, k;
-		input(s, k);
+		int n;
+		input(n);
 
-		if (s > k * k) {
-			if (s % k == 0) {
-				print(k);
+		int p = 2;
+		for (int i : primes) {
+			if (abs(2 * i - n) <= abs(2 * p - n)) {
+				p = i;
 			}
-			else {
-				print(max(1ll, k - 2));
-			}
-			continue;
 		}
 
-		vector<bool> v(s + 1, false);
-		for (int i = 0; i <= s; i += k) {
-			v[i] = true;
+		vector<int> res = {p};
+		int l = p - 1, r = p + 1;
+		while (l > 0 and r <= n) {
+			res.push_back(l);
+			res.push_back(r);
+			l--;
+			r++;
 		}
-		if (v[s]) {
-			print(k);
-			continue;
+		while (l > 0) {
+			res.push_back(l);
+			l--;
 		}
-
-		int res = 1;
-		for (int i = k - 1; i > 0; i--) {
-			vector<bool> w(s + 1, false);
-			if (i % 2 == k % 2) {
-				rep(j, i, s + 1) {
-					w[j] = v[j - i] or w[j - i];
-				}
-			}
-			else {
-				for (int j = s - i; j >= 0; j--) {
-					w[j] = v[j + i] or w[j + i];
-				}
-			}
-			v = w;
-			if (v[s]) {
-				res = i;
-				break;
-			}
+		while (r <= n) {
+			res.push_back(r);
+			r++;
 		}
-		print(res);
+		arrprint(res);
 	}
 }
