@@ -15,35 +15,33 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-#define vi vector<int>
-vector<vi> decomp;
-vector<vi> adj; vi siz;
-vector<bool> vis;
-void find_size(int v, int p) {
-	siz[v] = 1;
-	for(auto nx : adj[v]) if(nx != p && !vis[nx]) {
-		find_size(nx, v);
-		siz[v] += siz[nx];
-	}
-}
-int centroid(int v, int p, int n) {
-	for(auto nx : adj[v]) if(nx != p && !vis[nx] && siz[nx] > n/2) {
-		return centroid(nx, v, n);
-	}
-	return v;
-}
-void process(int v) {}
-int solve(int v, int p) {
-	find_size(v, p);
-	int c = centroid(v, p, siz[v]);
-	process(c);
-	vis[c] = true;
-	for(auto nx : adj[c]) if(!vis[nx]) decomp[c].push_back(solve(nx, c));
-	return c;
-}
-
 int32_t main() {
+	int N = 1e7;
+	vector<int> spf(N + 1);
+	rep(i, 0, N + 1) {
+		spf[i] = i;
+	}
+	vector<int> dp(N + 1, 0);
+	rep(i, 2, N + 1) {
+		if (spf[i] != i) {
+			continue;
+		}
+
+		for (int j = i; j <= N; j += i) {
+			dp[j]++;
+			if (spf[j] == j) {
+				spf[j] = i;
+			}
+		}
+	}
+	rep(i, 2, N + 1) {
+		dp[i] += dp[i - 1];
+	}
+
 	setup(); int tc; input(tc); while (tc--) {
-		
+		int n;
+		input(n);
+
+		print(dp[n]);
 	}
 }
