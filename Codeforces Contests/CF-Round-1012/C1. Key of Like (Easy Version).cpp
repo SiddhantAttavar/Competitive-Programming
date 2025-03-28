@@ -33,27 +33,32 @@ int mod_div(int a, int b) {
 }
 
 int32_t main() {
-	int N = 1e5;
-	vector<int> fact(N + 1, 1);
-	rep(i, 2ll, N + 1) {
-		fact[i] = i * fact[i - 1] % MOD;
-	}
-
 	setup(); int tc; input(tc); while (tc--) {
 		int n, l, k;
 		input(n, l, k);
 
-		rep(i, 0, n) {
-			int a = 0, b = 0;
-			rep(j, 0, i + 1) {
-				int k = mod_div(fact[i], fact[j] * fact[i - j] % MOD);
-				// print(i, j, k);
-				a = (a + k * j) % MOD;
-				b = (b + k) % MOD;
+		vector<vector<vector<int>>> dp(n * l + 1, vector<vector<int>>(min(n, l) + 1, vector<int>(min(n, l) + 1, 0)));
+		vector<int> res(n, 0);
+		dp[0][0][0] = 1;
+		rep(i, 1ll, n * l + 1) {
+			if (i <= l) {
+				dp[i][0][i] = dp[i - 1][0][i - 1] * mod_div(l - i, l - i + 1) % MOD;
 			}
-			// print(a, b);
-			cout << mod_div(a, b) << ' ';
+			rep(x, 1, min(i, l) + 1) {
+				rep(y, 1, min(i, l) - x + 1) {
+					dp[i][x][y] = dp[i][x][y - 1] * mod_div(l - x - y, l - x - y + 1) % MOD;
+				}
+				rep(y, 0, min(i, l) - x + 1) {
+					print("debug", x, y, l, i);
+					cout.flush();
+					dp[i][x][0] = (dp[i][x][0] + dp[i - 1][x - 1][y] * mod_div(1, l - x - y + 1)) % MOD;
+					print("debug2");
+					cout.flush();
+				}
+				res[(i - 1) % n] = (res[(i - 1) % n] + dp[i][x][0]) % MOD;
+			}
 		}
-		cout << endl;
+
+		arrprint(res);
 	}
 }

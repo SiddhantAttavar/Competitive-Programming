@@ -21,28 +21,50 @@ int mod_pow(int a, int b) {
 		if (b & 1) {
 			res = res * a % MOD;
 		}
-
 		a = a * a % MOD;
 		b >>= 1;
 	}
 	return res;
 }
 
+int mod_div(int a, int b) {
+	return a * mod_pow(b, MOD - 2) % MOD;
+}
+
 int32_t main() {
+	int M = 1e6, N = 100, K = 100;
+	vector<int> f(M + 1, 1);
+	rep(i, 2, M + 1) {
+		f[i] = i * f[i - 1] % MOD;
+	}
+
+	vector<int> g(N + 1);
+	rep(i, 1, N + 1) {
+		g[i] = mod_pow(2, i * (i - 1) / 2);
+	}
+
+	vector<int> c(N + 1, 0);
+	rep(i, 1, N + 1) {
+		rep(k, 1, i + 1) {
+			c[i] = (c[i] + (k * mod_div(f[i], f[k] * f[i - k] % MOD) % MOD) * (c[k] * g[i - k] % MOD)) % MOD;
+		}
+		c[i] = (g[i] - mod_div(c[i], i) + MOD) % MOD;
+	}
+
+	vector<vector<int>> dp(N + 1, vector<int>(K + 1, 0));
+	rep(i, 1, N + 1) {
+		dp[i][1] = c[i];
+		rep(j, 1, min((int) i, K) + 1) {
+			rep(s, 1, i + 1) {
+				dp[i][j] = (dp[i][j] + mod_div(f[i - 1], f[s - 1] * f[i - s] % MOD) * (c[s] * dp[i - s][j - 1] % MOD)) % MOD;
+			}
+		}
+	}
+
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, k;
+		input(n, k);
 
-		vector<int> f(n + 1);
-		f[1] = 1;
-		rep(i, 2, n + 1) {
-			f[i] = f[i - 1] * mod_pow(2, i - 1) % MOD;
-		}
-
-		vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
-		dp[0][0] = 1;
-		rep(i, 0, n) {
-
-		}
+		print(dp[n][k]);
 	}
 }

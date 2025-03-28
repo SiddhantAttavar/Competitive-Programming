@@ -15,49 +15,36 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-int32_t main() {
-	int N = 1e3;
-	vector<int> dp(N + 1, 0);
-	rep(i, 1, N + 1) {
-		int u = i;
-		while (u != 1 and dp[i] < 100) {
-			dp[i]++;
-			if (u % 2 == 0) {
-				u /= 2;
-			}
-			else {
-				u = 3 * u + 1;
-			}
-		}
+void sort3(int &a, int &b, int &c) {
+	if (a > b) {
+		swap(a, b);
 	}
+	if (b > c) {
+		swap(b, c);
+	}
+	if (a > b) {
+		swap(a, b);
+	}
+}
 
-	setup();
+int32_t main() {
+	setup(); int tc; input(tc); while (tc--) {
+		int a, b, c;
+		input(a, b, c);
 
-	int n, q;
-	input(n, q);
-
-	vector<int> a(n);
-	arrput(a);
-
-	while (q--) {
-		int o;
-		input(o);
-
-		if (o == 1) {
-			int l, r, k;
-			input(l, r, k);
-			int res = 0;
-			rep(i, l - 1, r) {
-				res += dp[a[i]] >= k;
-			}
-			print(res);
+		if ((a + b + c) % 2 == 1) {
+			print(-1);
+			continue;
 		}
-		else {
-			int i;
-			input(i);
-			i--;
-			vector<int> v(100, 0);
-			a[i]++;
+
+		int res = 0;
+		sort3(a, b, c);
+		while (b > 0) {
+			c--;
+			b--;
+			sort3(a, b, c);
+			res++;
 		}
+		print(res);
 	}
 }

@@ -22,27 +22,44 @@ int32_t main() {
 
 		vector<int> a(n);
 		arrput(a);
-
 		sort(a.begin(), a.end());
 
-		int l = 0;
-		while (l < n and a[l] == 1) {
-			l++;
+		bool flag = true;
+		int x = 0;
+		rep(i, 1, n) {
+			if (a[i] % a[i - 1]) {
+				flag = false;
+				break;
+			}
+			if (a[i] / a[i - 1] > 1) {
+				x = __gcd(x, a[i] / a[i - 1]);
+			}
 		}
 
-		if (l == n) {
+		if (!flag) {
+			print(n + 1);
+			continue;
+		}
+		else if (x == 0) {
 			print(n);
 			continue;
 		}
 
-		if (l == n - 1) {
-			print(a[l] = n - 1);
-			continue;
+		rep(i, 0, n) {
+			while (a[i] % x == 0) {
+				a[i] /= x;
+			}
+			if (a[i] != 1) {
+				flag = false;
+				break;
+			}
 		}
 
-		int r = l + 1;
-		while (r < n and a[r] < 2 * a[l]) {
-			r++;
+		if (!flag) {
+			print(n + 1);
+		}
+		else {
+			print(n - 1 + x);
 		}
 	}
 }

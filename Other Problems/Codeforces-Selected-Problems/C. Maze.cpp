@@ -15,49 +15,52 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+void dfs(int x, int y, vector<pair<int, int>> &res, vector<vector<bool>> &v) {
+	res.push_back({x, y});
+	v[x][y] = true;
+	if (x > 0 and !v[x - 1][y]) {
+		dfs(x - 1, y, res, v);
+	}
+	if (x < v.size() - 1 and !v[x + 1][y]) {
+		dfs(x + 1, y, res, v);
+	}
+	if (y > 0 and !v[x][y - 1]) {
+		dfs(x, y - 1, res, v);
+	}
+	if (y < v[0].size() - 1 and !v[x][y + 1]) {
+		dfs(x, y + 1, res, v);
+	}
+}
+
 int32_t main() {
-	int N = 1e3;
-	vector<int> dp(N + 1, 0);
-	rep(i, 1, N + 1) {
-		int u = i;
-		while (u != 1 and dp[i] < 100) {
-			dp[i]++;
-			if (u % 2 == 0) {
-				u /= 2;
-			}
-			else {
-				u = 3 * u + 1;
+	setup();
+
+	int n, m, k;
+	input(n, m, k);
+
+	vector<string> s(n);
+	arrput(s);
+
+	vector<vector<bool>> v(n, vector<bool>(m, false));
+	rep(i, 0, n) {
+		rep(j, 0, m) {
+			v[i][j] = s[i][j] == '#';
+		}
+	}
+
+	vector<pair<int, int>> res;
+	rep(i, 0, n) {
+		rep(j, 0, m) {
+			if (!v[i][j]) {
+				dfs(i, j, res, v);
 			}
 		}
 	}
 
-	setup();
-
-	int n, q;
-	input(n, q);
-
-	vector<int> a(n);
-	arrput(a);
-
-	while (q--) {
-		int o;
-		input(o);
-
-		if (o == 1) {
-			int l, r, k;
-			input(l, r, k);
-			int res = 0;
-			rep(i, l - 1, r) {
-				res += dp[a[i]] >= k;
-			}
-			print(res);
-		}
-		else {
-			int i;
-			input(i);
-			i--;
-			vector<int> v(100, 0);
-			a[i]++;
-		}
+	rep(i, res.size() - k, res.size()) {
+		s[res[i].first][res[i].second] = 'X';
+	}
+	rep(i, 0, n) {
+		print(s[i]);
 	}
 }

@@ -16,48 +16,40 @@ template<typename T, typename... S> inline void print(T outVar, S... args) {cout
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	int N = 1e3;
-	vector<int> dp(N + 1, 0);
-	rep(i, 1, N + 1) {
-		int u = i;
-		while (u != 1 and dp[i] < 100) {
-			dp[i]++;
-			if (u % 2 == 0) {
-				u /= 2;
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
+
+		vector<int> p(n);
+		arrput(p);
+
+		rep(i, 0, n) {
+			p[i]--;
+		}
+
+		vector<int> l;
+		vector<bool> v(n, false);
+		rep(i, 0, n) {
+			if (v[i]) {
+				continue;
 			}
-			else {
-				u = 3 * u + 1;
+
+			int u = i;
+			int c = 0;
+			while (!v[u]) {
+				v[u] = true;
+				u = p[u];
+				c++;
+			}
+			l.push_back(c);
+		}
+
+		int res = 0;
+		for (int i : l) {
+			if (i > 2) {
+				res += (i - 1) / 2;
 			}
 		}
-	}
-
-	setup();
-
-	int n, q;
-	input(n, q);
-
-	vector<int> a(n);
-	arrput(a);
-
-	while (q--) {
-		int o;
-		input(o);
-
-		if (o == 1) {
-			int l, r, k;
-			input(l, r, k);
-			int res = 0;
-			rep(i, l - 1, r) {
-				res += dp[a[i]] >= k;
-			}
-			print(res);
-		}
-		else {
-			int i;
-			input(i);
-			i--;
-			vector<int> v(100, 0);
-			a[i]++;
-		}
+		print(res);
 	}
 }
