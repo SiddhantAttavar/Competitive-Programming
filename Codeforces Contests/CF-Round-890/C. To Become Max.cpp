@@ -17,8 +17,41 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+bool check(vector<int> &a, int m, int k) {
+	rep(i, 0, a.size()) {
+		int x = k;
+		rep(j, i, a.size()) {
+			if (a[j] >= m - (j - i)) {
+				return true;
+			}
+			x -= m - (j - i) - a[j];
+			if (x < 0) {
+				break;
+			}
+		}
+	}
+	return false;
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n, k;
+		input(n, k);
 
+		vector<int> a(n);
+		arrput(a);
+
+		int l = 0, r = 1e9, res = -1;
+		while (l <= r) {
+			int m = (l + r) / 2;
+			if (check(a, m, k)) {
+				res = m;
+				l = m + 1;
+			}
+			else {
+				r = m - 1;
+			}
+		}
+		print(res);
 	}
 }

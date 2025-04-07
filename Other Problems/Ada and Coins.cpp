@@ -18,7 +18,30 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n, q;
+	input(n, q);
+
+	vector<int> a(n);
+	arrput(a);
+
+	const int N = 1e5;
+	bitset<N + 1> b = 1;
+	for (int i : a) {
+		if (i <= N) {
+			b |= b << i;
+		}
+	}
+
+	vector<int> p(N + 2, 1);
+	rep(i, 0, N + 1) {
+		p[i + 1] = p[i] + b[i + 1];
+	}
+
+	while (q--) {
+		int l, r;
+		input(l, r);
+		print(p[r] - p[l - 1]);
 	}
 }

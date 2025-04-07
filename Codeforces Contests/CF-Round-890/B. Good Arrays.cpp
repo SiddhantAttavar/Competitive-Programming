@@ -19,6 +19,27 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vector<int> a(n);
+		arrput(a);
+
+		int x = 0, y = 0;
+		for (int i : a) {
+			if (i == 1) {
+				x++;
+			}
+			else {
+				y += i - 1;
+			}
+		}
+
+		if (n == 1 or x > y) {
+			print("NO");
+		}
+		else {
+			print("YES");
+		}
 	}
 }

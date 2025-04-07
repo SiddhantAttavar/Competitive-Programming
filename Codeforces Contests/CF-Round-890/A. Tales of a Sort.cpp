@@ -19,6 +19,19 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vector<int> a(n);
+		arrput(a);
+
+		int x = a[0], res = 0;
+		rep(i, 1, n) {
+			if (a[i] < a[i - 1]) {
+				res = x;
+			}
+			x = max(x, a[i]);
+		}
+		print(res);
 	}
 }
