@@ -15,49 +15,44 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7; //998244353;
+const int MOD = 998244353;
 
-long double dist(long double a, long double b, long double x, long double y) {
-	return sqrtl((a - x) * (a - x) + (b - y) * (b - y));
+int mod_pow(int a, int b) {
+	int res = 1;
+	while (b) {
+		if (b & 1) {
+			res = res * a % MOD;
+		}
+		a = a * a % MOD;
+		b >>= 1;
+	}
+	return res;
+}
+
+int mod_div(int a, int b) {
+	return a * mod_pow(b, MOD - 2) % MOD;
 }
 
 int32_t main() {
 	setup();
 
-	long double a, b, c;
-	input(a, b, c);
-
-	vector<pair<int, int>> v;
-	if (a > b) {
-		swap(a, b);
-		v.push_back({0, 1});
-	}
-	if (b > c) {
-		swap(b, c);
-		v.push_back({1, 2});
-	}
-	if (a > b) {
-		swap(a, b);
-		v.push_back({0, 1});
+	const int N = 5000;
+	vector<int> fact(N + 1, 1);
+	rep(i, 2, N + 1) {
+		fact[i] = i * fact[i - 1] % MOD;
 	}
 
-	long double t = (2 * c - a - b) / sqrt(3);
-	long double y = (a - b) * (a - b) + t * t - (c - b) * (c - b);
-	y = sqrtl(y);
-	// long double p = dist(a, t, b, 0), q = dist(b, 0, c, y), r = dist(c, y, a, t);
-	// assert(abs(p - q) < 1e-6 and abs(q - r) < 1e-6);
+	int p, s, r;
+	input(p, s, r);
 
-	long double u = 0;
-	reverse(v.begin(), v.end());
-	for (pair<int, int> p : v) {
-		if (p.first == 0) {
-			swap(t, u);
+	int res = 0;
+	rep(k, r, s + 1) {
+		rep(i, 1, p) {
+			if (p * k - (p - 1) >= s and k * i <= s) {
+				res = (res + mod_div(fact[s - k * i + p - i - 1], fact[p - i - 1] * fact[s - k * i] % MOD * i % MOD) * mod_div(fact[p - 1], fact[i - 1] * fact[p - i] % MOD)) % MOD;
+			}
 		}
-		else {
-			swap(u, y);
-		}
+		res = (res + mod_div(k * p == s, p)) % MOD;
 	}
-
-	cout << fixed << setprecision(30);
-	print(t, u, y);
+	print(mod_div(fact[p - 1] * fact[s - r] % MOD * res % MOD, fact[s - r + p - 1]));
 }

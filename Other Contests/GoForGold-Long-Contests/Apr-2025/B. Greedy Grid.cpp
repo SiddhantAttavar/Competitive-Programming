@@ -17,47 +17,47 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-long double dist(long double a, long double b, long double x, long double y) {
-	return sqrtl((a - x) * (a - x) + (b - y) * (b - y));
+pair<int, int> dfs(int x, int y, vector<string> &a, vector<vector<bool>> &v) {
+	v[x][y] = true;
+	pair<int, int> res = {0, 1};
+	vector<pair<int, int>> l = {
+		{x - 1, y},
+		{x + 1, y},
+		{x, y - 1},
+		{x, y + 1},
+	};
+	for (pair<int, int> p : l) {
+		if (min(p.first, p.second) >= 0 and p.first < a.size() and p.second < a[0].size() and a[p.first][p.second] == '.') {
+			if (!v[p.first][p.second]) {
+				pair<int, int> q = dfs(p.first, p.second, a, v);
+				res.first += q.first;
+				res.second += q.second;
+			}
+		}
+		else {
+			res.first++;
+		}
+	}
+	return res;
 }
 
 int32_t main() {
 	setup();
 
-	long double a, b, c;
-	input(a, b, c);
+	int n, m;
+	input(n, m);
 
-	vector<pair<int, int>> v;
-	if (a > b) {
-		swap(a, b);
-		v.push_back({0, 1});
-	}
-	if (b > c) {
-		swap(b, c);
-		v.push_back({1, 2});
-	}
-	if (a > b) {
-		swap(a, b);
-		v.push_back({0, 1});
-	}
+	vector<string> a(n);
+	arrput(a);
 
-	long double t = (2 * c - a - b) / sqrt(3);
-	long double y = (a - b) * (a - b) + t * t - (c - b) * (c - b);
-	y = sqrtl(y);
-	// long double p = dist(a, t, b, 0), q = dist(b, 0, c, y), r = dist(c, y, a, t);
-	// assert(abs(p - q) < 1e-6 and abs(q - r) < 1e-6);
-
-	long double u = 0;
-	reverse(v.begin(), v.end());
-	for (pair<int, int> p : v) {
-		if (p.first == 0) {
-			swap(t, u);
-		}
-		else {
-			swap(u, y);
+	vector<vector<bool>> v(n, vector<bool>(m, false));
+	pair<int, int> res = {0, 0};
+	rep(i, 0, n) {
+		rep(j, 0, m) {
+			if (!v[i][j] and a[i][j] == '.') {
+				res = max(res, dfs(i, j, a, v));
+			}
 		}
 	}
-
-	cout << fixed << setprecision(30);
-	print(t, u, y);
+	print(res.first, res.second);
 }

@@ -17,47 +17,59 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-long double dist(long double a, long double b, long double x, long double y) {
-	return sqrtl((a - x) * (a - x) + (b - y) * (b - y));
+bool check(int a, int b, int c, int d) {
+	return a * a + b * b == c * c + d and min({a, b, c}) >= 1 and max({a, b, c}) <= 1e9 and a + b > c and a + c > b and b + c > a;
 }
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int d;
+		input(d);
 
-	long double a, b, c;
-	input(a, b, c);
-
-	vector<pair<int, int>> v;
-	if (a > b) {
-		swap(a, b);
-		v.push_back({0, 1});
-	}
-	if (b > c) {
-		swap(b, c);
-		v.push_back({1, 2});
-	}
-	if (a > b) {
-		swap(a, b);
-		v.push_back({0, 1});
-	}
-
-	long double t = (2 * c - a - b) / sqrt(3);
-	long double y = (a - b) * (a - b) + t * t - (c - b) * (c - b);
-	y = sqrtl(y);
-	// long double p = dist(a, t, b, 0), q = dist(b, 0, c, y), r = dist(c, y, a, t);
-	// assert(abs(p - q) < 1e-6 and abs(q - r) < 1e-6);
-
-	long double u = 0;
-	reverse(v.begin(), v.end());
-	for (pair<int, int> p : v) {
-		if (p.first == 0) {
-			swap(t, u);
+		if (d > 12) {
+			if (d % 2) {
+				assert(check((d - 5) / 2 + 1, 2, (d - 5) / 2, d));
+				print((d - 5) / 2 + 1, 2, (d - 5) / 2);
+			}
+			else {
+				assert(check((d - 10) / 2 + 1, 3, (d - 10) / 2, d));
+	 			print((d - 10) / 2 + 1, 3, (d - 10) / 2);
+			}
+			continue;
 		}
-		else {
-			swap(u, y);
+
+		if (d < 0) {
+			if (d % 2 == -1) {
+				assert(check((3 - d) / 2, 2, (3 - d) / 2 + 1, d));
+				print((3 - d) / 2, 2, (3 - d) / 2 + 1);
+			}
+			else {
+				assert(check((8 - d) / 2, 3, (8 - d) / 2 + 1, d));
+				print((8 - d) / 2, 3, (8 - d) / 2 + 1);
+			}
+			continue;
+		}
+
+		bool flag = false;
+		rep(a, 1, 11) {
+			rep(b, 1, 11) {
+				rep(c, 1, 11) {
+					if (check(a, b, c, d)) {
+						print(a, b, c);
+						flag = true;
+						break;
+					}
+				}
+				if (flag) {
+					break;
+				}
+			}
+			if (flag) {
+				break;
+			}
+		}
+		if (!flag) {
+			print(-1);
 		}
 	}
-
-	cout << fixed << setprecision(30);
-	print(t, u, y);
 }

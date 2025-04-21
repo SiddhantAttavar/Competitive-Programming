@@ -17,47 +17,69 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-long double dist(long double a, long double b, long double x, long double y) {
-	return sqrtl((a - x) * (a - x) + (b - y) * (b - y));
-}
-
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
-	long double a, b, c;
-	input(a, b, c);
+		if (n == 1) {
+			print("Yes");
+			continue;
+		}
 
-	vector<pair<int, int>> v;
-	if (a > b) {
-		swap(a, b);
-		v.push_back({0, 1});
-	}
-	if (b > c) {
-		swap(b, c);
-		v.push_back({1, 2});
-	}
-	if (a > b) {
-		swap(a, b);
-		v.push_back({0, 1});
-	}
+		vector<vector<int>> graph(n);
+		rep(i, 0, n - 1) {
+			int u, v;
+			input(u, v);
+			graph[u - 1].push_back(v - 1);
+			graph[v - 1].push_back(u - 1);
+		}
 
-	long double t = (2 * c - a - b) / sqrt(3);
-	long double y = (a - b) * (a - b) + t * t - (c - b) * (c - b);
-	y = sqrtl(y);
-	// long double p = dist(a, t, b, 0), q = dist(b, 0, c, y), r = dist(c, y, a, t);
-	// assert(abs(p - q) < 1e-6 and abs(q - r) < 1e-6);
+		bool flag = true;
+		rep(i, 0, n) {
+			if (graph[i].empty() or graph[i].size() > 2) {
+				flag = false;
+				break;
+			}
+		}
 
-	long double u = 0;
-	reverse(v.begin(), v.end());
-	for (pair<int, int> p : v) {
-		if (p.first == 0) {
-			swap(t, u);
+		if (!flag) {
+			print("No");
+			continue;
+		}
+
+		int u = 0;
+		while (u < n and graph[u].size() != 1) {
+			u++;
+		}
+
+		if (u == n) {
+			print("No");
+			continue;
+		}
+
+		vector<bool> b(n, false);
+		b[u] = true;
+		rep(i, 0, n - 1) {
+			vector<int> l;
+			for (int v : graph[u]) {
+				if (!b[v]) {
+					l.push_back(v);
+				}
+			}
+			if (i != n - 2 and l.size() != 1) {
+				flag = false;
+				break;
+			}
+			u = l[0];
+			b[u] = true;
+		}
+
+		if (!flag) {
+			print("No");
 		}
 		else {
-			swap(u, y);
+			print("Yes");
 		}
 	}
-
-	cout << fixed << setprecision(30);
-	print(t, u, y);
 }
