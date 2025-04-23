@@ -19,6 +19,23 @@ const int MOD = 998244353;
 #define all(x) x.begin(), x.end()
 #define sz(x) (int) x.size()
 
+int mod_pow(int a, int b) {
+	int res = 1;
+	while (b) {
+		if (b & 1) {
+			res = res * a % MOD;
+		}
+
+		a = a * a % MOD;
+		b >>= 1;
+	}
+	return res;
+}
+
+int mod_div(int a, int b) {
+	return a * mod_pow(b, MOD - 2) % MOD;
+}
+
 template<class T, class U, int SZ> struct LazySeg { 
 	// static_assert(pct(SZ) == 1); // SZ must be power of 2
 	const T ID1;
@@ -97,24 +114,18 @@ template <typename T, typename U, bool VALS_EDGES, int SZ> struct HLD {
 	void modifySubtree(int v, int x) { // modifySubtree is similar
 		tree.upd(pos[v] + VALS_EDGES, pos[v] + siz[v] - 1, x);
 	}
-};
-
-int mod_pow(int a, int b) {
-	int res = 1;
-	while (b) {
-		if (b & 1) {
-			res = res * a % MOD;
-		}
-
-		a = a * a % MOD;
-		b >>= 1;
+	int query(int u, vector<int> &a, vector<int> &s, vector<int> &t) {
+		int res = 0, n = s.size();
+		process(0, u, [&](int l, int r) {
+			res = (res + tree.query(l, r)) % MOD;
+			int u = t[l];
+			if (par[u] != -1) {
+				res = (res + a[par[u]] * mod_div(n - s[u], n)) % MOD;
+			}
+		});
+		return res;
 	}
-	return res;
-}
-
-int mod_div(int a, int b) {
-	return a * mod_pow(b, MOD - 2) % MOD;
-}
+};
 
 void dfs(int u, int p, vector<vector<int>> &graph, vector<int> &s) {
 	for (int v : graph[u]) {
@@ -140,34 +151,46 @@ int32_t main() {
 		graph[v - 1].push_back(u - 1);
 	}
 
-	HLD<int, int, false, 1 << 17> h(graph, 0, 0, [](int a, int b) {
-		return a + b;
+	HLD<int, int, false, 1 << 18> h(graph, 0, 0, [](int a, int b) {
+		return (a + b) % MOD;
 	}, [](int ind,int L,int R,vector<int>&seg,vector<int>&lazy) {
-		seg[ind] += (R-L+1)*lazy[ind];
-		if (L != R) {lazy[2*ind] += lazy[ind]; lazy[2*ind+1] += lazy[ind];}
+		seg[ind] = (seg[ind] + (R - L + 1) * lazy[ind]) % MOD;
+		if (L != R) {
+			lazy[2 * ind] = (lazy[2 * ind] + lazy[ind]) % MOD;
+			lazy[2 * ind + 1] = (lazy[2 * ind + 1] + lazy[ind]) % MOD;
+		}
 		lazy[ind] = 0;
 	});
 
 	vector<int> s(n, 1);
 	dfs(0, -1, graph, s);
 
+	vector<int> t(n);
+	rep(i, 0, n) {
+		t[h.pos[i]] = i;
+	}
+
 	int y = 0;
+	vector<int> l(n, 0), p(n, 0);
 	while (q--) {
 		int o, u;
 		input(o, u);
 		u--;
 
-		if (o == 1) {
-			int d;
-			input(d);
-
-			int x = mod_div(n - s[u] + 1, n) * d % MOD;
-			x = (x + mod_div(s[u], n) * (MOD - d)) % MOD;
-			y = (y + d) % MOD;
-			h.modifySubtree(u, x);
+		if (o == 2) {
+			print((h.query(u, l, s, t) + y + l[u]) % MOD);
+			continue;
 		}
-		else {
-			print((h.queryPath(u, u) + y) % MOD);
+
+		int d;
+		input(d);
+
+		y = (y + d * mod_div(s[u], n)) % MOD;
+		l[u] = (l[u] + d) % MOD;
+		h.modifyPath(u, u, d * mod_div(MOD - s[u], n) % MOD);
+		if (!h.adj[u].empty()) {
+			int v = h.adj[u][0];
+			h.modifyPath(v, v, d * mod_div(n - s[v], n) % MOD);
 		}
 	}
 }
