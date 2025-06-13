@@ -18,7 +18,24 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n, k;
+	input(n, k);
+
+	vector<int> a(n);
+	arrput(a);
+
+	vector<int> dp(k + 1, 0);
+	dp[0] = 1;
+	for (int i : a) {
+		vector<int> p(k + 2, 0);
+		rep(j, 0, k + 1) {
+			p[j + 1] = (p[j] + dp[j]) % MOD;
+		}
+		rep(j, 0, k + 1) {
+			dp[j] = (p[j + 1] - p[max(0ll, j - i)] + MOD) % MOD;
+		}
 	}
+	print(dp[k]);
 }

@@ -18,7 +18,28 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n;
+	input(n);
+
+	string s;
+	input(s);
+
+	vector<int> dp = {1};
+	rep(i, 1, n) {
+		vector<int> ndp(i + 1, 0);
+		if (s[i - 1] == '<') {
+			rep(j, 1, i + 1) {
+				ndp[j] = (ndp[j - 1] + dp[j - 1]) % MOD;
+			}
+		}
+		else {
+			for (int j = i - 1; j >= 0; j--) {
+				ndp[j] = (ndp[j + 1] + dp[j]) % MOD;
+			}
+		}
+		dp = ndp;
 	}
+	print(accumulate(dp.begin(), dp.end(), 0ll) % MOD);
 }

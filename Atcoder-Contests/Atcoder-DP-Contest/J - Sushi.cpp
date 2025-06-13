@@ -55,6 +55,6 @@ int32_t main() {
 		}
 	}
 
-	cout << setprecision(18) << fixed;
+	cout << setprecision(15) << fixed;
 	print(dp[x][y][z]);
 }

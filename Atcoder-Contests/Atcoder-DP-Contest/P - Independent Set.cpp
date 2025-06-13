@@ -17,8 +17,32 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-
+pair<int, int> dfs(int u, int p, vector<vector<int>> &graph) {
+	pair<int, int> res = {1, 1};
+	for (int v : graph[u]) {
+		if (v != p) {
+			pair<int, int> x = dfs(v, u, graph);
+			res.first = (res.first * (x.first + x.second)) % MOD;
+			res.second = (res.second * x.first) % MOD;
+		}
 	}
+	return res;
+}
+
+int32_t main() {
+	setup();
+
+	int n;
+	input(n);
+
+	vector<vector<int>> graph(n);
+	rep(i, 0, n - 1) {
+		int u, v;
+		input(u, v);
+		graph[u - 1].push_back(v - 1);
+		graph[v - 1].push_back(u - 1);
+	}
+
+	pair<int, int> res = dfs(0, -1, graph);
+	print((res.first + res.second) % MOD);
 }

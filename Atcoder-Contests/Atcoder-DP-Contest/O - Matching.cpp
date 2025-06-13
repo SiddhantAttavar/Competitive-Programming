@@ -18,7 +18,25 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n;
+	input(n);
+
+	vector<vector<int>> a(n, vector<int>(n));
+	rep(i, 0, n) {
+		arrput(a[i]);
 	}
+
+	vector<int> dp(1 << n, 0);
+	dp[0] = 1;
+	rep(k, 1, 1 << n) {
+		int i = __builtin_popcount(k) - 1;
+		rep(j, 0, n) {
+			if (k & (1 << j) and a[i][j]) {
+				dp[k] = (dp[k] + dp[k ^ (1 << j)]) % MOD;
+			}
+		}
+	}
+	print(dp.back());
 }

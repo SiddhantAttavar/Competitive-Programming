@@ -17,8 +17,44 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
 
+template<typename T> struct SegTree { // cmb(ID,b) = b
+	T ID; T (*cmb)(T a, T b);
+	int n; vector<T> seg;
+	SegTree(int _n, T id, T _cmb(T, T)) {
+		ID = id; cmb = _cmb;
+		for (n = 1; n < _n; ) n *= 2; 
+		seg.assign(2*n,ID); 
 	}
+	void pull(int p) { seg[p] = cmb(seg[2*p],seg[2*p+1]); }
+	void upd(int p, T val) { // set val at position p
+		seg[p += n] = val; for (p /= 2; p; p /= 2) pull(p); }
+	T query(int l, int r) {	// zero-indexed, inclusive
+		T ra = ID, rb = ID;
+		for (l += n, r += n+1; l < r; l /= 2, r /= 2) {
+			if (l&1) ra = cmb(ra,seg[l++]);
+			if (r&1) rb = cmb(seg[--r],rb);
+		}
+		return cmb(ra,rb);
+	}
+};
+
+int32_t main() {
+	setup();
+
+	int n;
+	input(n);
+
+	vector<int> h(n), a(n);
+	arrput(h);
+	arrput(a);
+
+	SegTree<int> s(n + 1, 0, [](int a, int b) {
+		return max(a, b);
+	});
+
+	rep(i, 0, n) {
+		s.upd(h[i], s.query(0, h[i]) + a[i]);
+	}
+	print(s.query(0, n));
 }
