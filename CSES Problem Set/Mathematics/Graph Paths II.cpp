@@ -17,57 +17,66 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-int mod_pow(int a, int b) {
-	int res = 1;
-	while (b) {
-		if (b & 1) {
-			res = res * a % MOD;
+#define ll int
+template<class T, int N> struct Matrix {
+	typedef Matrix M;
+	array<array<T, N>, N> d{};
+	M operator*(const M& m) const {
+		M a;
+		rep(i,0,N) rep(j,0,N) {
+			a.d[i][j] = 2e18;
+			rep(k,0,N) {
+				a.d[i][j] = min(a.d[i][j], d[i][k] + m.d[k][j]);
+			}
 		}
-		a = a * a % MOD;
-		b >>= 1;
+		return a;
 	}
-	return res;
-}
-
-int mod_div(int a, int b) {
-	return a * mod_pow(b, MOD - 2) % MOD;
-}
+	array<T, N> operator*(const array<T, N>& vec) const {
+		array<T, N> ret{};
+		rep(i,0,N) rep(j,0,N) {
+			ret[i] += d[i][j] * vec[j];
+			ret[i] %= MOD;
+		}
+		return ret;
+	}
+	M operator^(ll p) const {
+		assert(p >= 0);
+		M a, b(*this);
+		rep(i, 0, N) rep(j, 0, N) a.d[i][j] = 2e18;
+		rep(i, 0, N) a.d[i][i] = 0;
+		while (p) {
+			if (p&1) a = a*b;
+			b = b*b;
+			p >>= 1;
+		}
+		return a;
+	}
+};
 
 int32_t main() {
-	const int N = 2e6;
-	vector<int> fact(N + 1, 1);
-	rep(i, 2, N + 1) {
-		fact[i] = i * fact[i - 1] % MOD;
-	}
 	setup();
-	int n;
-	input(n);
 
-	string s;
-	input(s);
+	int n, m, k;
+	input(n, m, k);
 
-	int x = 0, y = 0;
-	for (char c : s) {
-		x += c == '(';
-		y += c == ')';
-		if (y > x) {
-			print(0);
-			return 0;
+	Matrix<int, 100> graph;
+	rep(i, 0, 100) {
+		rep(j, 0, 100) {
+			graph.d[i][j] = 2e18;
 		}
 	}
+	rep(i, 0, m) {
+		int u, v, w;
+		input(u, v, w);
 
-	if (n % 2 or x > n / 2) {
-		print(0);
-		return 0;
+		graph.d[u - 1][v - 1] = min(graph.d[u - 1][v - 1], w);
 	}
 
-	if (n / 2 == x) {
-		print(1);
-		return 0;
+	graph = graph ^ k;
+	if (graph.d[0][n - 1] == 2e18) {
+		print(-1);
 	}
-
-	print((
-		mod_div(fact[n - x - y], fact[n / 2 - x] * fact[(n + 1) / 2 - y] % MOD) -
-		mod_div(fact[n - x - y], fact[n / 2 - x - 1] * fact[(n + 1) / 2 - y + 1] % MOD) + MOD
-	) % MOD);
+	else {
+		print(graph.d[0][n - 1]);
+	}
 }

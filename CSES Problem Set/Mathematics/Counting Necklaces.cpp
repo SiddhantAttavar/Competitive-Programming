@@ -34,40 +34,14 @@ int mod_div(int a, int b) {
 }
 
 int32_t main() {
-	const int N = 2e6;
-	vector<int> fact(N + 1, 1);
-	rep(i, 2, N + 1) {
-		fact[i] = i * fact[i - 1] % MOD;
-	}
 	setup();
-	int n;
-	input(n);
 
-	string s;
-	input(s);
+	int n, m;
+	input(n, m);
 
-	int x = 0, y = 0;
-	for (char c : s) {
-		x += c == '(';
-		y += c == ')';
-		if (y > x) {
-			print(0);
-			return 0;
-		}
+	int res = 0;
+	rep(i, 1, n + 1) {
+		res = (res + mod_pow(m, __gcd((int) i, n))) % MOD;
 	}
-
-	if (n % 2 or x > n / 2) {
-		print(0);
-		return 0;
-	}
-
-	if (n / 2 == x) {
-		print(1);
-		return 0;
-	}
-
-	print((
-		mod_div(fact[n - x - y], fact[n / 2 - x] * fact[(n + 1) / 2 - y] % MOD) -
-		mod_div(fact[n - x - y], fact[n / 2 - x - 1] * fact[(n + 1) / 2 - y + 1] % MOD) + MOD
-	) % MOD);
+	print(mod_div(res, n));
 }

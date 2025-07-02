@@ -17,6 +17,10 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+#define vi vector<int>
+#define sz(x) (int) x.size()
+#define all(x) x.begin(), x.end()
+
 int mod_pow(int a, int b) {
 	int res = 1;
 	while (b) {
@@ -34,40 +38,7 @@ int mod_div(int a, int b) {
 }
 
 int32_t main() {
-	const int N = 2e6;
-	vector<int> fact(N + 1, 1);
-	rep(i, 2, N + 1) {
-		fact[i] = i * fact[i - 1] % MOD;
+	setup(); int tc; input(tc); while (tc--) {
+
 	}
-	setup();
-	int n;
-	input(n);
-
-	string s;
-	input(s);
-
-	int x = 0, y = 0;
-	for (char c : s) {
-		x += c == '(';
-		y += c == ')';
-		if (y > x) {
-			print(0);
-			return 0;
-		}
-	}
-
-	if (n % 2 or x > n / 2) {
-		print(0);
-		return 0;
-	}
-
-	if (n / 2 == x) {
-		print(1);
-		return 0;
-	}
-
-	print((
-		mod_div(fact[n - x - y], fact[n / 2 - x] * fact[(n + 1) / 2 - y] % MOD) -
-		mod_div(fact[n - x - y], fact[n / 2 - x - 1] * fact[(n + 1) / 2 - y + 1] % MOD) + MOD
-	) % MOD);
 }
