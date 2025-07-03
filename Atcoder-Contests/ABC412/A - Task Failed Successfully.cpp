@@ -20,11 +20,14 @@ const int MOD = (int) 1e9 + 7; //998244353;
 int32_t main() {
 	setup();
 
-	int n, m, k;
-	input(n, m, k);
+	int n;
+	input(n);
 
-	vector<vector<int>> a(n, vector<int>(m));
+	int res = 0;
 	rep(i, 0, n) {
-		arrput(a[i]);
+		int a, b;
+		input(a, b);
+		res += b > a;
 	}
+	print(res);
 }

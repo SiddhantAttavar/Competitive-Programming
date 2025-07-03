@@ -18,13 +18,27 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
-	int n, m, k;
-	input(n, m, k);
+		vector<int> s(n);
+		arrput(s);
 
-	vector<vector<int>> a(n, vector<int>(m));
-	rep(i, 0, n) {
-		arrput(a[i]);
+		multiset<int> m(s.begin() + 1, s.end() - 1);
+
+		int x = s[0], res = 2;
+		while (2 * x < s[n - 1]) {
+			multiset<int>::iterator i = m.upper_bound(2 * x);
+			if (i == m.begin()) {
+				res = -1;
+				break;
+			}
+			i--;
+			x = *i;
+			m.erase(i);
+			res++;
+		}
+		print(res);
 	}
 }

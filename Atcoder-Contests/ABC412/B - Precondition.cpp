@@ -20,11 +20,16 @@ const int MOD = (int) 1e9 + 7; //998244353;
 int32_t main() {
 	setup();
 
-	int n, m, k;
-	input(n, m, k);
+	string s, t;
+	input(s, t);
 
-	vector<vector<int>> a(n, vector<int>(m));
-	rep(i, 0, n) {
-		arrput(a[i]);
+	set<char> a(t.begin(), t.end());
+
+	rep(i, 1, s.size()) {
+		if (s[i] >= 'A' and s[i] <= 'Z' and !a.count(s[i - 1])) {
+			print("No");
+			return 0;
+		}
 	}
+	print("Yes");
 }
