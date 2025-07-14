@@ -17,18 +17,6 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-int mod_pow(int a, int b, int m = MOD) {
-	int res = 1;
-	while (b) {
-		if (b & 1) {
-			res = res * a % m;
-		}
-		a = a * a % m;
-		b >>= 1;
-	}
-	return res;
-}
-
 template<typename T> struct SegTree { // cmb(ID,b) = b
 	T ID; T (*cmb)(T a, T b);
 	int n; vector<T> seg;
@@ -69,7 +57,11 @@ vector<int> build(int i, vector<int> &a, vector<char> &v) {
 	}
 	else {
 		rep(j, 0, 10) {
-			l[j] = mod_pow(j, a[i + 1], 10);
+			l[j] = 1;
+			rep(k, 0, a[i + 1] % 9) {
+				l[j] *= j;
+			}
+			l[j] %= 10;
 		}
 	}
 	return l;
