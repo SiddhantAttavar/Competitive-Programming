@@ -42,9 +42,7 @@ int32_t main() {
 
 	int N = 1e6;
 	vector<int> spf(N + 1), f(N + 1, 0);
-	rep(i, 0, N + 1) {
-		spf[i] = i;
-	}
+	iota(spf.begin(), spf.end(), 0);
 	rep(i, 2ll, N + 1) {
 		if (spf[i] != i) {
 			continue;
