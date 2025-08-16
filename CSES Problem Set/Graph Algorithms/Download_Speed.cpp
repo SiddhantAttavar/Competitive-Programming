@@ -1,109 +1,78 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp> 
-#include <ext/pb_ds/tree_policy.hpp> 
+#include <bits/extc++.h>
 using namespace std;
 using namespace __gnu_pbds; 
-template<typename T> inline void input(T& inVar) {cin >> inVar;}
-template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
-template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
-template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
-#define int long long
-#define range(it, start, end) for (auto it = start; it < end; it++)
-#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+template<typename T> inline void input(T& x) {cin >> x;}
+template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
+template<typename T> inline void print(T x) {cout << x << '\n';}
+template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
+#define rep(i, a, b) for (auto i = (a); i < (b); i++)
+#define arrput(l) for (auto &i : l) {cin >> i;}
+#define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7; //998244353
-#define all(x) x.begin(), x.end()
-#define sz size
+const int MOD = (int) 1e9 + 7; //998244353;
+
 #define vi vector<int>
-#define rep range
 #define ll int
+#define sz(x) (int) x.size()
 
-const ll INF = numeric_limits<ll>::max() / 4;
-
-struct MCMF {
-	struct edge {
-		int from, to, rev;
-		ll cap, cost, flow;
+struct Dinic {
+	struct Edge {
+		int to, rev;
+		ll c, oc;
+		ll flow() { return max(oc - c, 0LL); } // if you need flows
 	};
-	int N;
-	vector<vector<edge>> ed;
-	vi seen;
-	vector<ll> dist, pi;
-	vector<edge*> par;
-
-	MCMF(int N) : N(N), ed(N), seen(N), dist(N), pi(N), par(N) {}
-
-	void addEdge(int from, int to, ll cap, ll cost) {
-		if (from == to) return;
-		ed[from].push_back(edge{ from,to,(int)sz(ed[to]),cap,cost,0 });
-		ed[to].push_back(edge{ to,from,(int)sz(ed[from])-1,0,-cost,0 });
+	vi lvl, ptr, q;
+	vector<vector<Edge>> adj;
+	Dinic(int n) : lvl(n), ptr(n), q(n), adj(n) {}
+	void addEdge(int a, int b, ll c, ll rcap = 0) {
+		adj[a].push_back({b, sz(adj[b]), c, c});
+		adj[b].push_back({a, sz(adj[a]) - 1, rcap, rcap});
 	}
-
-	void path(int s) {
-		fill(all(seen), 0);
-		fill(all(dist), INF);
-		dist[s] = 0; ll di;
-
-		priority_queue<pair<ll, int>> q;
-		q.push({ 0, s });
-
-		while (!q.empty()) {
-            int x = q.top().first;
-			s = q.top().second; q.pop();
-            if (-x != dist[s]) continue;
-			seen[s] = 1; di = dist[s] + pi[s];
-			for (edge& e : ed[s]) if (!seen[e.to]) {
-				ll val = di - pi[e.to] + e.cost;
-				if (e.cap - e.flow > 0 && val < dist[e.to]) {
-					dist[e.to] = val;
-					par[e.to] = &e;
-                    q.push({ -dist[e.to], e.to });
+	ll dfs(int v, int t, ll f) {
+		if (v == t || !f) return f;
+		for (int& i = ptr[v]; i < sz(adj[v]); i++) {
+			Edge& e = adj[v][i];
+			if (lvl[e.to] == lvl[v] + 1)
+				if (ll p = dfs(e.to, t, min(f, e.c))) {
+					e.c -= p, adj[e.to][e.rev].c += p;
+					return p;
 				}
-			}
 		}
-		rep(i,0,N) pi[i] = min(pi[i] + dist[i], INF);
+		return 0;
 	}
-
-	pair<ll, ll> maxflow(int s, int t) {
-		ll totflow = 0, totcost = 0;
-		while (path(s), seen[t]) {
-			ll fl = INF;
-			for (edge* x = par[t]; x; x = par[x->from])
-				fl = min(fl, x->cap - x->flow);
-
-			totflow += fl;
-			for (edge* x = par[t]; x; x = par[x->from]) {
-				x->flow += fl;
-				ed[x->to][x->rev].flow -= fl;
+	ll calc(int s, int t) {
+		ll flow = 0; q[0] = s;
+		rep(L,0,31) do { // 'int L=30' maybe faster for random data
+			lvl = ptr = vi(sz(q));
+			int qi = 0, qe = lvl[s] = 1;
+			while (qi < qe && !lvl[t]) {
+				int v = q[qi++];
+				for (Edge e : adj[v])
+					if (!lvl[e.to] && e.c >> (30 - L))
+						q[qe++] = e.to, lvl[e.to] = lvl[v] + 1;
 			}
-		}
-		rep(i,0,N) for(edge& e : ed[i]) totcost += e.cost * e.flow;
-		return {totflow, totcost/2};
+			while (ll p = dfs(s, t, LLONG_MAX)) flow += p;
+		} while (lvl[t]);
+		return flow;
 	}
-
-	// If some costs can be negative, call this before maxflow:
-	void setpi(int s) { // (otherwise, leave this out)
-		fill(all(pi), INF); pi[s] = 0;
-		int it = N, ch = 1; ll v;
-		while (ch-- && it--)
-			rep(i,0,N) if (pi[i] != INF)
-			  for (edge& e : ed[i]) if (e.cap)
-				  if ((v = pi[i] + e.cost) < pi[e.to])
-					  pi[e.to] = v, ch = 1;
-		assert(it >= 0); // negative cost cycle
-	}
+	bool leftOfMinCut(int a) { return lvl[a] != 0; }
 };
 
 int32_t main() {
-    setup();
+	setup();
 
-    int n, m;
-    input(n, m);
+	int n, m;
+	input(n, m);
 
-    range(i, 0, m) {
-        int u, v;
-        input(u, v);
-    }
+	Dinic d(n);
+	rep(i, 0, m) {
+		int u, v, w;
+		input(u, v, w);
+		d.addEdge(u - 1, v - 1, w);
+	}
+	print(d.calc(0, n - 1));
 }
