@@ -1,0 +1,27 @@
+a=? max ?
+b=a max a
+c=b max b
+d=c max c
+e=d max d
+f=e max e
+g=f max f
+h=g max g
+i=h max h
+j=i max i
+k=j max j
+l=k max k
+m=l max l
+n=m max m
+o=n max n
+p=o max o
+q=p max p
+r=q/q
+s=r+r
+t=s*s
+u=s*t
+v=t*t
+w=t*u
+x=u*u
+y=u*v
+z=v*v
+r+s+t+u+v+w+x+y

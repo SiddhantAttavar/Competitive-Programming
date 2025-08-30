@@ -15,21 +15,10 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-const int N = 1e4;
+const int N = 25000;
 const int W = 1e5;
-const int K = 200;
-
-int query(vector<int> &a) {
-	cout << "? " << a.size();
-	for (int i : a) {
-		cout << ' ' << i;
-	}
-	cout << endl;
-	cout.flush();
-	int x;
-	input(x);
-	return x;
-}
+const int X = 8000;
+const int Y = 130;
 
 int get(vector<int> &a, int w) {
 	if (a.size() > N or *max_element(a.begin(), a.end()) > w) {
@@ -48,6 +37,18 @@ int get(vector<int> &a, int w) {
 	return res;
 }
 
+int query(vector<int> &a) {
+	cout << "? " << a.size();
+	for (int i : a) {
+		cout << ' ' << i;
+	}
+	cout << endl;
+	cout.flush();
+	int x;
+	input(x);
+	return x;
+}
+
 // int w;
 // int query(vector<int> &a) {
 // 	return get(a, w);
@@ -58,17 +59,17 @@ int32_t main() {
 	int tc; input(tc); while (tc--) {
 		// input(w);
 
-		vector<int> a(N, K);
+		vector<int> a(X, Y);
 		int x = query(a);
 
 		int l = W, r = 0;
 		if (x == 0) {
 			l = 1;
-			r = K - 1;
+			r = Y - 1;
 		}
-		rep(w, K, W + 1) {
-			int k = w / K;
-			if ((N + k - 1) / k == x) {
+		rep(w, Y, W + 1) {
+			int k = w / Y;
+			if ((X + k - 1) / k == x) {
 				l = min(l, w);
 				r = max(r, w);
 			}
@@ -80,21 +81,15 @@ int32_t main() {
 			b.push_back(i - l);
 		}
 		b.push_back(l);
+		// print(l, r);
+		// cout.flush();
+		assert(b.size() <= N - X);
 		if (x == 0) {
-			b.clear();
-			rep(i, 0, N) {
-				b.push_back(rng() % 2 + 1);
-			}
+			b = vector<int>(N - X, 1);
 		}
 
-		int res = 2;
+		int res = -1;
 		int y = query(b);
-		if (x == 0 and y == 0) {
-			print('!', 1);
-			cout.flush();
-			continue;
-		}
-
 		while (l <= r) {
 			int m = (l + r) / 2;
 			if (get(b, m) == y) {
@@ -112,7 +107,3 @@ int32_t main() {
 		cout.flush();
 	}
 }
-
-
-
-
