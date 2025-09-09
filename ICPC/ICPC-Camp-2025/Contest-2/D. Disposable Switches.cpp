@@ -3,11 +3,15 @@ using namespace std;
 #define int long long
 #define rep(i, a, b) for (int i = a; i < b; i++)
 
-void dfs(int u, vector<vector<int>> &graph, vector<bool> &vis) {
-	vis[u] = true;
-	for (int v : graph[u]) {
-		if (!vis[v]) {
-			dfs(v, graph, vis);
+void dfs(int u, int x, vector<vector<pair<int, int>>> &graph, vector<vector<bool>> &vis, vector<vector<int>> &dp) {
+	int n = graph.size(), k = u / n;
+	vis[x][u] = true;
+	if (x > 0 and dp[x][u] == dp[x - 1][u] and !vis[x - 1][u]) {
+		dfs(u, x - 1, graph, vis, dp);
+	}
+	for (auto [v, w] : graph[u % n]) {
+		if (x > 0 and !vis[x - 1][v] and dp[x][u] == dp[x - 1][v] + w) {
+			dfs(v, x - 1, graph, vis, dp);
 		}
 	}
 }
@@ -29,43 +33,44 @@ signed main() {
 		graph[v - 1].push_back({u - 1, w});
 	}
 
-	vector<vector<int>> rev_graph(n * n);
-	vector<bool> vis(n * n, false);
-	vector<int> dp(n, 1e18);
+	vector<vector<int>> dp(n, vector<int>(n, 1e13));
+	vector<vector<bool>> vis(n, vector<bool>(n, false));
 	vector<int> t(n);
-	dp[0] = 0;
-	t[0] = 1e18;
+	vector<int> v;
+	dp[0][0] = 0;
+	t[0] = 1e13;
 	rep(i, 1, n) {
-		vector<int> ndp(dp.begin(), dp.end());
+		rep(u, 0, n) {
+			dp[i][u] = dp[i - 1][u];
+		}
 		rep(u, 0, n) {
 			for (auto [v, w] : graph[u]) {
-				if (dp[u] + w < ndp[v]) {
-					ndp[v] = dp[u] + w;
-					rev_graph[v + n * i] = {u + n * (i - 1)};
-				}
-				else if (dp[u] + w == ndp[v]) {
-					rev_graph[v + n * i].push_back(u + n * (i - 1));
-				}
+				dp[i][v] = min(dp[i][v], dp[i - 1][u] + w);
 			}
 		}
-		t[i] = ndp[n - 1];
-		dp = ndp;
+		t[i] = dp[i][n - 1];
+		if (t[i] == 1e13) {
+			continue;
+		}
+
+		while (v.size() >= 2 and (t[v[v.size() - 2]] - t[i]) * (v[v.size() - 1] - v[v.size() - 2]) > (t[v[v.size() - 2]] - t[v[v.size() - 1]]) * (i - v[v.size() - 2])) {
+			v.pop_back();
+		}
+		v.push_back(i);
 	}
 
-	int z = 0;
-	int k = 1e18;
-	for (int i = n - 1; i >= 1; i--) {
-		if (k >= t[i] - z) {
-			dfs(n - 1 + n * i, rev_graph, vis);
+	for (int i : v) {
+		if (t[i] < 1e13) {
+			dfs(n - 1, i, graph, vis, dp);
 		}
-		k = min(k, t[i] - z);
-		z = max(z, t[i]);
 	}
 
 	vector<bool> res(n, true);
-	rep(i, 0, n * n) {
-		if (vis[i]) {
-			res[i % n] = false;
+	rep(i, 0, n) {
+		rep(j, 0, n) {
+			if (vis[i][j]) {
+				res[j] = false;
+			}
 		}
 	}
 	cout << accumulate(res.begin(), res.end(), 0ll) << endl;

@@ -1,26 +1,78 @@
 #include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
 using namespace std;
+using namespace __gnu_pbds;
 #define int long long
 #define rep(i, a, b) for (int i = a; i < b; i++)
 
-template<class F, class G, class T>
-void rec(int from, int to, F& f, G& g, int& i, T& p, T q) {
-	if (p == q) return;
-	if (from == to) {
-		g(i, to, p);
-		i = to; p = q;
-	} else {
-		int mid = (from + to) >> 1;
-		rec(from, mid, f, g, i, p, f(mid));
-		rec(mid+1, to, f, g, i, p, q);
+template<class T>
+using Tree = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+int solve(vector<int> &s, int c, int r, bool flag) {
+	int n = s.size();
+	vector<int> v(n);
+	rep(i, 0, n) {
+		v[i] = abs(s[i]);
 	}
-}
-template<class F, class G>
-void constantIntervals(int from, int to, F f, G g) {
-	if (to <= from) return;
-	int i = from; auto p = f(i), q = f(to-1);
-	rec(from, to-1, f, g, i, p, q);
-	g(i, to, q);
+	sort(v.begin(), v.end());
+	reverse(v.begin(), v.end());
+	v.erase(unique(v.begin(), v.end()), v.end());
+
+	map<int, vector<int>> l;
+	rep(i, 0, n) {
+		l[abs(s[i])].push_back(i);
+	}
+	for (auto [k, v] : l) {
+		reverse(l[k].begin(), l[k].end());
+	}
+
+	int res = 0;
+	bool q = flag;
+	rep(j, 0, n) {
+		if (s[j] == 0 or q == (s[j] < 0)) {
+			res += r;
+		}
+		else {
+			q = !q;
+		}
+	}
+	set<int> p;
+	Tree<int> o;
+	vector<bool> b(n, false);
+	int y = 0;
+	for (int i : v) {
+		res = min(res, (i + 1) * c + y * r);
+		// cout << i << ' ' << y << ' ' << (i + 1) * c + y * r << endl;
+
+		for (int j : l[i]) {
+			p.insert(j);
+			if (s[j] != 0 and (j + flag + o.order_of_key(j)) % 2 == (s[j] < 0)) {
+				b[j] = false;
+				continue;
+			}
+			// cout << j << endl;
+			b[j] = true;
+			o.insert(j);
+			y++;
+			set<int>::iterator q = p.upper_bound(j);
+			if (q == p.end()) {
+				continue;
+			}
+			if (b[*q]) {
+				o.erase(*q);
+				b[*q] = false;
+				y--;
+			}
+			else {
+				o.insert(*q);
+				b[*q] = true;
+				y++;
+			}
+		}
+	}
+	// cout << res << endl;
+	return res;
 }
 
 signed main() {
@@ -36,55 +88,5 @@ signed main() {
 		cin >> s[i];
 	}
 
-	vector<int> v = {0};
-	rep(i, 0, n) {
-		v.push_back(abs(s[i]) + 1);
-	}
-	sort(v.begin(), v.end());
-	v.erase(unique(v.begin(), v.end()), v.end());
-
-	int res = 2e18;
-	constantIntervals(0, v.size(), [&, a = s](int i) {
-		int nc = v[i];
-		int ans = 0;
-		vector<vector<int>> dp(n, vector<int>(2, 0));
-		if(a[0] > 0){
-			dp[0][0] = 0;
-			dp[0][1] = r;
-			if(a[0] < nc){
-				dp[0][1] = 0;
-			}
-		} else if(a[0] < 0){
-			dp[0][1] = 0;
-			dp[0][0] = r;
-			if(abs(a[0]) < nc){
-				dp[0][0] = 0;
-			}
-		} else{
-			if(nc > 0){
-				dp[0][0] = dp[0][1] = 0;
-			} else{
-				dp[0][0] = dp[0][1] = r;
-			}
-		}
-		for(int i = 1; i<n; i++){
-			// dp[i][0]
-			dp[i][0] = dp[i-1][0] + r;
-			if(a[i] > 0 || (abs(a[i]) < nc)){
-				dp[i][0] = min(dp[i][0], dp[i-1][1]);
-			}
-	 
-			// dp[i][1]
-			dp[i][1] = dp[i-1][1] + r;
-			if(a[i] < 0 || ((abs(a[i]) < nc))){
-				dp[i][1] = min(dp[i][1], dp[i-1][0]);
-			}
-		}
-		ans += min(dp[n-1][0], dp[n-1][1]);
-		return -ans;
-	}, [&](int a, int b, int x) {
-		cout << -x / r << ' ' << a << endl;
-		res = min(res, c * v[a] - x);
-	});
-	cout << res << endl;
+	cout << min(solve(s, c, r, true), solve(s, c, r, false)) << endl;
 }
