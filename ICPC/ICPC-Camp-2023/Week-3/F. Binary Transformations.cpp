@@ -1,14 +1,48 @@
 #include <bits/stdc++.h>
+#include <bits/extc++.h>
 using namespace std;
-template<typename T> inline void input(T& inVar) {cin >> inVar;}
-template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
-template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
-template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
-#define range(it, start, end) for (auto it = start; it < end; it++)
-#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+using namespace __gnu_pbds; 
+template<typename T> inline void input(T& x) {cin >> x;}
+template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
+template<typename T> inline void print(T x) {cout << x << '\n';}
+template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
+#define rep(i, a, b) for (auto i = (a); i < (b); i++)
+#define arrput(l) for (auto &i : l) {cin >> i;}
+#define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+const int MOD = (int) 1e9 + 7; //998244353;
+
+__int128_t solve(multiset<int> &a, multiset<int> &b, multiset<int> &c) {
+	__int128_t x = 0;
+	for (int i : a) {
+		x += i;
+	}
+	for (int i : c) {
+		x += i;
+	}
+	__int128_t res = 0;
+	for (multiset<int>::reverse_iterator i = a.rbegin(); i != a.rend(); i++) {
+		x -= *i;
+		res += x;
+	}
+	for (int i : b) {
+		x += i;
+		res += x;
+	}
+	return res;
+}
+
+void print(__int128 x) {
+    if (x < 0) {
+        putchar('-');
+        x = -x;
+    }
+    if (x > 9) print(x / 10);
+    putchar(x % 10 + '0');
+}
 
 int32_t main() {
 	setup();
@@ -17,92 +51,33 @@ int32_t main() {
 	input(n);
 
 	vector<int> c(n);
-	arrPut(c);
+	arrput(c);
+
+	string s, t;
+	input(s, t);
 
 	vector<bool> a(n), b(n);
-	string x, y;
-	input(x, y);
-	range(i, 0, n) {
-		a[i] = x[i] - '0';
-		b[i] = y[i] - '0';
+	rep(i, 0, n) {
+		a[i] = s[i] == '1';
+		b[i] = t[i] == '1';
 	}
 
-	vector<pair<int, int>> zto, otz, v;
-	range(i, 0, n) {
-		if (a[i] and !b[i]) {
-			otz.push_back({-c[i], i});
-		}
-		else if (!a[i] and b[i]) {
-			zto.push_back({c[i], i});
-		}
-		else if (a[i]) {
-			v.push_back({c[i], i});
-		}
+	int x = 0;
+	rep(i, 0, n) {
+		x += a[i] * c[i];
 	}
 
-	sort(zto.begin(), zto.end());
-	sort(otz.begin(), otz.end());
-	sort(v.begin(), v.end());
-
-	int res = 0, curr = 0;
-	vector<int> cost_zto(zto.size()), cost_otz(otz.size());
-	range(i, 0, n) {
-		curr += c[i] * a[i];
+	vector<multiset<int>> v(4);
+	rep(i, 0, n) {
+		v[a[i] + 2 * b[i]].insert(c[i]);
 	}
- 
-	range(i, 0, (int) otz.size()) {
-		curr -= c[otz[i].second];
-		cost_otz[i] = curr;
-		res += curr;
+	__int128_t res = solve(v[1], v[2], v[3]);
+	while (!v[3].empty()) {
+		int t = *v[3].rbegin();
+		v[3].erase(prev(v[3].end()));
+		v[2].insert(t);
+		v[1].insert(t);
+		res = min(res, solve(v[1], v[2], v[3]));
 	}
- 
-	range(i, 0, (int) zto.size()) {
-		curr += c[zto[i].second];
-		cost_zto[i] = curr;
-		res += curr;
-	}
-
-	otz.push_back({0, -1});
-	cost_otz.push_back(0);
-	zto.insert(zto.begin(), {0, -1});
-	cost_zto.insert(cost_zto.begin(), 0);
-
-	vector<vector<int>> dp(v.size() + 1, vector<int>(n + 1, 0));
-	fill(dp[0].begin(), dp[0].end(), 0);
-
-	int l = (int) otz.size() - 1;
-	int r = 0;
-	range(i, 0, (int) v.size()) {
-		while (l >= 0 and -otz[l].first < v[i].first) {
-			l--;
-		}
-
-		while (r < (int) zto.size() and zto[r].first < v[i].first) {
-			r++;
-		}
-
-		int k = ((int) otz.size() - l - 2) + (r - 1) + 1;
-		print(l, r, k);
-		print(cost_otz[l + 1], otz[l + 1].first, cost_zto[r - 1]);
-		dp[i + 1][k] = (k - 1) * v[i].first - (cost_otz[l + 1] - v[i].first - otz[l + 1].first + cost_zto[r - 1]);
-		range(p, k + 1, k + i + 1) {
-			dp[i + 1][p] = max({
-				dp[i][p],
-				dp[i][p - 1] + (p - 1) * v[i].first - (cost_otz[l + 1] - v[i].first - otz[l + 1].first + cost_zto[r - 1])
-			});
-		}
-	}
-
-	range(i, 0, (int) v.size() + 1) {
-		arrPrint(dp[i]);
-	}
-
-	int ans = res;
-	range(k, 0, n + 1) {
-		if (dp[(int) v.size()][k] != -1) {
-			ans = min(ans, res - dp[(int) v.size()][k]);
-		}
-	}
-
-	print(ans);
+	print(res);
 }
