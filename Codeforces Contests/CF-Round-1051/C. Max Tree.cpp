@@ -1,3 +1,4 @@
+#include <bits/stdc++.h>
 #include <bits/extc++.h>
 using namespace std;
 using namespace __gnu_pbds; 
@@ -14,8 +15,49 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+void dfs(int u, vector<vector<int>> &graph, vector<bool> &vis, vector<int> &res) {
+	vis[u] = true;
+	for (int v : graph[u]) {
+		if (!vis[v]) {
+			dfs(v, graph, vis, res);
+		}
+	}
+	res.push_back(u);
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vector<vector<int>> graph(n);
+		rep(i, 0, n - 1) {
+			int u, v, x, y;
+			input(u, v, x, y);
+
+			u--;
+			v--;
+			if ((u < v) == (x < y)) {
+				graph[u].push_back(v);
+			}
+			else {
+				graph[v].push_back(u);
+			}
+		}
+
+		vector<int> t;
+		vector<bool> vis(n, false);
+		rep(i, 0, n) {
+			if (!vis[i]) {
+				dfs(i, graph, vis, t);
+			}
+		}
+		reverse(t.begin(), t.end());
+
+		vector<int> res(n);
+		rep(i, 0, n) {
+			res[t[i]] = i + 1;
+		}
+		arrprint(res);
 	}
 }

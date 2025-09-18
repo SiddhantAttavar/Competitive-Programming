@@ -13,7 +13,7 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = 998244353;
+const int MOD = (int) 1e9 + 7; //998244353;
 
 template<typename T> struct SegTree { // cmb(ID,b) = b
 	T ID; T (*cmb)(T a, T b);
@@ -36,47 +36,15 @@ template<typename T> struct SegTree { // cmb(ID,b) = b
 	}
 };
 
-const int N = 3e5;
-vector<int> pow2(N + 1), inv2(N + 1);
-
-vector<int> solve(vector<int> &a) {
-	int n = a.size();
-	vector<int> l;
-	rep(i, 0, n) {
-		if (l.empty() or l.back() < a[i]) {
-			l.push_back(a[i]);
-		}
-	}
-
-	vector<int> dp(n, 0);
-	vector<int> p(l.size(), 0);
-	SegTree<int> s(l.size(), 0, [](int a, int b) {
-		return a + b;
-	});
-	vector<int> v(l.size(), 0);
-	rep(i, 0, n) {
-		int j = lower_bound(l.begin(), l.end(), a[i]) - l.begin();
-		if (j == 0 and a[i] == l[0]) {
-			dp[i] = 1;
-			v[0] = (v[0] + inv2[p[0] + 1]) % MOD;
-		}
-		else if (j > 0 and a[i] == l[j]) {
-			dp[i] = (v[j - 1] * pow2[s.query(0, j - 1)]) % MOD;
-			v[j] = (v[j] + dp[i] * inv2[s.query(0, j) + 1]) % MOD;
-		}
-		p[j]++;
-		s.upd(j, p[j]);
-	}
-	return dp;
-}
+const int N = 300;
+vector<SegTree<int>> s(N + 1, SegTree<int>(N + 1, 0, [](int a, int b) {
+	return (a + b) % MOD;
+}));
+vector<SegTree<int>> t(N + 1, SegTree<int>(N + 1, 0, [](int a, int b) {
+	return (a + b) % MOD;
+}));
 
 int32_t main() {
-	pow2[0] = 1;
-	inv2[0] = 1;
-	rep(i, 1, N + 1) {
-		pow2[i] = pow2[i - 1] * 2 % MOD;
-		inv2[i] = inv2[i - 1] * (MOD + 1) / 2 % MOD;
-	}
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
@@ -84,22 +52,34 @@ int32_t main() {
 		vector<int> a(n);
 		arrput(a);
 
-		vector<int> f = solve(a);
-		reverse(a.begin(), a.end());
-		vector<int> g = solve(a);
-		reverse(a.begin(), a.end());
-		reverse(g.begin(), g.end());
-
-		int res = 0, x = 0;
-		int k = *max_element(a.begin(), a.end());
-		rep(i, 0, n) {
-			if (a[i] == k) {
-				res = (res + f[i] * g[i]) % MOD;
-				res = (res + x * g[i] % MOD * pow2[i - 1]) % MOD;
-				x = (x + f[i] * inv2[i]) % MOD;
+		vector<vector<int>> dp(N + 1, vector<int>(N + 1));
+		dp[0][0] = 1;
+		rep(i, 0, N + 1) {
+			rep(j, 0, N + 1) {
+				s[i].upd(j, dp[i][j]);
+				t[j].upd(i, dp[i][j]);
 			}
+		}
+		for (int i : a) {
+			rep(j, 0, i + 1) {
+				dp[j][i] = (dp[j][i] + s[j].query(j, i)) % MOD;
+			}
+			rep(k, i + 1, N + 1) {
+				dp[i][k] = (dp[i][k] + t[k].query(0, i)) % MOD;
+			}
+			rep(j, 0, N + 1) {
+				s[i].upd(j, dp[i][j]);
+				t[j].upd(i, dp[i][j]);
+
+				s[j].upd(i, dp[j][i]);
+				t[i].upd(j, dp[j][i]);
+			}
+		}
+
+		int res = 0;
+		rep(i, 0, N + 1) {
+			res = (res + s[i].query(0, N)) % MOD;
 		}
 		print(res);
 	}
 }
-

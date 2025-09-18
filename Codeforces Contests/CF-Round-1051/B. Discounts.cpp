@@ -1,3 +1,4 @@
+#include <bits/stdc++.h>
 #include <bits/extc++.h>
 using namespace std;
 using namespace __gnu_pbds; 
@@ -16,6 +17,24 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n, k;
+		input(n, k);
 
+		vector<int> a(n), b(k);
+		arrput(a);
+		arrput(b);
+
+		sort(a.begin(), a.end());
+		sort(b.begin(), b.end());
+
+		int i = n - 1, res = 0;
+		for (int j : b) {
+			if (i - j + 1 < 0) {
+				break;
+			}
+			res += a[i - j + 1];
+			i -= j;
+		}
+		print(accumulate(a.begin(), a.end(), 0ll) - res);
 	}
 }

@@ -1,3 +1,4 @@
+#include <bits/stdc++.h>
 #include <bits/extc++.h>
 using namespace std;
 using namespace __gnu_pbds; 
@@ -16,6 +17,25 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vector<int> a(n);
+		arrput(a);
+
+		int l = 0, r = n - 1;
+		while (l < n - 1 and a[l] <= a[l + 1]) {
+			l++;
+		}
+		while (r > 0 and a[r] <= a[r - 1]) {
+			r--;
+		}
+
+		if (l < r) {
+			print("NO");
+		}
+		else {
+			print("YES");
+		}
 	}
 }
