@@ -18,31 +18,13 @@ const int MOD = (int) 1e9 + 7; //998244353;
 int32_t main() {
 	setup();
 
-	while (true) {
-		int n;
-		input(n);
+	int a, b, c;
+	input(a, b, c);
 
-		if (n == 0) {
-			break;
-		}
-
-		vector<int> a(n), b(n);
-		arrput(a);
-		arrput(b);
-
-		int x = 0, res = 0, p = 0, q = 0;
-		rep(i, 0, n) {
-			p += a[i];
-			q += b[i];
-			if (p > q) {
-				res += x == -1;
-				x = 1;
-			}
-			else if (p < q) {
-				res += x == 1;
-				x = -1;
-			}
-		}
-		print(res);
+	if (a == b or b == c or a == c) {
+		print("Yes");
+	}
+	else {
+		print("No");
 	}
 }

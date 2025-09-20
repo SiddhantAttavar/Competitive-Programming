@@ -18,31 +18,39 @@ const int MOD = (int) 1e9 + 7; //998244353;
 int32_t main() {
 	setup();
 
-	while (true) {
-		int n;
-		input(n);
+	int n, m;
+	input(n, m);
 
-		if (n == 0) {
-			break;
-		}
+	vector<int> a(n);
+	arrput(a);
+	sort(a.begin(), a.end());
+	reverse(a.begin(), a.end());
+	a.insert(a.begin(), m);
 
-		vector<int> a(n), b(n);
-		arrput(a);
-		arrput(b);
-
-		int x = 0, res = 0, p = 0, q = 0;
-		rep(i, 0, n) {
-			p += a[i];
-			q += b[i];
-			if (p > q) {
-				res += x == -1;
-				x = 1;
-			}
-			else if (p < q) {
-				res += x == 1;
-				x = -1;
-			}
-		}
-		print(res);
+	vector<vector<int>> b(n + 1);
+	rep(i, 0, m) {
+		int x, y;
+		input(x, y);
+		b[x].push_back(y);
 	}
+	rep(i, 0, n + 1) {
+		sort(b[i].begin(), b[i].end());
+		reverse(b[i].begin(), b[i].end());
+		b[i].insert(b[i].begin(), 0);
+		rep(j, 1, b[i].size()) {
+			b[i][j] += b[i][j - 1];
+		}
+	}
+
+	vector<int> dp(m + 1, 0);
+	for (int i = n; i >= 0; i--) {
+		vector<int> ndp = dp;
+		rep(j, 0, b[i].size()) {
+			rep(k, j, a[i] + 1) {
+				ndp[k] = max(ndp[k], dp[k - j] + b[i][j]);
+			}
+		}
+		dp = ndp;
+	}
+	print(*max_element(dp.begin(), dp.end()));
 }

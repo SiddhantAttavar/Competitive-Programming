@@ -16,77 +16,39 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup();
-	const int N = 100;
-	while (true) {
+	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		if (n == 0) {
-			break;
+		vector<int> a(n);
+		arrput(a);
+
+		int x = accumulate(a.begin(), a.end(), 0ll);
+
+		map<int, int> m;
+		for (int i : a) {
+			m[i]++;
 		}
 
-		int a, b, d;
-		input(a, b, d);
-
-		vector<vector<vector<int>>> v(N + 1, vector<vector<int>>(N + 1, vector<int>(4, 0)));
-		rep(i, 0, n) {
-			int x, y;
-			input(x, y);
-
-			v[x][y][0] = -1;
-			v[x][y][1] = -1;
-			v[x][y][2] = -1;
-			v[x][y][3] = -1;
-		}
-
-		int j = 3;
-		bool flag = false;
-		v[a][b][3] = d;
-		while (d) {
-			vector<pair<int, int>> l = {
-				{a, b + 1},
-				{a - 1, b},
-				{a, b - 1},
-				{a + 1, b}
-			};
-
-			while (true) {
-				tie(a, b) = l[j];
-				if (min(a, b) < 0 or max(a, b) > N) {
-					break;
-				}
-				if (v[a][b][j] != -1) {
-					break;
-				}
-				j = (j + 1) % 4;
+		vector<int> v;
+		for (auto [a, b] : m) {
+			if (a % 2 == 1) {
+				v.push_back(b);
 			}
-			d--;
+		}
+		sort(v.begin(), v.end());
+		reverse(v.begin(), v.end());
 
-			if (min(a, b) < 0 or max(a, b) > N) {
-				break;
+		int res = 0;
+		rep(i, 0, v.size()) {
+			if (i % 2 == 0) {
+				res += v[i];
 			}
-
-			if (v[a][b][j] == 0 or flag) {
-				v[a][b][j] = d;
-				continue;
+			else {
+				res -= v[i];
 			}
-			d %= (v[a][b][j] - d);
-			flag = true;
 		}
 
-		if (a < 0) {
-			a -= d;
-		}
-		if (a > N) {
-			a += d;
-		}
-		if (b < 0) {
-			b -= d;
-		}
-		if (b > N) {
-			b += d;
-		}
-		print(a, b);
+		print((x + res) / 2, (x - res) / 2);
 	}
 }

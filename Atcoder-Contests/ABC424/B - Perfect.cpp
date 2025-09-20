@@ -18,31 +18,31 @@ const int MOD = (int) 1e9 + 7; //998244353;
 int32_t main() {
 	setup();
 
-	while (true) {
-		int n;
-		input(n);
+	int n, m, k;
+	input(n, m, k);
 
-		if (n == 0) {
-			break;
+	vector<int> a(n, m);
+	vector<int> b(n, -1);
+	rep(i, 0, k) {
+		int x, y;
+		input(x, y);
+		a[x - 1]--;
+
+		if (a[x - 1] == 0) {
+			b[x - 1] = i;
 		}
-
-		vector<int> a(n), b(n);
-		arrput(a);
-		arrput(b);
-
-		int x = 0, res = 0, p = 0, q = 0;
-		rep(i, 0, n) {
-			p += a[i];
-			q += b[i];
-			if (p > q) {
-				res += x == -1;
-				x = 1;
-			}
-			else if (p < q) {
-				res += x == 1;
-				x = -1;
-			}
-		}
-		print(res);
 	}
+
+	vector<pair<int, int>> res;
+	rep(i, 0, n) {
+		if (b[i] != -1) {
+			res.push_back({b[i], i});
+		}
+	}
+	sort(res.begin(), res.end());
+
+	for (auto [a, b] : res) {
+		cout << b + 1 << ' ';
+	}
+	cout << endl;
 }

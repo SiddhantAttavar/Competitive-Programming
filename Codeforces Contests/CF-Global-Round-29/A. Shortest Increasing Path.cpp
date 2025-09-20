@@ -16,33 +16,21 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int x, y;
+		input(x, y);
 
-	while (true) {
-		int n;
-		input(n);
-
-		if (n == 0) {
-			break;
+		if (x < y) {
+			print(2);
 		}
-
-		vector<int> a(n), b(n);
-		arrput(a);
-		arrput(b);
-
-		int x = 0, res = 0, p = 0, q = 0;
-		rep(i, 0, n) {
-			p += a[i];
-			q += b[i];
-			if (p > q) {
-				res += x == -1;
-				x = 1;
-			}
-			else if (p < q) {
-				res += x == 1;
-				x = -1;
-			}
+		else if (x == y) {
+			print(-1);
 		}
-		print(res);
+		else if (y > 1 and y < x - 1) {
+			print(3);
+		}
+		else {
+			print(-1);
+		}
 	}
 }

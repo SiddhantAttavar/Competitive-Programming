@@ -16,33 +16,43 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup();
+	cout << fixed << setprecision(20);
+	setup(); int tc; input(tc); while (tc--) {
+		int n, k, x;
+		input(n, k, x);
 
-	while (true) {
-		int n;
-		input(n);
-
-		if (n == 0) {
-			break;
-		}
-
-		vector<int> a(n), b(n);
+		vector<int> a(n);
 		arrput(a);
-		arrput(b);
 
-		int x = 0, res = 0, p = 0, q = 0;
-		rep(i, 0, n) {
-			p += a[i];
-			q += b[i];
-			if (p > q) {
-				res += x == -1;
-				x = 1;
-			}
-			else if (p < q) {
-				res += x == 1;
-				x = -1;
-			}
+		multiset<pair<double, int>> m;
+		for (int i : a) {
+			m.insert({-i, 1});
 		}
-		print(res);
+
+		while (k) {
+			auto [x, y] = *m.begin();
+			m.erase(m.begin());
+
+			if (y <= k) {
+				k -= y;
+				m.insert({x / 2, y * 2});
+				continue;
+			}
+
+			m.insert({x / 2, k * 2});
+			m.insert({x, y - k});
+			k = 0;
+		}
+
+		while (x) {
+			auto [z, y] = *m.begin();
+			m.erase(m.begin());
+
+			if (y >= x) {
+				print(-z);
+				break;
+			}
+			x -= y;
+		}
 	}
 }

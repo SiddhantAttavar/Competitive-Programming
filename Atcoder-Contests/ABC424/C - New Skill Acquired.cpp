@@ -15,34 +15,42 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+void dfs(int u, vector<vector<int>> &graph, vector<bool> &vis) {
+	vis[u] = true;
+	for (int v : graph[u]) {
+		if (!vis[v]) {
+			dfs(v, graph, vis);
+		}
+	}
+}
+
 int32_t main() {
 	setup();
 
-	while (true) {
-		int n;
-		input(n);
+	int n;
+	input(n);
 
-		if (n == 0) {
-			break;
+	vector<vector<int>> graph(n);
+	vector<bool> v(n, false);
+	rep(i, 0, n) {
+		int a, b;
+		input(a, b);
+
+		if (a == 0) {
+			v[i] = true;
+			continue;
 		}
 
-		vector<int> a(n), b(n);
-		arrput(a);
-		arrput(b);
-
-		int x = 0, res = 0, p = 0, q = 0;
-		rep(i, 0, n) {
-			p += a[i];
-			q += b[i];
-			if (p > q) {
-				res += x == -1;
-				x = 1;
-			}
-			else if (p < q) {
-				res += x == 1;
-				x = -1;
-			}
-		}
-		print(res);
+		graph[a - 1].push_back(i);
+		graph[b - 1].push_back(i);
 	}
+
+	vector<bool> vis(n, false);
+	rep(i, 0, n) {
+		if (!vis[i] and v[i]) {
+			dfs(i, graph, vis);
+		}
+	}
+
+	print(accumulate(vis.begin(), vis.end(), 0ll));
 }

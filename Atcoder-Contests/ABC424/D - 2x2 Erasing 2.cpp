@@ -16,33 +16,36 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n, m;
+		input(n, m);
 
-	while (true) {
-		int n;
-		input(n);
-
-		if (n == 0) {
-			break;
-		}
-
-		vector<int> a(n), b(n);
+		vector<string> a(n);
 		arrput(a);
-		arrput(b);
 
-		int x = 0, res = 0, p = 0, q = 0;
-		rep(i, 0, n) {
-			p += a[i];
-			q += b[i];
-			if (p > q) {
-				res += x == -1;
-				x = 1;
-			}
-			else if (p < q) {
-				res += x == 1;
-				x = -1;
-			}
+		vector<int> dp(1 << m, 0);
+		rep(x, 0, 1 << m) {
+			dp[x] = __builtin_popcount(x);
 		}
-		print(res);
+		rep(i, 1, n) {
+			vector<int> ndp(1 << m, 1e18);
+			rep(x, 0, 1 << m) {
+				rep(y, 0, 1 << m) {
+					bool flag = true;
+					rep(j, 0, m - 1) {
+						if ((a[i - 1][j]  == '#' and a[i - 1][j + 1] == '#' and a[i][j] == '#' and a[i][j + 1] == '#') and 
+							(!(x >> j & 3) and !(y >> j & 3))) {
+							flag = false;
+							break;
+						}
+					}
+					if (flag) {
+						ndp[x] = min(ndp[x], dp[y] + __builtin_popcount(x));
+					}
+				}
+			}
+			dp = ndp;
+		}
+		print(*min_element(dp.begin(), dp.end()));
 	}
 }
