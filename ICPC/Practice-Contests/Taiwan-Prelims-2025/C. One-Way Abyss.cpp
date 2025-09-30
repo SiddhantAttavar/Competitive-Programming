@@ -15,51 +15,36 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-pair<int, int> norm(pair<int, int> a) {
-	if (a.second == 0) {
-		return a;
-	}
-	if (a.second < 0) {
-		a = {-a.first, -a.second};
-	}
-	int g = __gcd(abs(a.first), abs(a.second));
-	return {a.first / g, a.second / g};
-}
-
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, m;
+		input(n, m);
 
-		map<pair<int, int>, vector<pair<int, int>>> s;
-		rep(i, 0, n) {
-			int xa, ya, xb, yb;
-			input(xa, ya, xb, yb);
+		vector<vector<int>> a(n);
+		vector<int> v(m), c(2 * m);
+		rep(i, 0, m) {
+			int x, y;
+			input(x, y, v[i]);
 
-			yb -= ya;
-			xb -= xa;
-			if (xb == 0) {
-				s[{1, 0}].push_back({xa, 0});
-			}
-			else {
-				s[norm({yb, xb})].push_back(norm({ya * xb - xa * yb, xb}));
-			}
+			x--;
+			y--;
+
+			a[x].push_back(2 * i);
+			a[y].push_back(2 * i + 1);
+			c[2 * i] = y;
+			c[2 * i + 1] = x;
 		}
 
-		int res = n * (n - 1);
-		for (auto [k, v] : s) {
-			sort(v.begin(), v.end());
-			int c = 1;
-			rep(i, 1, v.size()) {
-				if (v[i] == v[i - 1]) {
-					c++;
-					continue;
-				}
-				res -= c * (v.size() - c);
-				c = 1;
+		int res = 0;
+		vector<int> dp(2 * m, 0);
+		rep(i, 0, 2 * m) {
+			res = max(res, dp[i] + v[i / 2]);
+			int y = c[i];
+			int j = upper_bound(a[y].begin(), a[y].end(), i + 1 - i % 2) - a[y].begin();
+			if (j < a[y].size()) {
+				dp[a[y][j]] = max(dp[a[y][j]], dp[i] + v[i / 2]);
 			}
-			res -= c * (v.size() - c);
 		}
-		print(res / 2);
+		print(res);
 	}
 }

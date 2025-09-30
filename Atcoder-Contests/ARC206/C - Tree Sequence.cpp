@@ -13,53 +13,55 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7; //998244353;
-
-pair<int, int> norm(pair<int, int> a) {
-	if (a.second == 0) {
-		return a;
-	}
-	if (a.second < 0) {
-		a = {-a.first, -a.second};
-	}
-	int g = __gcd(abs(a.first), abs(a.second));
-	return {a.first / g, a.second / g};
-}
+const int MOD = 998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+	setup();
 
-		map<pair<int, int>, vector<pair<int, int>>> s;
-		rep(i, 0, n) {
-			int xa, ya, xb, yb;
-			input(xa, ya, xb, yb);
-
-			yb -= ya;
-			xb -= xa;
-			if (xb == 0) {
-				s[{1, 0}].push_back({xa, 0});
-			}
-			else {
-				s[norm({yb, xb})].push_back(norm({ya * xb - xa * yb, xb}));
-			}
-		}
-
-		int res = n * (n - 1);
-		for (auto [k, v] : s) {
-			sort(v.begin(), v.end());
-			int c = 1;
-			rep(i, 1, v.size()) {
-				if (v[i] == v[i - 1]) {
-					c++;
-					continue;
-				}
-				res -= c * (v.size() - c);
-				c = 1;
-			}
-			res -= c * (v.size() - c);
-		}
-		print(res / 2);
+	int n;
+	input(n);
+	
+	if (n == 1) {
+		print(1);
+		return 0;
 	}
+
+	vector<int> a(n);
+	arrput(a);
+	rep(i, 0, n) {
+		if (a[i] != -1) {
+			a[i]--;
+		}
+	}
+
+	// f: left, g: right, h: other
+	vector<int> f(n, 0), g(n, 0), h(n, 0);
+	f[0] = 0;
+	if (a[0] == -1) {
+		g[0] = 1;
+		h[0] = n - 1;
+	}
+	else if (a[0] == 1) {
+		g[0] = 1;
+	}
+	else {
+		h[0] = 1;
+	}
+	rep(i, 1, n) {
+		if (a[i] == i - 1) {
+			f[i] = (f[i - 1] + g[i - 1] + h[i - 1]) % MOD;
+		}
+		else if (a[i] == i + 1) {
+			g[i] = g[i - 1];
+		}
+		else if (a[i] != -1) {
+			h[i] = g[i - 1];
+		}
+		else {
+			f[i] = (f[i - 1] + g[i - 1] + h[i - 1]) % MOD;
+			g[i] = g[i - 1];
+			h[i] = g[i - 1] * (n - 2 + (i == n - 1)) % MOD;
+		}
+	}
+	print((f[n - 1] + h[n - 1]) % MOD);
 }

@@ -13,53 +13,57 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7; //998244353;
+const int MOD = 998244353;
 
-pair<int, int> norm(pair<int, int> a) {
-	if (a.second == 0) {
-		return a;
+int mod_pow(int a, int b) {
+	int res = 1;
+	while (b) {
+		if (b & 1) {
+			res = res * a % MOD;
+		}
+		a = a * a % MOD;
+		b >>= 1;
 	}
-	if (a.second < 0) {
-		a = {-a.first, -a.second};
-	}
-	int g = __gcd(abs(a.first), abs(a.second));
-	return {a.first / g, a.second / g};
+	return res;
+}
+
+int mod_div(int a, int b) {
+	return a * mod_pow(b, MOD - 2) % MOD;
 }
 
 int32_t main() {
+	const int N = 1e6;
+	vector<int> fact(N + 1);
+	fact[0] = 1;
+	rep(i, 1, N + 1) {
+		fact[i] = i * fact[i - 1] % MOD;
+	}
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		map<pair<int, int>, vector<pair<int, int>>> s;
-		rep(i, 0, n) {
-			int xa, ya, xb, yb;
-			input(xa, ya, xb, yb);
+		vector<int> a(n);
+		arrput(a);
 
-			yb -= ya;
-			xb -= xa;
-			if (xb == 0) {
-				s[{1, 0}].push_back({xa, 0});
-			}
-			else {
-				s[norm({yb, xb})].push_back(norm({ya * xb - xa * yb, xb}));
-			}
+		if (accumulate(a.begin(), a.end(), 0ll) != n) {
+			print(0);
+			continue;
 		}
 
-		int res = n * (n - 1);
-		for (auto [k, v] : s) {
-			sort(v.begin(), v.end());
-			int c = 1;
-			rep(i, 1, v.size()) {
-				if (v[i] == v[i - 1]) {
-					c++;
-					continue;
-				}
-				res -= c * (v.size() - c);
-				c = 1;
+		int res = 1, c = 0;
+		for (int i = (n + 1) / 2 - 1; i >= 0; i--) {
+			c += 2 - (n % 2 and i == n / 2);
+			if (c < a[i]) {
+				res = 0;
+				break;
 			}
-			res -= c * (v.size() - c);
+
+			res = res * mod_div(fact[c], fact[a[i]] * fact[c - a[i]] % MOD) % MOD;
+			c -= a[i];
 		}
-		print(res / 2);
+		if (c != 0) {
+			res = 0;
+		}
+		print(res);
 	}
 }

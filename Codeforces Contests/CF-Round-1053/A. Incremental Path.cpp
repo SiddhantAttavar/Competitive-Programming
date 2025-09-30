@@ -15,51 +15,60 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-pair<int, int> norm(pair<int, int> a) {
-	if (a.second == 0) {
-		return a;
-	}
-	if (a.second < 0) {
-		a = {-a.first, -a.second};
-	}
-	int g = __gcd(abs(a.first), abs(a.second));
-	return {a.first / g, a.second / g};
-}
-
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, m;
+		input(n, m);
 
-		map<pair<int, int>, vector<pair<int, int>>> s;
-		rep(i, 0, n) {
-			int xa, ya, xb, yb;
-			input(xa, ya, xb, yb);
+		string s;
+		input(s);
 
-			yb -= ya;
-			xb -= xa;
-			if (xb == 0) {
-				s[{1, 0}].push_back({xa, 0});
-			}
-			else {
-				s[norm({yb, xb})].push_back(norm({ya * xb - xa * yb, xb}));
+		vector<int> a(m);
+		arrput(a);
+
+		int k = 2 * (n + m);
+		vector<bool> b(k + 1, false);
+		for (int i : a) {
+			if (i <= k) {
+				b[i] = true;
 			}
 		}
 
-		int res = n * (n - 1);
-		for (auto [k, v] : s) {
-			sort(v.begin(), v.end());
-			int c = 1;
-			rep(i, 1, v.size()) {
-				if (v[i] == v[i - 1]) {
+		int c = 2;
+		if (s[0] == 'B') {
+			while (b[c]) {
+				c++;
+			}
+		}
+		b[c] = true;
+		rep(i, 1, n) {
+			if (s[i - 1] == 'B') {
+				while (b[c]) {
 					c++;
-					continue;
 				}
-				res -= c * (v.size() - c);
-				c = 1;
 			}
-			res -= c * (v.size() - c);
+			c++;
+			if (s[i] == 'B') {
+				while (b[c]) {
+					c++;
+				}
+			}
+			b[c] = true;
 		}
-		print(res / 2);
+
+		vector<int> res;
+		rep(i, 1, k + 1) {
+			if (b[i]) {
+				res.push_back(i);
+			}
+		}
+		for (int i : a) {
+			if (i > k) {
+				res.push_back(i);
+			}
+		}
+
+		print(res.size());
+		arrprint(res);
 	}
 }

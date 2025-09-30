@@ -38,48 +38,45 @@ template<typename T> struct SegTree { // cmb(ID,b) = b
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n, m;
-		input(n, m);
+		int n;
+		input(n);
 
-		SegTree<int> s(n + 1, 0, [](int a, int b) {
-			return a + b;
-		}), t(n + 1, 0, [](int a, int b) {
-			return a + b;
+		vector<int> v(n), a(n), b(n);
+		arrput(v);
+		arrput(a);
+		arrput(b);
+
+		SegTree<array<int, 3>> s(n + 1, {(int) -1e18, 0, 0}, [](array<int, 3> a, array<int, 3> b) {
+			return array<int, 3>{
+				max(a[0] - b[2], b[0]),
+				max(b[1], a[1] + b[2]),
+				a[2] + b[2]
+			};
 		});
 
-		vector<int> a(n);
-		arrput(a);
-
-		vector<int> d(n + 1);
-		d[0] = a[0];
-		t.upd(0, d[0]);
-		rep(i, 1, n) {
-			d[i] = a[i] - a[i - 1];
-			s.upd(i, max(0ll, d[i]));
-			t.upd(i, d[i]);
+		vector<int> c(n), d(n);
+		rep(i, 0, n) {
+			a[i]--;
+			b[i]--;
+			c[a[i]] = i;
+			d[b[i]] = i;
 		}
 
-		while (m--) {
-			int o, l, r;
-			input(o, l, r);
-			
-			l--;
-			r--;
-
-			if (o == 1) {
-				int k;
-				input(k);
-
-				d[l] += k;
-				s.upd(l, max(0ll, d[l]));
-				t.upd(l, d[l]);
-				d[r + 1] -= k;
-				s.upd(r + 1, max(0ll, d[r + 1]));
-				t.upd(r + 1, d[r + 1]);
-			}
-			else {
-				print(t.query(0, l) + (l == r ? 0 : s.query(l + 1, r)));
-			}
+		vector<int> p(n + 1, 0);
+		rep(i, 0, n) {
+			p[i + 1] = p[i] + v[a[i]];
 		}
+
+		vector<int> dp(n + 1);
+		s.upd(0, {0, 0, 0});
+		for (int j : b) {
+			int i = c[j];
+			dp[i + 1] = s.query(0, i)[0] + p[i + 1];
+			// print(i, s.query(0, i)[2]);
+			s.upd(i + 1, {dp[i + 1] - p[i + 1], max(0ll, v[a[i]]), v[a[i]]});
+			// arrprint(dp);
+		}
+
+		print(*max_element(dp.begin(), dp.end()));
 	}
 }

@@ -15,51 +15,26 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-pair<int, int> norm(pair<int, int> a) {
-	if (a.second == 0) {
-		return a;
-	}
-	if (a.second < 0) {
-		a = {-a.first, -a.second};
-	}
-	int g = __gcd(abs(a.first), abs(a.second));
-	return {a.first / g, a.second / g};
-}
-
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		string s;
+		input(s);
 
-		map<pair<int, int>, vector<pair<int, int>>> s;
+		int n = s.size();
+		vector<vector<int>> dp(n, vector<int>(n, 1e18));
 		rep(i, 0, n) {
-			int xa, ya, xb, yb;
-			input(xa, ya, xb, yb);
-
-			yb -= ya;
-			xb -= xa;
-			if (xb == 0) {
-				s[{1, 0}].push_back({xa, 0});
-			}
-			else {
-				s[norm({yb, xb})].push_back(norm({ya * xb - xa * yb, xb}));
+			dp[i][i] = 0;
+		}
+		rep(i, 0, n - 1) {
+			dp[i][i + 1] = s[i] != s[i + 1];
+		}
+		rep(l, 3, n + 1) {
+			rep(i, 0, n - l + 1) {
+				int j = i + l - 1;
+				dp[i][j] = min(dp[i][j - 1], dp[i + 1][j]) + 1;
+				dp[i][j] = min(dp[i][j], dp[i + 1][j - 1] + (s[i] != s[j]));
 			}
 		}
-
-		int res = n * (n - 1);
-		for (auto [k, v] : s) {
-			sort(v.begin(), v.end());
-			int c = 1;
-			rep(i, 1, v.size()) {
-				if (v[i] == v[i - 1]) {
-					c++;
-					continue;
-				}
-				res -= c * (v.size() - c);
-				c = 1;
-			}
-			res -= c * (v.size() - c);
-		}
-		print(res / 2);
+		print(dp[0][n - 1]);
 	}
 }

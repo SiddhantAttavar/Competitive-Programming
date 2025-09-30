@@ -1,47 +1,62 @@
 #include <bits/stdc++.h>
+#include <bits/extc++.h>
 using namespace std;
-template<typename T> inline void input(T& inVar) {cin >> inVar;}
-template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
-template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
-template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
-#define range(it, start, end) for (auto it = start; it < end; it++)
-#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+using namespace __gnu_pbds; 
+template<typename T> inline void input(T& x) {cin >> x;}
+template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
+template<typename T> inline void print(T x) {cout << x << '\n';}
+template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
+#define rep(i, a, b) for (auto i = (a); i < (b); i++)
+#define arrput(l) for (auto &i : l) {cin >> i;}
+#define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
 		int n, m;
 		input(n, m);
 
-		vector<int> a(n), b(n);
-		vector<pair<int, int>> l;
-		range(i, 0, m) {
-			input(l[i].first);
-			l[i].second = i;
-		}
-		sort(l.begin(), l.end());
+		vector<int> l(m);
+		arrput(l);
 
-		vector<vector<pair<int, int>>> v(m);
-		range(i, 0, n) {
-			input(a[i], b[i]);
-			b[i]--;
-			v[b[i]].push_back({a[i], i});
+		vector<vector<int>> v(m);
+		rep(i, 0, n) {
+			int a, b;
+			input(a, b);
+
+			v[b - 1].push_back(a);
 		}
 
-		range(i, 0, m) {
-			sort(v.begin(), v.end());
-			reverse(v.begin(), v.end());
-		}
+		vector<int> a(n + 1, 0);
+		rep(i, 0, m) {
+			if (v[i].size() < l[i]) {
+				continue;
+			}
 
-		pair<int, int> res = {-1, -1};
-		int curr = 0;
-		int j = 0;
-		range(i, 1, n + 1) {
-			while (j < m and l[j].first == (i + 1)) {
+			sort(v[i].begin(), v[i].end());
+			reverse(v[i].begin(), v[i].end());
 
+			a[l[i]] += accumulate(v[i].begin(), v[i].begin() + l[i], 0ll);
+			rep(j, l[i], v[i].size()) {
+				a[j + 1] += v[i][j];
 			}
 		}
+
+		pair<int, int> res = {0, 1};
+		int x = 0;
+		rep(i, 1, n + 1) {
+			x += a[i];
+			pair<int, int> p = {x, i};
+			int g = __gcd(p.first, p.second);
+			p = {p.first / g, p.second / g};
+			if (p.first * res.second > res.first * p.second) {
+				res = p;
+			}
+		}
+		cout << res.first << '/' << res.second << endl;
 	}
 }

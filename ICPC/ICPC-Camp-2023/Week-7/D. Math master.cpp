@@ -1,122 +1,66 @@
 #include <bits/stdc++.h>
+#include <bits/extc++.h>
 using namespace std;
-template<typename T> inline void input(T& inVar) {cin >> inVar;}
-template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
-template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
-template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
-#define range(it, start, end) for (auto it = start; it < end; it++)
-#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+using namespace __gnu_pbds; 
+template<typename T> inline void input(T& x) {cin >> x;}
+template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
+template<typename T> inline void print(T x) {cout << x << '\n';}
+template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
+#define rep(i, a, b) for (auto i = (a); i < (b); i++)
+#define arrput(l) for (auto &i : l) {cin >> i;}
+#define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define int unsigned long long
-
-vector<int> get_digits(int n) {
-	if (n == 0) {
-		return {0};
-	}
-
-	vector<int> res;
-	while (n) {
-		res.push_back(n % 10);
-		n /= 10;
-	}
-	reverse(res.begin(), res.end());
-	return res;
-}
+#define int long long
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int p, q;
+		string p, q;
 		input(p, q);
 
-		int g = __gcd(p, q);
-		int a = p / g, b = q / g;
+		int a = stoll(p), b = stoll(q);
+		int g = gcd(a, b);
+		a /= g;
+		b /= g;
 
-		vector<int> x = get_digits(p);
-		vector<int> y = get_digits(q);
-
-		if (p == 0) {
-			int k = 10;
-			for (int i : y) {
-				if (i != 0) {
-					k = min(k, i);
+		pair<int, int> res = {stoll(p), stoll(q)};
+		rep(i, 1, 1 << p.size()) {
+			string t, r;
+			vector<int> v(10);
+			rep(j, 0, p.size()) {
+				if (i >> j & 1) {
+					t += p[j];
+				}
+				else if (!t.empty() or p[j] != '0') {
+					r += p[j];
 				}
 			}
-			print(0, k);
-			continue;
-		}
-
-		int res = -1;
-		int m;
-
-		range(i, 1, (1 << x.size())) {
-			vector<int> d;
-			int t = 0;
-			range(j, 0, (int) x.size()) {
-				if (i & (1 << j)) {
-					t = (10 * t + x[j]);
-				}
-				else {
-					d.push_back(x[j]);
-				}
-			}
-			sort(d.begin(), d.end());
-
-			if (t == 0) {
+			int c = stoll(t);
+			if (c == 0 or c >= res.first or c % a) {
 				continue;
 			}
-
-			if (t % a != 0) {
+			int d = (c / a) * b;
+			string s = to_string(d), u;
+			int l = s.size() - 1;
+			for (int j = q.size() - 1; j >= 0; j--) {
+				if (l >= 0 and s[l] == q[j]) {
+					l--;
+				}
+				else if (l >= 0 or q[j] != '0') {
+					u += q[j];
+				}
+			}
+			if (l >= 0) {
 				continue;
 			}
-
-			int k = t / a;
-
-			vector<int> z = get_digits(k * b);
-			int w = d.size();
-			int e = y.size() - z.size();
-			// if (w < e) {
-			// 	continue;
-			// }
-
-			reverse(z.begin(), z.end());
-			range(j, 0, (int) w - e) {
-				z.push_back(0);
-			}
-			reverse(z.begin(), z.end());
-
-			int j = 0;
-			vector<int> f;
-			range(l, 0, (int) y.size()) {
-				if (j < (int) z.size() and z[j] == y[l]) {
-					j++;
-				}
-				else {
-					f.push_back(y[l]);
-				}
-			}
-			sort(f.begin(), f.end());
-
-			if (j != (int) z.size()) {
-				continue;
-			}
-
-			bool flag = true;
-			range(l, 0, (int) d.size()) {
-				if (d[l] != f[l]) {
-					flag = false;
-					break;
-				}
-			}
-
-			if (flag) {
-				if (res == -1 or (k * a) < m) {
-					res = k;
-					m = k * a;
-				}
+			sort(r.begin(), r.end());
+			sort(u.begin(), u.end());
+			if (r == u) {
+				res = {c, d};
 			}
 		}
-
-		print(res * a, res * b);
+		print(res.first, res.second);
 	}
 }

@@ -7,13 +7,20 @@ template<typename T> inline void input(T& inVar) {cin >> inVar;}
 template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
 template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
 template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
-#define int long long
+#define int __int128_t
 #define range(it, start, end) for (auto it = start; it < end; it++)
 #define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
 #define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353
+
+int abs_int(int a) {
+    if (a < 0) {
+        return -a;
+    }
+    return a;
+}
 
 int gcd(int a, int b, int& x, int& y) {
     if (b == 0) {
@@ -29,7 +36,7 @@ int gcd(int a, int b, int& x, int& y) {
 }
 
 bool find_any_solution(int a, int b, int c, int &x0, int &y0, int &g) {
-    g = gcd(abs(a), abs(b), x0, y0);
+    g = gcd(abs_int(a), abs_int(b), x0, y0);
     if (c % g) {
         return false;
     }
@@ -41,62 +48,113 @@ bool find_any_solution(int a, int b, int c, int &x0, int &y0, int &g) {
     return true;
 }
 
+void shift_solution(int & x, int & y, int a, int b, int cnt) {
+    x += cnt * b;
+    y -= cnt * a;
+}
+
+int find_all_solutions(int a, int b, int c, int minx, int maxx, int miny, int maxy) {
+    int x, y, g;
+    if (!find_any_solution(a, b, c, x, y, g))
+        return 1e18;
+    a /= g;
+    b /= g;
+
+    int sign_a = a > 0 ? +1 : -1;
+    int sign_b = b > 0 ? +1 : -1;
+
+    shift_solution(x, y, a, b, (minx - x) / b);
+    if (x < minx)
+        shift_solution(x, y, a, b, sign_b);
+    if (x > maxx)
+        return 1e18;
+    int lx1 = x;
+
+    shift_solution(x, y, a, b, (maxx - x) / b);
+    if (x > maxx)
+        shift_solution(x, y, a, b, -sign_b);
+    int rx1 = x;
+
+    shift_solution(x, y, a, b, -(miny - y) / a);
+    if (y < miny)
+        shift_solution(x, y, a, b, -sign_a);
+    if (y > maxy)
+        return 1e18;
+    int lx2 = x;
+
+    shift_solution(x, y, a, b, -(maxy - y) / a);
+    if (y > maxy)
+        shift_solution(x, y, a, b, sign_a);
+    int rx2 = x;
+
+    if (lx2 > rx2)
+        swap(lx2, rx2);
+    int lx = max(lx1, lx2);
+    int rx = min(rx1, rx2);
+
+    if (lx > rx)
+        return 1e18;
+	return lx;
+}
+
+bool check(vector<long long> &res, vector<long long> &d, int x) {
+    cout.flush();
+	range(i, 0, res.size()) {
+		x -= res[i] * d[i];
+		if (abs_int(res[i]) > 1e9) {
+			return false;
+		}
+	}
+	return x == 0;
+}
+
 int32_t main() {
 	setup();
 
-	int x, y;
+	long long x, y;
 	input(x, y);
 
-	int n;
+	long long n;
 	input(n);
-	vector<int> d(n);
+	vector<long long> d(n);
 	arrPut(d);
 
-	vector<int> pref(n, d[0]);
+	vector<long long> pref(n, d[0]);
 	range(i, 1, n) {
-		pref[i] = __gcd(pref[i - 1], d[i]);
+        pref[i] = std::gcd(pref[i - 1], d[i]);
 	}
 
 	int z = y - x;
-	vector<int> res(n);
+	vector<long long> res(n);
+    vector<int> s(n);
 	for (int i = n - 1; i > 0; i--) {
-		int a, b, c;
-		find_any_solution(pref[i - 1], d[i], z, a, b, c);
+        s[i] = z;
+		int a = find_all_solutions(pref[i - 1], d[i], z, -1e9, 1e9, -1e9, 1e9);
+		assert((z - a * pref[i - 1]) % d[i] == 0);
+		int b = (z - a * pref[i - 1]) / d[i];
 		assert(a * pref[i - 1] + b * d[i] == z);
-
-		while (abs(a) > 1e9) {
-			if (abs(a - d[i]) < abs(a)) {
-				a = a - d[i];
-				b = b + pref[i - 1];
-			}
-			else {
-				a = a + d[i];
-				b = b - pref[i - 1];
-			}
-		}
-
-		while (abs(b) > 1e9) {
-			if (abs(b - pref[i - 1]) < abs(b)) {
-				a = a + d[i];
-				b = b - pref[i - 1];
-			}
-			else {
-				a = a - d[i];
-				b = b + pref[i - 1];
-			}
-		}
-
-		assert(a * pref[i - 1] + b * d[i] == z);
+        assert(abs_int(a) <= 1e9);
+        assert(abs_int(b) <= 1e9);
 
 		res[i] = b;
-		z = a;
+		z = a * pref[i - 1];
 	}
-	res[0] = z;
+    assert(z <= 1e9);
+    s[0] = z;
+	res[0] = z / d[0];
 
-	for (int i : res) {
+    int c = res[0] * d[0];
+    assert(c == s[0]);
+    range(i, 1, n) {
+        c += res[i] * d[i];
+        assert(c == s[i]);
+    }
+
+	for (long long i : res) {
 		print(max(0ll, i));
 	}
-	for (int i : res) {
+	for (long long i : res) {
 		print(max(0ll, -i));
 	}
+	assert(check(res, d, y - x));
 }
