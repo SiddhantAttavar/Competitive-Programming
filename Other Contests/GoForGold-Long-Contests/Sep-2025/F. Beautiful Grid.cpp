@@ -15,50 +15,55 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-void dfs(int u, int p, vector<vector<int>> &graph, vector<int> &d) {
-	for (int v : graph[u]) {
-		if (v != p) {
-			d[v] = d[u] + 1;
-			dfs(v, u, graph, d);
+bool check(vector<int> &l, vector<pair<int, int>> &a, int t, int m) {
+	int n = l.size();
+	vector<int> b(n);
+	for (auto [x, i] : a) {
+		b[i] = x;
+	}
+	int x = 0, y = 0;
+	rep(i, 0, n) {
+		if (l[i] == 1) {
+			x += b[i];
+		}
+		else {
+			y += m - b[i];
 		}
 	}
+	return x <= t and y <= t;
 }
 
 int32_t main() {
-	setup();
-	int n, k;
-	input(n, k);
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
-	vector<vector<int>> a(n, vector<int>(n, 0));
-	rep(i, 0, k) {
-		vector<vector<int>> graph(n);
-		rep(j, 0, n - 1) {
-			int u, v;
-			input(u, v);
-
-			graph[u - 1].push_back(v - 1);
-			graph[v - 1].push_back(u - 1);
+		vector<pair<int, int>> x(n);
+		int m = 0, z = 0;
+		rep(i, 0, n) {
+			int y;
+			input(x[i].first, y);
+			m = x[i].first + y;
+			z += x[i].first;
+			x[i].second = i;
 		}
+		sort(x.begin(), x.end());
 
-		rep(j, 0, n) {
-			vector<int> d(n, 0);
-			dfs(j, -1, graph, d);
-			rep(l, 0, n) {
-				a[j][l] += d[l];
+		int t = (n + 1) * m / 4;
+		int k = -1, c = 0;
+		rep(i, 0, n) {
+			c += x[i].first;
+			if (c <= t and c + (n - i - 1) * m - z <= t) {
+				k = i + 1;
+				break;
 			}
 		}
-	}
 
-	vector<vector<int>> res(n, vector<int>(n));
-	rep(u, 0, n) {
-		rep(v, 0, n) {
-			rep(w, 0, n) {
-				res[u][v] += a[u][v] == a[u][w] + a[w][v];
-			}
+		vector<int> res(n, 2);
+		rep(i, 0, k) {
+			res[x[i].second] = 1;
 		}
-	}
-
-	rep(i, 0, n) {
-		arrprint(res[i]);
+		arrprint(res);
+		// assert(check(res, x, t, m));
 	}
 }
