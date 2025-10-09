@@ -23,68 +23,99 @@ int32_t main() {
 		vector<int> x(n);
 		arrput(x);
 
+		vector<vector<int>> a(n, vector<int>(20, n));
+		for (int i = n - 1; i >= 0; i--) {
+			a[i][0] = upper_bound(x.begin(), x.end(), x[i] + z) - x.begin();
+			rep(j, 1, 20) {
+				if (a[i][j - 1] < n) {
+					a[i][j] = a[a[i][j - 1]][j - 1];
+				}
+			}
+		}
+
+		vector<vector<int>> b(n, vector<int>(20, n)), c(n, vector<int>(20, 0));
+		for (int i = n - 2; i >= 0; i--) {
+			int u = i, v = i + 1;
+			int x = 0;
+			for (int j = 19; j >= 0; j--) {
+				if (a[u][j] < n and a[v][j] < n and a[u][j] != a[v][j]) {
+					x += 1 << (j + 1);
+					u = a[u][j];
+					v = a[v][j];
+				}
+			}
+			if (a[v][0] < b[i][0]) {
+				b[i][0] = a[v][0];
+				c[i][0] = x + 2;
+			}
+			u = i + 1, v = a[i][0];
+			int y = 1;
+			for (int j = 19; j >= 0; j--) {
+				if (v < n and a[u][j] < n and a[v][j] < n and a[u][j] != a[v][j]) {
+					y += 1 << (j + 1);
+					u = a[u][j];
+					v = a[v][j];
+				}
+			}
+			if (u == v) {
+				if (v < b[i][0]) {
+					b[i][0] = v;
+					c[i][0] = y;
+				}
+			}
+			else if (v < n and a[v][0] < b[i][0]) {
+				b[i][0] = a[v][0];
+				c[i][0] = y + 2;
+			}
+			rep(j, 1, 20) {
+				if (b[i][j - 1] < n) {
+					b[i][j] = b[b[i][j - 1]][j - 1];
+					c[i][j] = c[i][j - 1] + c[b[i][j - 1]][j - 1];
+				}
+			}
+		}
+
 		int q;
 		input(q);
-		vector<pair<pair<int, int>, int>> v(q);
-		rep(i, 0, n) {
-			input(v[i].first.first, v[i].first.second);
-			v[i].first.first--;
-			v[i].first.second--;
-			v[i].second = i;
-		}
-		sort(v.begin(), v.end(), [](pair<pair<int, int>, int> a, pair<pair<int, int>, int> b) {
-			return make_pair(a.first.first / 500, a.first.second) < make_pair(b.first.first / 500, b.first.second);
-		});
+		while (q--) {
+			int l, r;
+			input(l, r);
 
-		int b = 0, a = 0;
-		deque<int> d = {0};
-		vector<int> res(q);
-		for (auto [p, i] : v) {
-			auto [l, r] = p;
+			l--;
+			r--;
+
+			int res = 0;
+			for (int j = 19; j >= 0; j--) {
+				if (b[l][j] <= r) {
+					res += c[l][j];
+					l = b[l][j];
+				}
+			}
+
 			if (l == r) {
-				d = {l};
-				res[i] = 1;
-				continue;
-			}
-			else if (l == r - 1) {
-				d = {l, l + 1};
-				res[i] = 2;
+				print(res + 1);
 				continue;
 			}
 
-			while (b < r) {
-				b++;
-				if (d.size() < 2 or x[d[d.size() - 2]] + z < x[b]) {
-					d.push_back(b);
+			int u = l;
+			for (int j = 19; j >= 0; j--) {
+				if (a[u][j] <= r) {
+					res += 1 << j;
+					u = a[u][j];
 				}
 			}
+			res += u <= r;
 
-			while (a > l) {
-				a--;
-				if (d.size() < 2 or x[d[1]] - z > x[a]) {
-					d.push_front(a);
+			u = l + 1;
+			for (int j = 19; j >= 0; j--) {
+				if (a[u][j] <= r) {
+					res += 1 << j;
+					u = a[u][j];
 				}
 			}
+			res += u <= r;
 
-			while (b > r) {
-				if (!d.empty() and d.back() == b) {
-					d.pop_back();
-				}
-				b--;
-			}
-
-			while (a < l) {
-				if (!d.empty() and d.front() == a) {
-					d.pop_front();
-				}
-				a++;
-			}
-
-			res[i] = d.size();
-		}
-
-		for (int i : res) {
-			print(i);
+			print(res);
 		}
 	}
 }
