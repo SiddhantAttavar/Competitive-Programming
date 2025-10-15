@@ -1,143 +1,84 @@
 #include <bits/stdc++.h>
+#include <bits/extc++.h>
 using namespace std;
-template<typename T> inline void input(T& inVar) {cin >> inVar;}
-template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
-template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
-template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
-#define range(it, start, end) for (auto it = start; it < end; it++)
-#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+using namespace __gnu_pbds; 
+template<typename T> inline void input(T& x) {cin >> x;}
+template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
+template<typename T> inline void print(T x) {cout << x << '\n';}
+template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
+#define rep(i, a, b) for (int16_t i = (a); i < (b); i++)
+#define arrput(l) for (auto &i : l) {cin >> i;}
+#define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int int16_t
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+// const int MOD = (int) 1e9 + 7; //998244353;
 
+int n, m;
+int dp[40][40][400][10];
+string a[40];
+
+void dfs(tuple<int, int, int, int> u) {
+	int l, r, k, x;
+	tie(l, r, k, x) = u;
+
+	if (x and dp[l][r][k][x] == dp[l][r][k][x - 1]) {
+		dfs({l, r, k, x - 1});
+		return;
+	}
+
+	int c = 0;
+	for (int j = r; j > l; j--) {
+		c += a[j][k] != ('0' + x);
+		a[j][k] = '0' + x;
+		if (k < m - 1 and x and dp[l][r][k][x] == dp[j][r][k + 1][9] + dp[l][j - 1][k][x - 1] + c) {
+			dfs({j, r, k + 1, 9});
+			dfs({l, j - 1, k, x - 1});
+			return;
+		}
+	}
+	a[l][k] = '0' + x;
+	if (k < m - 1) {
+		dfs({l, r, k + 1, 9});
+	}
+}
 int32_t main() {
 	setup();
 
-	int n, m;
 	input(n, m);
+	arrput(a);
 
-	vector<vector<char>> a(n);
-	range(i, 0, n) {
-		string s;
-		input(s);
-		a[i] = vector<char>(s.begin(), s.end());
-		reverse(a[i].begin(), a[i].end());
-	}
-
-	int dp[n][n][m][10];
-	vector<tuple<int, int, int, int>> p[n][n][m][10];
-	range(len, 1, n + 1) {
-		range(l, 0, n - len + 1) {
-			int r = l + len - 1;
-			range(j, 0, m) {
-				range(k, 0, 10) {
-					dp[l][r][j][k] = 1e9;
-					p[l][r][j][k] = {};
-
-					if (k == 0) {
-						int x = 0;
-						range(i, l, r + 1) {
-							x += a[i][j] != '0';
-						}
-						if (j > 0) {
-							dp[l][r][j][k] = dp[l][r][j - 1][9] + x;
-							p[l][r][j][k].push_back({l, r, j - 1, 9});
-						}
-						else {
-							dp[l][r][j][k] = x;
-						}
-						continue;
+	for (int k = m - 1; k >= 0; k--) {
+		rep(r, 0, n) {
+			for (int l = r; l >= 0; l--) {
+				rep(x, 0, 10) {
+					dp[l][r][k][x] = 18000;
+					if (x) {
+						dp[l][r][k][x] = dp[l][r][k][x - 1];
 					}
 
-					dp[l][r][j][k] = dp[l][r][j][k - 1];
-					p[l][r][j][k] = {{l, r, j, k - 1}};
-
-					int x = 0;
-					for (int s = r - 1; s >= l; s--) {
-						x += a[s + 1][j] != '0' + k;
-						if (j > 0) {
-							int y = dp[l][s][j][k - 1] + dp[s + 1][r][j - 1][9] + x;
-							if (y < dp[l][r][j][k]) {
-								dp[l][r][j][k] = y;
-								p[l][r][j][k] = {{l, s, j, k - 1}, {s + 1, r, j - 1, 9}};
-							}
-						}
-						else {
-							int y = dp[l][s][j][k - 1] + x;
-							if (y < dp[l][r][j][k]) {
-								dp[l][r][j][k] = y;
-								p[l][r][j][k] = {{l, s, j, k - 1}};
-							}
+					int c = 0;
+					for (int j = r; j > l; j--) {
+						c += a[j][k] != ('0' + x);
+						if (k < m - 1 and x) {
+							dp[l][r][k][x] = min(dp[l][r][k][x], (int) (dp[j][r][k + 1][9] + dp[l][j - 1][k][x - 1] + c));
 						}
 					}
-
-					x += a[l][j] != '0' + k;
-					if (j > 0) {
-						int y = dp[l][r][j - 1][9] + x;
-						if (y < dp[l][r][j][k]) {
-							dp[l][r][j][k] = y;
-							p[l][r][j][k] = {{l, r, j - 1, 9}};
-						}
+					c += a[l][k] != ('0' + x);
+					if (k < m - 1) {
+						dp[l][r][k][x] = min(dp[l][r][k][x], (int) (dp[l][r][k + 1][9] + c));
 					}
 					else {
-						int y = x;
-						// if (l == 0 and r == 2 and j == 0 and k == 1) {
-						// 	print(x, dp[l][r][j][k]);
-						// }
-						if (y < dp[l][r][j][k]) {
-							dp[l][r][j][k] = y;
-							p[l][r][j][k] = {};
-						}
+						dp[l][r][k][x] = min(dp[l][r][k][x], c);
 					}
 				}
 			}
 		}
 	}
 
-	vector<vector<char>> res(n);
-	range(i, 0, n) {
-		res[i] = vector<char>(a[i].begin(), a[i].end());
-		// arrPrint(res[i]);
+	dfs({0, n - 1, 0, 9});
+	for (string s : a) {
+		print(s);
 	}
-
-	queue<tuple<int, int, int, int>> q;
-	q.push({0, n - 1, m - 1, 9});
-	while (!q.empty()) {
-		int l, r, j, k;
-		tie(l, r, j, k) = q.front();
-		// print(l, r, j, k);
-		q.pop();
-
-		if (p[l][r][j][k].size() == 0) {
-			range(x, l, r + 1) {
-				res[x][j] = (char) ((int) '0' + k);
-			}
-			continue;
-		}
-		// print(l, r, j, k);
-
-		// print(get<1>(p[l][r][j][k][0]));
-		range(x, get<1>(p[l][r][j][k][0]) + 1, r + 1) {
-			// print(x, j, k);
-			res[x][j] = (char) ((int) '0' + k);
-		}
-
-		if (get<2>(p[l][r][j][k][0]) == j - 1) {
-			range(x, l, r + 1) {
-				res[x][j] = (char) ((int) '0' + k);
-			}
-		}
-
-		for (tuple<int, int, int, int> t : p[l][r][j][k]) {
-			q.push(t);
-		}
-	}
-
-	range(i, 0, n) {
-		string t(res[i].begin(), res[i].end());
-		reverse(t.begin(), t.end());
-		print(t);
-	}
-
-	// print(dp[0][n - 1][m - 1][9]);
-	// print(get<0>(p[0][2][0][1][0]), get<1>(p[0][2][0][1][0]), get<2>(p[0][2][0][1][0]), get<3>(p[0][2][0][1][0]));
 }
