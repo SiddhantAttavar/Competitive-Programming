@@ -37,18 +37,25 @@ void dfs(tuple<int, int, int, int> u) {
 			dfs({l, j - 1, k, x - 1});
 			return;
 		}
+		if (k == m - 1 and x and dp[l][r][k][x] == dp[l][j - 1][k][x - 1] + c) {
+			dfs({l, j - 1, k, x - 1});
+			return;
+		}
 	}
 	a[l][k] = '0' + x;
 	if (k < m - 1) {
 		dfs({l, r, k + 1, 9});
 	}
 }
+
 int32_t main() {
 	setup();
 
 	input(n, m);
-	arrput(a);
-
+	rep(i, 0, n) {
+		input(a[i]);
+	}
+	
 	for (int k = m - 1; k >= 0; k--) {
 		rep(r, 0, n) {
 			for (int l = r; l >= 0; l--) {
@@ -64,6 +71,9 @@ int32_t main() {
 						if (k < m - 1 and x) {
 							dp[l][r][k][x] = min(dp[l][r][k][x], (int) (dp[j][r][k + 1][9] + dp[l][j - 1][k][x - 1] + c));
 						}
+						else if (k == m - 1 and x) {
+							dp[l][r][k][x] = min(dp[l][r][k][x], (int) (dp[l][j - 1][k][x - 1] + c));
+						}
 					}
 					c += a[l][k] != ('0' + x);
 					if (k < m - 1) {
@@ -78,7 +88,7 @@ int32_t main() {
 	}
 
 	dfs({0, n - 1, 0, 9});
-	for (string s : a) {
-		print(s);
+	rep(i, 0, n) {
+		print(a[i]);
 	}
 }

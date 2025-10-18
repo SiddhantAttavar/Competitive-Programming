@@ -12,7 +12,7 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
-#define ordered_set tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update> 
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
@@ -20,37 +20,27 @@ int32_t main() {
 		int n;
 		input(n);
 
-		vector<int> a(n);
-		arrput(a);
+		if (n % 3 == 1) {
+			print("NO");
+			continue;
+		}
 
-		int res = 0;
-		if (a[0] == -1 and a[n - 1] == -1) {
-			ordered_set o;
-			o.insert(a[0]);
-			int x = a[0];
-			rep(i, 1, n - 1) {
-				x += a[i];
-				res += o.order_of_key(x + 1);
-				o.insert(x);
+		vector<int> res;
+		int x = 2;
+		rep(i, 0, n - 2) {
+			if (i % 3 == 0) {
+				res.push_back(x);
+			}
+			else if (i % 3 == 1) {
+				res.push_back(x + 2);
+			}
+			else {
+				res.push_back(x + 1);
+				x += 3;
 			}
 		}
 
-		if (a[n - 1] == -1) {
-			int x = a[0];
-			rep(i, 1, n) {
-				res += a[i] == -1 and x >= 0;
-				x += a[i];
-			}
-		}
-
-		if (a[0] == -1) {
-			reverse(a.begin(), a.end());
-			int x = a[0];
-			rep(i, 1, n) {
-				res += a[i] == -1 and x >= 0;
-				x += a[i];
-			}
-		}
-		print(res);
+		print("YES");
+		arrprint(res);
 	}
 }

@@ -12,44 +12,42 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
-#define ordered_set tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update> 
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, m, q;
+		input(n, m, q);
 
-		vector<int> a(n);
-		arrput(a);
+		vector<vector<int>> a(m, vector<int>(n, 0));
+		rep(i, 0, q) {
+			int x, t, z;
+			input(x, t, z);
+			a[t][x - 1] += z;
+		}
 
+		vector<vector<int>> dp(n, vector<int>(n, -1e18));
+		dp[0][n - 1] = a[0][0] + a[0][n - 1];
+		rep(t, 1, m) {
+			vector<vector<int>> ndp = dp;
+			rep(i, 0, n) {
+				rep(j, i + 1, n) {
+					rep(k, i - 1, i + 2) {
+						rep(l, j - 1, j + 2) {
+							if (l > k and k >= 0 and l < n) {
+								ndp[i][j] = max(ndp[i][j], dp[k][l]);
+							}
+						}
+					}
+					ndp[i][j] += a[t][i] + a[t][j];
+				}
+			}
+			dp = ndp;
+		}
 		int res = 0;
-		if (a[0] == -1 and a[n - 1] == -1) {
-			ordered_set o;
-			o.insert(a[0]);
-			int x = a[0];
-			rep(i, 1, n - 1) {
-				x += a[i];
-				res += o.order_of_key(x + 1);
-				o.insert(x);
-			}
-		}
-
-		if (a[n - 1] == -1) {
-			int x = a[0];
-			rep(i, 1, n) {
-				res += a[i] == -1 and x >= 0;
-				x += a[i];
-			}
-		}
-
-		if (a[0] == -1) {
-			reverse(a.begin(), a.end());
-			int x = a[0];
-			rep(i, 1, n) {
-				res += a[i] == -1 and x >= 0;
-				x += a[i];
-			}
+		rep(i, 0, n) {
+			res = max(res, *max_element(dp[i].begin(), dp[i].end()));
 		}
 		print(res);
 	}
