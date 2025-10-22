@@ -13,47 +13,35 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = 998244353;
-
-int mod_pow(int a, int b) {
-	int res = 1;
-	while (b) {
-		if (b & 1) {
-			res = res * a % MOD;
-		}
-		a = a * a % MOD;
-		b >>= 1;
-	}
-	return res;
-}
-
-int mod_div(int a, int b) {
-	return a * mod_pow(b, MOD - 2) % MOD;
-}
+const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup();
+	setup(); int tc; input(tc); while (tc--) {
+		int n, m, k;
+		input(n, m, k);
 
-	int n;
-	input(n);
+		set<int> s;
+		rep(i, 0, k) {
+			int x, y;
+			input(x, y);
 
-	vector<int> p(n);
-	arrput(p);
+			if (y == 1 or n == 1 and y != 2) {
+				continue;
+			}
 
-	vector<int> a(100);
-	rep(i, 0, 100) {
-		a[i] = mod_div(i, 100);
-	}
+			if (s.count(y)) {
+				s.erase(y);
+			}
+			else {
+				s.insert(y);
+			}
+		}
 
-	vector<int> l(100, 0);
-	vector<int> dp(n + 1);
-	rep(i, 0, n) {
-		int y = (1 - a[p[i]] + MOD) * a[p[i]] % MOD * mod_div((mod_pow(a[p[i]], i) - 1 + MOD) % MOD, (a[p[i]] - 1 + MOD) % MOD) % MOD;
-		y = (y + mod_pow(a[p[i]], i + 1)) % MOD;
-		dp[i + 1] = mod_div((dp[i] - l[p[i]] * (1 - a[p[i]]) % MOD + 1 + MOD) % MOD, (1 - y + MOD) % MOD);
-		rep(j, 0, 100) {
-			l[j] = (l[j] + dp[i + 1]) * a[j] % MOD;
+		if (!s.empty()) {
+			print("Mimo");
+		}
+		else {
+			print("Yuyu");
 		}
 	}
-	print(dp[n]);
 }

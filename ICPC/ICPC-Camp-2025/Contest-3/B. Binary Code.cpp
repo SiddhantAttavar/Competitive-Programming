@@ -1,17 +1,33 @@
 #include <bits/stdc++.h>
+#include <bits/extc++.h>
 using namespace std;
-// #define int long long
-#define rep(i, a, b) for (int i = a; i < b; i++)
+using namespace __gnu_pbds; 
+template<typename T> inline void input(T& x) {cin >> x;}
+template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
+template<typename T> inline void print(T x) {cout << x << '\n';}
+template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
+#define rep(i, a, b) for (auto i = (a); i < (b); i++)
+#define arrput(l) for (auto &i : l) {cin >> i;}
+#define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+const int MOD = (int) 1e9 + 7; //998244353;
 
 #define vi vector<int>
-#define sz(x) (int)x.size()
+#define sz(x) (int) x.size()
+
+const int N = 1e7;
 
 struct TwoSat {
 	int N;
 	vector<vi> gr;
 	vi values; // 0 = false, 1 = true
 
-	TwoSat(int n = 0) : N(n), gr(2*n) {}
+	TwoSat(int n = 0) : N(n), gr(2*n) {
+		gr.reserve(1e7);
+	}
 
 	int addVar() { // (optional)
 		gr.emplace_back();
@@ -22,53 +38,108 @@ struct TwoSat {
 	void either(int f, int j) {
 		f = max(2*f, -1-2*f);
 		j = max(2*j, -1-2*j);
+		if (max(f, j) < 0 or max(f, j) >= gr.size()) return;
 		gr[f].push_back(j^1);
 		gr[j].push_back(f^1);
 	}
 	void setValue(int x) { either(x, x); }
 
-	void atMostOne(const vi& li) { // (optional)
-		if (sz(li) <= 1) return;
+	int atMostOne(const vi& li) { // (optional)
+		if (li.empty()) return addVar();
+		if (sz(li) == 1) {
+			int x = addVar();
+			either(~li[0], x);
+			return x;
+		}
 		int cur = ~li[0];
-		rep(i,2,sz(li)) {
+		rep(i,1,sz(li)) {
 			int next = addVar();
 			either(cur, ~li[i]);
 			either(cur, next);
 			either(~li[i], next);
 			cur = ~next;
 		}
-		either(cur, ~li[1]);
+		return ~cur;
 	}
 
-	vi val, comp, z; int time = 0;
-	int dfs(int i) {
-		int low = val[i] = ++time, x; z.push_back(i);
-		for(int e : gr[i]) if (!comp[e])
-			low = min(low, val[e] ?: dfs(e));
-		if (low == val[i]) do {
-			x = z.back(); z.pop_back();
-			comp[x] = low;
-			if (values[x>>1] == -1)
-				values[x>>1] = x&1;
-		} while (x != i);
-		return val[i] = low;
-	}
+	vi val, comp, inStack;
+	int timer = 0;
+	vector<int> st;
 
 	bool solve() {
 		values.assign(N, -1);
-		val.assign(2*N, 0); comp = val;
-		rep(i,0,2*N) if (!comp[i]) dfs(i);
-		rep(i,0,N) if (comp[2*i] == comp[2*i+1]) return 0;
-		return 1;
+		val.assign(2*N, 0);
+		comp.assign(2*N, 0);
+		inStack.assign(2*N, 0);
+		st.clear();
+		timer = 0;
+
+		int cid = 0; // component id counter
+		vector<int> idx(2*N, -1), low(2*N, 0);
+		vector<int> stack;
+		vector<char> onstack(2*N, false);
+		int idCounter = 0;
+
+		for (int start = 0; start < 2*N; ++start) {
+			if (idx[start] != -1) continue;
+
+			// manual DFS stack: (node, iterator index, "phase")
+			vector<pair<int,int>> dfs;
+			dfs.emplace_back(start, 0);
+
+			while (!dfs.empty()) {
+				auto &[v, it] = dfs.back();
+
+				if (idx[v] == -1) {
+					idx[v] = low[v] = ++idCounter;
+					stack.push_back(v);
+					onstack[v] = true;
+				}
+
+				if (it < (int)gr[v].size()) {
+					int to = gr[v][it++];
+					if (idx[to] == -1) {
+						dfs.emplace_back(to, 0);
+					} else if (onstack[to]) {
+						low[v] = min(low[v], idx[to]);
+					}
+				} else {
+					// Postorder: update low-link
+					for (int to : gr[v])
+						if (onstack[to])
+							low[v] = min(low[v], low[to]);
+
+					if (low[v] == idx[v]) {
+						// found SCC
+						while (true) {
+							int x = stack.back(); stack.pop_back();
+							onstack[x] = false;
+							comp[x] = cid + 1;
+							if (values[x >> 1] == -1)
+								values[x >> 1] = x & 1;
+							if (x == v) break;
+						}
+						cid++;
+					}
+					dfs.pop_back();
+				}
+			}
+		}
+
+		for (int i = 0; i < N; ++i)
+			if (comp[2*i] == comp[2*i + 1])
+				return false;
+		return true;
 	}
 };
 
-void insert(vector<pair<int, int>> &tree, vector<vector<int>> &l, string &s, int x) {
-	int u = 0;
+int z = 1;
+void insert(int u, string &s, vector<pair<int, int>> &tree, vector<vector<int>> &l, int x) {
 	for (char c : s) {
+		if (u < 0 or u >= tree.size() or tree.size() != l.size()) return;
 		if (c == '0') {
 			if (tree[u].first == -1) {
-				tree[u].first = tree.size();
+				tree[u].first = z++;
 				tree.push_back({-1, -1});
 				l.push_back({});
 			}
@@ -76,22 +147,24 @@ void insert(vector<pair<int, int>> &tree, vector<vector<int>> &l, string &s, int
 		}
 		else {
 			if (tree[u].second == -1) {
-				tree[u].second = tree.size();
+				tree[u].second = z++;
 				tree.push_back({-1, -1});
 				l.push_back({});
 			}
 			u = tree[u].second;
 		}
 	}
+	if (u < 0 or u >= tree.size() or tree.size() != l.size()) return;
 	l[u].push_back(x);
 }
 
-void dfs(int u, int p, vector<pair<int, int>> &tree, TwoSat &t, vector<vector<int>> &l) {
+void dfs(int u, int p, vector<pair<int, int>> &tree, vector<vector<int>> &l, TwoSat &t) {
 	if (u == -1) {
 		return;
 	}
-	t.atMostOne(l[u]);
-	int x = t.addVar();
+	if (u < 0 or u >= tree.size() or tree.size() != l.size()) return;
+
+	int x = t.atMostOne(l[u]);
 	for (int i : l[u]) {
 		t.either(~i, x);
 	}
@@ -101,57 +174,61 @@ void dfs(int u, int p, vector<pair<int, int>> &tree, TwoSat &t, vector<vector<in
 		}
 		t.either(~p, x);
 	}
-	dfs(tree[u].first, x, tree, t, l);
-	dfs(tree[u].second, x, tree, t, l);
+	dfs(tree[u].first, x, tree, l, t);
+	dfs(tree[u].second, x, tree, l, t);
 }
 
-signed main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
+int32_t main() {
+	try {
+	setup();
 
-	// freopen("binary.in", "r", stdin);
-	// freopen("binary.out", "w", stdout);
+	freopen("binary.in", "r", stdin);
+	freopen("binary.out", "w", stdout);
 
 	int n;
-	cin >> n;
+	input(n);
 
 	vector<string> s(n);
-	rep(i, 0, n) {
-		cin >> s[i];
-	}
+	arrput(s);
 
-	vector<int> k(n);
 	vector<pair<int, int>> tree = {{-1, -1}};
 	vector<vector<int>> l = {{}};
+	tree.reserve(N);
+	l.reserve(N);
+	vector<int> v(n, -1);
 	TwoSat t(n);
-	rep(i, 0, n) {
-		k[i] = find(s[i].begin(), s[i].end(), '?') - s[i].begin();
-		if (k[i] == s[i].size()) {
-			k[i] = 0;
-			int x = s[i][0] == '0' ? ~i : i;
-			t.setValue(x);
-			insert(tree, l, s[i], x);
+		rep(i, 0, n) {
+			int j = s[i].find('?');
+			if (j == -1) {
+				int x = s[i][0] == '0' ? ~i : i;
+				t.setValue(x);
+				insert(0, s[i], tree, l, x);
+			}
+			else {
+				v[i] = j;
+				string a = s[i], b = s[i];
+				if (j < 0 or j > s[i].size()) return 0;
+				a[j] = '0';
+				b[j] = '1';
+				insert(0, a, tree, l, ~i);
+				insert(0, b, tree, l, i);
+			}
 		}
-		else {
-			string b = s[i], c = s[i];
-			b[k[i]] = '0';
-			c[k[i]] = '1';
-			insert(tree, l, b, ~i);
-			insert(tree, l, c, i);
-		}
-	}
 
-	dfs(0, -1, tree, t, l);
+	dfs(0, -1, tree, l, t);
 
 	if (!t.solve()) {
-		cout << "NO" << endl;
+		print("NO");
 		return 0;
 	}
 
-	cout << "YES" << endl;
+	print("YES");
 	rep(i, 0, n) {
-		s[i][k[i]] = t.values[i] + '0';
-		cout << s[i] << endl;
+		if (v[i] != -1) {
+			s[i][v[i]] = t.values[i] + '0';
+		}
+		print(s[i]);
 	}
+	}
+	catch (exception e) {}
 }
