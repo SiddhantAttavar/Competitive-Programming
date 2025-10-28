@@ -14,60 +14,29 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
-#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+#define ordered_set tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-struct Med {
-	ordered_set o;
-	Med() {
-		o = ordered_set();
+template<typename T> struct SegTree { // cmb(ID,b) = b
+	T ID; T (*cmb)(T a, T b);
+	int n; vector<T> seg;
+	SegTree(int _n, T id, T _cmb(T, T)) {
+		ID = id; cmb = _cmb;
+		for (n = 1; n < _n; ) n *= 2; 
+		seg.assign(2*n,ID); 
 	}
-	void insert(int x) {
-		o.insert(x);
-	}
-	int med() {
-		int l = 0, r = 1e9, res = 0;
-		while (l <= r) {
-			int m = (l + r) / 2;
-			if (2 * o.order_of_key(m) < o.size()) {
-				res = m;
-				l = m + 1;
-			}
-			else {
-				r = m - 1;
-			}
+	void pull(int p) { seg[p] = cmb(seg[2*p],seg[2*p+1]); }
+	void upd(int p, T val) { // set val at position p
+		seg[p += n] = val; for (p /= 2; p; p /= 2) pull(p); }
+	T query(int l, int r) {	// zero-indexed, inclusive
+		T ra = ID, rb = ID;
+		for (l += n, r += n+1; l < r; l /= 2, r /= 2) {
+			if (l&1) ra = cmb(ra,seg[l++]);
+			if (r&1) rb = cmb(seg[--r],rb);
 		}
-		return res;
+		return cmb(ra,rb);
 	}
 };
-
-int dfs(int u, vector<vector<int>> &graph, vector<int> &s, vector<Med*> &x, vector<int>  &a) {
-	int k = -1, res = 0;
-	for (int v : graph[u]) {
-		res = max(res, dfs(v, graph, s, x, a));
-		s[u] += s[v];
-		if (k == -1 or s[v] > s[k]) {
-			v = k;
-		}
-	}
-	if (k == -1) {
-		x[u] = new Med();
-	}
-	else {
-		x[u] = x[k];
-	}
-	x[u]->insert(a[u]);
-	for (int v : graph[u]) {
-		if (k == v) {
-			continue;
-		}
-		for (int i : x[v]->o) {
-			x[u]->insert(i);
-		}
-	}
-	print(u, x[u]->med() - a[u], x[u]->med(), x[u]->o.size());
-	return max(res, x[u]->med() - a[u]);
-}
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
@@ -77,14 +46,20 @@ int32_t main() {
 		vector<int> a(n);
 		arrput(a);
 
-		vector<int> l(n, -1), r(n, -1);
+		vector<vector<int>> v(n);
+		rep(i, 0, n) {
+			a[i]--;
+			v[a[i]].push_back(i);
+		}
+
+		vector<int> l(n, 0), r(n, n - 1);
 		stack<int> s;
 		rep(i, 0, n) {
-			while (!s.empty() and a[s.top()] > a[i]) {
+			while (!s.empty() and a[s.top()] >= a[i]) {
 				s.pop();
 			}
 			if (!s.empty()) {
-				l[i] = s.top();
+				l[i] = s.top() + 1;
 			}
 			s.push(i);
 		}
@@ -96,28 +71,50 @@ int32_t main() {
 				s.pop();
 			}
 			if (!s.empty()) {
-				r[i] = s.top();
+				r[i] = s.top() - 1;
 			}
 			s.push(i);
 		}
 
-		vector<vector<int>> graph(n);
-		int u = -1;
-		rep(i, 0, n) {
-			if (l[i] == -1 and r[i] == -1) {
-				u = i;
-				continue;
+		int res = 0;
+		vector<int> x(n, 0), y(n, n - 1);
+		SegTree<array<int ,3>> t(n, {0, 0, 0}, [](array<int, 3> a, array<int, 3> b) {
+			return array<int, 3>{a[0] + b[0], max(a[1], a[0] + b[1]), max(a[2] + b[0], b[2])};
+		});
+		rep(i, 0, 20) {
+			vector<vector<int>> z(n);
+			vector<int> f(n, -1);
+			bool flag = false;
+			rep(j, 0, n) {
+				t.seg[j + t.n] = {-1, 0, 0};
+				if (x[j] <= y[j]) {
+					flag = true;
+					z[(x[j] + y[j]) / 2].push_back(j);
+				}
 			}
-			if (l[i] != -1 and (r[i] == -1 or a[l[i]] >= a[r[i]])) {
-				graph[l[i]].push_back(i);
+			if (!flag) {
+				break;
 			}
-			else {
-				graph[r[i]].push_back(i);
+			for (int j = t.n - 1; j > 0; j--) {
+				t.pull(j);
+			}
+			for (int j = n - 1; j >= 0; j--) {
+				for (int k : v[j]) {
+					f[k] = 1;
+					t.upd(k, {1, 1, 1});
+				}
+				for (int k : z[j]) {
+					int u = f[k] + (k < r[k] ? t.query(k + 1, r[k])[1] : 0) + (k > l[k] ? t.query(l[k], k - 1)[2] : 0);
+					if (u >= 0) {
+						res = max(res, j - a[k]);
+						x[k] = j + 1;
+					}
+					else {
+						y[k] = j - 1;
+					}
+				}
 			}
 		}
-
-		vector<int> x(n, 1);
-		vector<Med*> v(n);
-		print(dfs(u, graph, x, v, a));
+		print(res);
 	}
 }

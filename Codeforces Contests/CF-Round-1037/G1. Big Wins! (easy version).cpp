@@ -38,6 +38,23 @@ template<typename T> struct SegTree { // cmb(ID,b) = b
 	}
 };
 
+template<class T>
+struct RMQ {
+	vector<vector<T>> jmp;
+	RMQ(const vector<T>& V) : jmp(1, V) {
+		for (int pw = 1, k = 1; pw * 2 <= V.size(); pw *= 2, ++k) {
+			jmp.emplace_back(V.size() - pw * 2 + 1);
+			rep(j,0,jmp[k].size())
+				jmp[k][j] = min(jmp[k - 1][j], jmp[k - 1][j + pw]);
+		}
+	}
+	T query(int a, int b) {
+		b++;
+		int dep = 31 - __builtin_clz(b - a);
+		return min(jmp[dep][a], jmp[dep][b - (1 << dep)]);
+	}
+};
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
@@ -47,13 +64,9 @@ int32_t main() {
 		arrput(a);
 
 		int res = 0;
-		SegTree<int> t(n, 1e18, [](int a, int b) {
-			return min(a, b);
-		});
-		rep(i, 0, n) {
-			t.upd(i, a[i]);
-		}
-		rep(x, 1, 101) {
+		RMQ t(a);
+		int k = min(n, 100ll);
+		rep(x, 1, k + 1) {
 			SegTree<int> s(2 * n + 1, -1, [](int a, int b) {
 				return max(a, b);
 			});
