@@ -15,52 +15,33 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-void insert(string &s, vector<vector<int>> &tree, vector<int> &a) {
-	int u = 0;
-	for (char c : s) {
-		a[u]++;
-		if (tree[u][c - 'a'] == -1) {
-			tree[u][c - 'a'] = tree.size();
-			tree.push_back(vector<int>(26, -1));
-			a.push_back(0);
-		}
-		u = tree[u][c - 'a'];
-	}
-	a[u]++;
-}
-
-int get(string &s, vector<vector<int>> &tree, vector<int> &a) {
-	int u = 0, res = 0;
-	for (char c : s) {
-		if (tree[u][c - 'a'] == -1) {
-			return res;
-		}
-		u = tree[u][c - 'a'];
-		res += a[u];
-	}
-	return res;
-}
-
 int32_t main() {
-	setup();
-	int n;
-	input(n);
+	setup(); int tc; input(tc); while (tc--) {
+		int n, x;
+		input(n, x);
 
-	vector<string> s(n);
-	arrput(s);
+		vector<int> a(n);
+		arrput(a);
 
-	vector<vector<int>> tree(1, vector<int>(26, -1));
-	vector<int> a = {0};
-	int x = 0;
-	for (string i : s) {
-		x += i.size();
-		insert(i, tree, a);
+		multiset<int> m(a.begin(), a.end());
+		int c = 0, res = 0;
+		vector<int> l;
+		while (!m.empty()) {
+			multiset<int>::iterator i = m.lower_bound(x - c);
+			if (i == m.end()) {
+				l.push_back(*m.begin());
+				c += *m.begin();
+				m.erase(m.begin());
+			}
+			else {
+				i = --m.end();
+				l.push_back(*i);
+				res += *i;
+				c = (c + *i) % x;
+				m.erase(i);
+			}
+		}
+		print(res);
+		arrprint(l);
 	}
-
-	int res = 2 * n * x;
-	for (string i : s) {
-		reverse(i.begin(), i.end());
-		res -= 2 * get(i, tree, a);
-	}
-	print(res);
 }

@@ -1,91 +1,98 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp> 
-#include <ext/pb_ds/tree_policy.hpp> 
+#include <bits/extc++.h>
 using namespace std;
 using namespace __gnu_pbds; 
-template<typename T> inline void input(T& inVar) {cin >> inVar;}
-template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
-template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
-template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
-#define int long long
-#define range(it, start, end) for (auto it = start; it < end; it++)
-#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+template<typename T> inline void input(T& x) {cin >> x;}
+template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
+template<typename T> inline void print(T x) {cout << x << '\n';}
+template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
+#define rep(i, a, b) for (auto i = (a); i < (b); i++)
+#define arrput(l) for (auto &i : l) {cin >> i;}
+#define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7;
+const int MOD = (int) 1e9 + 7; //998244353;
 
-bool check(vector<int> a) {
-	set<int> s;
-	range(i, 1, a.size()) {
-		s.insert(a[i] * a[i - 1]);
-	}
-	return s.size() + 1 == a.size();
-}
+#define vi vector<int>
+#define pii pair<int, int>
+#define sz(x) (int) x.size()
 
-vector<int> build(vector<int> &p, int k, int n) {
-	vector<int> res;
-	res.push_back(p[0]);
-	for (int i = 0; i < k - 1; i += 2) {
-		int u = 0;
-		do {
-			res.push_back(p[u]);
-			u = (u + i + 1) % k;
-			if (res.size() == n) {
-				return res;
-			}
-			res.push_back(p[u]);
-			if (res.size() == n) {
-				return res;
-			}
-			u = (u - i + k) % k;
-		} while (u);
-	}
-	if (k % 2) {
-		int u = 0;
-		do {
-			res.push_back(p[u]);
-			u = (u + k - 1) % k;
-			if (res.size() == n) {
-				return res;
-			}
-		} while (u);
-	}
-	return {};
-}
-
-int solve(int x) {
-	x++;
-	if (x % 2) {
-		return x * (x - 1) / 2;
-	}
-	return x * (x - 2) / 2 + 1;
+vi eulerWalk(vector<vector<pii>>& gr, int nedges, int src=0) {
+	int n = sz(gr);
+	vi D(n), its(n), eu(nedges), ret, s = {src};
+	D[src]++; // to allow Euler paths, not just cycles
+	while (!s.empty()) {
+		int x = s.back(), y, e, &it = its[x], end = sz(gr[x]);
+		if (it == end){ ret.push_back(x); s.pop_back(); continue; }
+		tie(y, e) = gr[x][it++];
+		if (!eu[e]) {
+			D[x]--, D[y]++;
+			eu[e] = 1; s.push_back(y);
+		}}
+	for (int x : D) if (x < 0 || sz(ret) != nedges+1) return {};
+	return {ret.rbegin(), ret.rend()};
 }
 
 int32_t main() {
-	int N = 3e5;
-	vector<int> seive(N + 1, true);
-	vector<int> primes;
-	range(i, 2, N + 1) {
+	const int N = 1e7;
+	vector<bool> seive(N + 1, true);
+	vector<int> p;
+	rep(i, 2, N + 1) {
 		if (!seive[i]) {
 			continue;
 		}
-
-		primes.push_back(i);
-		for (int j = i + i; j <= N; j += i) {
+		p.push_back(i);
+		for (int j = i; j <= N; j += i) {
 			seive[j] = false;
 		}
 	}
-
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		int x = 1;
-		while (solve(x) < n) {
-			x++;
+		if (n == 2) {
+			print(1, 1);
+			continue;
 		}
 
-		arrPrint(build(primes, x, n));
+		int k = 0;
+		while (k * (k + k % 2) / 2 + 1 - k % 2 < n - 1) {
+			k++;
+		}
+
+		vector<vector<pair<int, int>>> graph(k);
+		int t = 0;
+		rep(i, 0, k) {
+			rep(j, 0, i - 1) {
+				graph[i].push_back({j, t});
+				graph[j].push_back({i, t});
+				t++;
+			}
+			if (i and (k % 2 or i % 2)) {
+				graph[i].push_back({i - 1, t});
+				graph[i - 1].push_back({i, t});
+				t++;
+			}
+		}
+
+		vector<int> v = eulerWalk(graph, t, 0);
+		vector<bool> b(n, false);
+		vector<int> res;
+		for (int i : v) {
+			res.push_back(p[i]);
+			if (res.size() == n) {
+				break;
+			}
+			if (!b[i]) {
+				b[i] = true;
+				res.push_back(p[i]);
+			}
+			if (res.size() == n) {
+				break;
+			}
+		}
+		arrprint(res);
 	}
 }

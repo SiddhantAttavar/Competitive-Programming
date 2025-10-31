@@ -15,52 +15,52 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-void insert(string &s, vector<vector<int>> &tree, vector<int> &a) {
-	int u = 0;
-	for (char c : s) {
-		a[u]++;
-		if (tree[u][c - 'a'] == -1) {
-			tree[u][c - 'a'] = tree.size();
-			tree.push_back(vector<int>(26, -1));
-			a.push_back(0);
+int brute(vector<int> &a) {
+	int res = a.size();
+	rep(i, 0, 1 << a.size()) {
+		vector<bool> v(a.size() + 1, false);
+		bool flag = true;
+		rep(j, 0, a.size()) {
+			if (i >> j & 1) {
+				if (v[a[j] - 1]) {
+					flag = false;
+					break;
+				}
+				v[a[j]] = true;
+			}
 		}
-		u = tree[u][c - 'a'];
-	}
-	a[u]++;
-}
-
-int get(string &s, vector<vector<int>> &tree, vector<int> &a) {
-	int u = 0, res = 0;
-	for (char c : s) {
-		if (tree[u][c - 'a'] == -1) {
-			return res;
+		if (flag) {
+			res = min(res, (int) a.size() - __builtin_popcount(i));
 		}
-		u = tree[u][c - 'a'];
-		res += a[u];
 	}
 	return res;
 }
 
 int32_t main() {
-	setup();
-	int n;
-	input(n);
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
-	vector<string> s(n);
-	arrput(s);
+		vector<int> a(n);
+		arrput(a);
 
-	vector<vector<int>> tree(1, vector<int>(26, -1));
-	vector<int> a = {0};
-	int x = 0;
-	for (string i : s) {
-		x += i.size();
-		insert(i, tree, a);
+		vector<vector<int>> v(n + 1);
+		rep(i, 0, n) {
+			v[a[i]].push_back(i);
+		}
+
+		vector<vector<int>> dp(n + 1);
+		dp[0] = {0};
+		rep(x, 1, n + 1) {
+			dp[x].resize(v[x].size() + 1);
+			dp[x].back() = dp[x - 1][0];
+			int p = n;
+			for (int i = v[x].size() - 1; i >= 0; i--) {
+				int k = lower_bound(v[x - 1].begin(), v[x - 1].end(), v[x][i]) - v[x - 1].begin();
+				p = min(p, dp[x - 1][k] + k + (int) v[x].size() - i - 1);
+				dp[x][i] = min(p, dp[x][i + 1] + 1);
+			}
+		}
+		print(dp[n][0]);
 	}
-
-	int res = 2 * n * x;
-	for (string i : s) {
-		reverse(i.begin(), i.end());
-		res -= 2 * get(i, tree, a);
-	}
-	print(res);
 }
