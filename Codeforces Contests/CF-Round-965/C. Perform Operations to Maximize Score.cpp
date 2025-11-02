@@ -1,48 +1,30 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp> 
-#include <ext/pb_ds/tree_policy.hpp> 
+#include <bits/extc++.h>
 using namespace std;
 using namespace __gnu_pbds; 
-template<typename T> inline void input(T& inVar) {cin >> inVar;}
-template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
-template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
-template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
-#define int long long
-#define range(it, start, end) for (auto it = start; it < end; it++)
-#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+template<typename T> inline void input(T& x) {cin >> x;}
+template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
+template<typename T> inline void print(T x) {cout << x << '\n';}
+template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
+#define rep(i, a, b) for (auto i = (a); i < (b); i++)
+#define arrput(l) for (auto &i : l) {cin >> i;}
+#define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7;
+const int MOD = (int) 1e9 + 7; //998244353;
 
-bool check(int m, vector<pair<int, int>> &v, int k) {
-	int n = v.size();
-	int x = n / 2 + 1;
-	for (int i = n - 1; i >= 0; i--) {
-		if (!v[i].second and v[i].first >= m) {
-			x--;
-		}
+bool check(vector<int> &x, vector<int> &y, int k, int m) {
+	int c = (x.size() + y.size()) / 2 + 1;
+	c -= y.end() - lower_bound(y.begin(), y.end(), m);
+	if (c > (int) x.size()) {
+		return false;
 	}
-	if (x <= 0) {
-		return true;
+	rep(i, 0, c) {
+		k -= max(0ll, m - x[i]);
 	}
-
-	int res = 0;
-	for (int i = n - 1; i >= 0; i--) {
-		if (!v[i].second) {
-			continue;
-		}
-
-		res += max(0ll, m - v[i].first);
-		x--;
-		if (res > k) {
-			return false;
-		}
-		if (x == 0) {
-			return true;
-		}
-	}
-	return false;
+	return k >= 0;
 }
 
 int32_t main() {
@@ -51,46 +33,51 @@ int32_t main() {
 		input(n, k);
 
 		vector<int> a(n), b(n);
-		arrPut(a);
-		arrPut(b);
+		arrput(a);
+		arrput(b);
 
-		vector<pair<int, int>> p;
 		int u = -1;
-		range(i, 0, n) {
-			if (b[i]) {
-				p.push_back({a[i], i});
-			}
-			else if (u == -1 or a[u] < a[i]) {
+		rep(i, 0, n) {
+			if (b[i] and (u == -1 or a[i] > a[u])) {
 				u = i;
 			}
 		}
-		sort(p.begin(), p.end());
 
 		int res = 0;
-		if (p.size()) {
-			vector<int> v(a);
-			v.erase(v.begin() + p.back().second);
-			sort(v.begin(), v.end());
-			res = p.back().first + k + v[n / 2 - 1];
+		if (u != -1) {
+			vector<int> c = a;
+			c.erase(c.begin() + u);
+			sort(c.begin(), c.end());
+			res = max(res, c[n / 2 - 1] + a[u] + k);
 		}
 
-		if (u == -1) {
+		vector<int> x, y;
+		rep(i, 0, n) {
+			if (b[i]) {
+				x.push_back(a[i]);
+			}
+			else {
+				y.push_back(a[i]);
+			}
+		}
+		sort(x.begin(), x.end());
+		reverse(x.begin(), x.end());
+		sort(y.begin(), y.end());
+
+		if (y.empty()) {
 			print(res);
 			continue;
 		}
 
-		vector<pair<int, int>> v(n);
-		range(i, 0, n) {
-			v[i] = {a[i], b[i]};
-		}
-		v.erase(v.begin() + u);
-		sort(v.begin(), v.end());
+		int z = y.back();
+		y.pop_back();
+		res = max(res, z);
 
-		int l = max(res, a[u]), r = 1e9;
+		int l = 0, r = 3e9;
 		while (l <= r) {
 			int m = (l + r) / 2;
-			if (check(m - a[u], v, k)) {
-				res = m;
+			if (check(x, y, k, m)) {
+				res = max(res, z + m);
 				l = m + 1;
 			}
 			else {
