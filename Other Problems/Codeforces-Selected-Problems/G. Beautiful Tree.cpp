@@ -15,60 +15,59 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-#define sz(x) (int) x.size()
-
-template<class T>
-struct RMQ {
-	vector<vector<T>> jmp;
-	RMQ(const vector<T>& V) : jmp(1, V) {
-		for (int pw = 1, k = 1; pw * 2 <= sz(V); pw *= 2, ++k) {
-			jmp.emplace_back(sz(V) - pw * 2 + 1);
-			rep(j,0,sz(jmp[k]))
-				jmp[k][j] = min(jmp[k - 1][j], jmp[k - 1][j + pw]);
-		}
-	}
-	T query(int a, int b) {
-		b++;
-		assert(a < b); // or return inf if a == b
-		int dep = 31 - __builtin_clz(b - a);
-		return min(jmp[dep][a], jmp[dep][b - (1 << dep)]);
-	}
-};
-
 int32_t main() {
-	int k = 5;
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		vector<int> a(n);
-		arrput(a);
+		if (n == 2) {
+			print(-1);
+			continue;
+		}
 
-		RMQ x(a);
+		if (n == 3) {
+			print(1, 3);
+			print(2, 3);
+			continue;
+		}
 
-		vector<int> dp(n, 1e18);
-		stack<int> s;
-		rep(i, 0, n) {
-			rep(j, 1ll, k + 1) {
-				int l = 0, r = i - 1, u = -1;
-				while (l <= r) {
-					int m = (l + r) / 2;
-					if (j * x.query(m, i - 1) < a[i]) {
-						u = m;
-						l = m + 1;
-					}
-					else {
-						r = m - 1;
-					}
+		if (n == 4) {
+			print(1, 2);
+			print(3, 1);
+			print(4, 1);
+			continue;
+		}
+
+		if (n % 2 == 1) {
+			print(2, 4);
+			print(4, 5);
+			print(5, 1);
+			print(1, 3);
+
+			if (n >= 6) {
+				print(1, 6);
+				rep(i, 7, n) {
+					print(2, i);
 				}
-				if (u == -1) {
-					dp[i] = min(dp[i], j);
+				print(1, n);
+			}
+			continue;
+		}
+
+		if (n % 2 == 0) {
+			print(3, 6);
+			print(6, 2);
+			print(2, 5);
+			print(5, 1);
+			print(1, 4);
+
+			if (n >= 7) {
+				print(1, 7);
+				rep(i, 8, n) {
+					print(2, i);
 				}
-				else {
-					dp[i] = min(dp[i], dp[u] + j);
-				}
+				print(1, n);
 			}
 		}
-		print(dp[n - 1]);
 	}
 }
