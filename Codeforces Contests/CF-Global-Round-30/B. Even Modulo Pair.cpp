@@ -24,7 +24,7 @@ int32_t main() {
 		arrput(a);
 
 		bool flag = false;
-		if (a.size() <= 30) {
+		if (a.size() <= 32) {
 			rep(i, 0, n) {
 				rep(j, i + 1, n) {
 					if ((a[j] % a[i]) % 2 == 0) {
@@ -44,9 +44,24 @@ int32_t main() {
 			continue;
 		}
 
-		rep(i, 1, n) {
-			if ((a[i] % a[i - 1]) % 2 == 0) {
-				print(a[i - 1], a[i]);
+		vector<int> x, y;
+		for (int i : a) {
+			if (i % 2 == 0) {
+				x.push_back(i);
+			}
+			else {
+				y.push_back(i);
+			}
+		}
+
+		if (x.size() >= 2) {
+			print(x[0], x[1]);
+			continue;
+		}
+
+		rep(i, 1, y.size()) {
+			if ((y[i] % y[i - 1]) % 2 == 0) {
+				print(y[i - 1], y[i]);
 				break;
 			}
 		}

@@ -32,49 +32,68 @@ struct UF {
 	}
 };
 
+int dfs(int u, int p, int x, vector<vector<int>> &tree, vector<int> &l, vector<bool> &b) {
+	x = min(x, l[u]);
+	int res = l[u];
+	if (b[u]) {
+		res += x;
+	}
+	for (int v : tree[u]) {
+		if (v != p) {
+			res += dfs(v, u, x, tree, l, b);
+		}
+	}
+	return res;
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
 		int n, m;
 		input(n, m);
 
-		vector<bool> a(n, false);
-		vector<array<int, 4>> p(m);
-		vector<int> x(m);
+		vector<bool> b(n, false);
+		vector<array<int, 4>> e;
 		rep(i, 0, m) {
 			int u, v, w;
 			input(u, v, w);
+
 			u--;
 			v--;
-			p.push_back({i, u, v, w});
-			a[u] = !a[u];
-			a[v] = !a[v];
-			x[i] = w;
+			e.push_back({i, u, v, w});
+			b[u] = !b[u];
+			b[v] = !b[v];
 		}
 
 		UF d(n);
-		vector<bool> b = a;
-		vector<int> q, l;
-		for (auto [i, u, v, w] : p) {
+		vector<int> l(n, 0);
+		vector<vector<int>> tree(n);
+		vector<bool> p(n, false);
+		vector<int> a(n);
+		rep(i, 0, n) {
+			a[i] = i;
+		}
+		for (auto [i, u, v, w] : e) {
 			int x = d.find(u);
 			int y = d.find(v);
-			if (!d.join(u, v)) {
-				continue;
-			}
-			l.push_back(i);
-			if (b[x] and b[y]) {
-				q.push_back(i);
+			p.push_back(false);
+			l.push_back(w);
+			tree.push_back({a[x]});
+			if (x != y) {
+				tree.back().push_back(a[y]);
+				d.join(u, v);
+				int z = d.find(u);
+				if (b[x] and b[y]) {
+					p.back() = true;
+					b[z] = false;
+				}
+				else {
+					b[z] = b[x] or b[y];
+				}
 			}
 			int z = d.find(u);
-			b[z] = b[x] ^ b[y];
+			a[z] = tree.size() - 1;
 		}
 
-		int res = accumulate(x.begin(), x.end(), 0ll);
-		// for (int i = m - 2; i >= 0; i--) {
-		// 	x[i] = min(x[i], x[i + 1]);
-		// }
-		for (int i : q) {
-			res += x[i];
-		}
-		print(res);
+		print(dfs(tree.size() - 1, -1, 1e18, tree, l, p));
 	}
 }
