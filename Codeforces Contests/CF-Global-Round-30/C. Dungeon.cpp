@@ -15,59 +15,47 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-int get(int p, int n) {
-	int res = 0, z = p;
-	while (z <= n) {
-		res += n / z;
-		z *= p;
-	}
-	return res;
-}
-
-bool check(int p, int c, int x, int n) {
-	return get(p, n) / c > get(p, x) / c;
-}
-
 int32_t main() {
-	const int N = 1e7 ;
-	bitset<N> seive = 0;
-	seive = ~seive;
-	vector<array<int, 3>> primes;
-	rep(i, 2, N + 1) {
-		if (!seive[i]) {
-			continue;
-		}
-		for (int j = i; j <= N; j += i) {
-			seive[j] = false;
-		}
-		int z = i, c = 1;
-		while (z <= N) {
-			primes.push_back({z, i, c});
-			z *= i;
-			c++;
-		}
-	}
-	sort(primes.begin(), primes.end(), [](array<int, 3> &a, array<int, 3> &b) {
-		return a[0] < b[0];
-	});
-
 	setup(); int tc; input(tc); while (tc--) {
 		int n, m;
 		input(n, m);
 
-		int l = primes.size() - 1;
-		while (primes[l][0] > m) {
-			l--;
+		vector<int> a(n), b(m), c(m);
+		arrput(a);
+		arrput(b);
+		arrput(c);
+
+		vector<pair<int, int>> v(m);
+		rep(i, 0, m) {
+			v[i] = {b[i], c[i]};
 		}
-		int res = 0;
-		rep(x, 1, n) {
-			while (!check(primes[l][1], primes[l][2], x, n)) {
-				l--;
+		sort(v.begin(), v.end(), [](pair<int, int> a, pair<int, int> b) {
+			if (a.second == 0 and b.second == 0) {
+				return a.first < b.first;
 			}
-			res += get(primes[l][1], x) / primes[l][2];
-			cout << get(primes[l][1], x) / primes[l][2] << ' ';
+			if (a.second == 0) {
+				return false;
+			}
+			if (b.second == 0) {
+				return true;
+			}
+			return a < b;
+		});
+
+		multiset<int> s(a.begin(), a.end());
+		int res = 0;
+		for (auto [b, c] : v) {
+			set<int>::iterator i = s.lower_bound(b);
+			if (i == s.end()) {
+				continue;
+			}
+			int x = *i;
+			s.erase(i);
+			res++;
+			if (c) {
+				s.insert(max(x, c));
+			}
 		}
-		cout << endl;
 		print(res);
 	}
 }
