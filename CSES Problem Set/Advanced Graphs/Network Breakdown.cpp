@@ -6,9 +6,7 @@ template<typename T> inline void input(T& x) {cin >> x;}
 template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
 template<typename T> inline void print(T x) {cout << x << '\n';}
 template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
-template<typename T> inline void dbg(T x) {cerr << x << '\n';}
-template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x << ", "; dbg(args ...);}
-#define debug(...) cerr << #__VA_ARGS__ << ": "; dbg(__VA_ARGS__);
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
 #define rep(i, a, b) for (auto i = (a); i < (b); i++)
 #define arrput(l) for (auto &i : l) {cin >> i;}
 #define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
@@ -17,41 +15,63 @@ template<typename T, typename... S> inline void dbg(T x, S... args) {cerr << x <
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+#define vi vector<int>
+
+struct UF {
+	vi e;
+	UF(int n) : e(n, -1) {}
+	bool sameSet(int a, int b) { return find(a) == find(b); }
+	int size(int x) { return -e[find(x)]; }
+	int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
+	bool join(int a, int b) {
+		a = find(a), b = find(b);
+		if (a == b) return false;
+		if (e[a] > e[b]) swap(a, b);
+		e[a] += e[b]; e[b] = a;
+		return true;
+	}
+};
+
 int32_t main() {
 	setup();
 
-	int n, m;
-	input(n, m);
+	int n, m, k;
+	input(n, m, k);
 
-	vector<vector<int>> graph(n);
-	vector<int> a(n, 0);
+	set<pair<int, int>> s;
 	rep(i, 0, m) {
 		int u, v;
 		input(u, v);
-
-		graph[v - 1].push_back(u - 1);
-		a[u - 1]++;
-	}
-
-	std::priority_queue<int> pq;
-	rep(i, 0, n) {
-		if (a[i] == 0) {
-			pq.push(i);
+		u--;
+		v--;
+		if (u > v) {
+			swap(u, v);
 		}
+		s.insert({u, v});
 	}
-	vector<int> res;
-	while (!pq.empty()) {
-		int u = pq.top();
-		pq.pop();
-
-		res.push_back(u + 1);
-		for (int v : graph[u]) {
-			a[v]--;
-			if (a[v] == 0) {
-				pq.push(v);
-			}
+	vector<pair<int, int>> t;
+	rep(i, 0, k) {
+		int u, v;
+		input(u, v);
+		u--;
+		v--;
+		if (u > v) {
+			swap(u, v);
 		}
+		s.erase({u, v});
+		t.push_back({u, v});
 	}
-	reverse(res.begin(), res.end());
+
+	UF d(n);
+	int c = n;
+	for (auto [u, v] : s) {
+		c -= d.join(u, v);
+	}
+
+	vector<int> res(k);
+	for (int i = k - 1; i >= 0; i--) {
+		res[i] = c;
+		c -= d.join(t[i].first, t[i].second);
+	}
 	arrprint(res);
 }
