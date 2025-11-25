@@ -15,37 +15,52 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+int get(vector<int> &x, vector<int> &p, map<int, int> &f, int k, int i, int b) {
+	int r = lower_bound(x.begin(), x.end(), x[i] + k) - x.begin() - 1;
+	int l = upper_bound(x.begin(), x.end(), x[i] - k) - x.begin();
+	int s = x[i] * (i - l) - (p[i] - p[l]) + (p[r + 1] - p[i]) - x[i] * (r + 1 - i);
+	if (s > b) {
+		return -1;
+	}
+	int u = upper_bound(x.begin(), x.end(), x[i] + k) - x.begin() - 1;
+	int v = lower_bound(x.begin(), x.end(), x[i] - k) - x.begin();
+	return r - l + min(u - r + l - v, (b - s) / k);
+}
+
 int32_t main() {
-	const int N = 1e6;
-	vector<bool> seive(N + 1, true);
-	vector<vector<pair<int, int>>> l(N + 1);
-	rep(i, 2, N + 1) {
-		if (!seive[i]) {
-			continue;
-		}
-		for (int j = i, x = 1; j <= N; j += i, x++) {
-			seive[j] = false;
-			l[j].push_back({i, x});
-		}
-	}
-
-	vector<int> res(N + 1, 0);
-	int x = 0;
-	rep(i, 2, N + 1) {
-		for (auto [p, y] : l[i]) {
-			x = (x - (y - 1) * (p - 1) % p + MOD) % MOD;
-			x = (x + y * (p - 1) % p) % MOD;
-		}
-		if (i % 4 == 0) {
-			x = (x - (i / 4 - 1) * 2 % 4 + MOD) % MOD;
-			x = (x + (i / 4) * 2 % 4) % MOD;
-		}
-		res[i] = (res[i - 1] + x) % MOD;
-	}
-
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
-		print(res[n]);
+
+		vector<int> x(n), b(n);
+		arrput(x);
+		arrput(b);
+
+		map<int, int> f;
+		for (int i : x) {
+			f[i]++;
+		}
+
+		vector<int> p(n + 1, 0);
+		rep(i, 0, n) {
+			p[i + 1] = p[i] + x[i];
+		}
+
+		rep(i, 0, n) {
+			int l = 1, r = 1e9, res = 0;
+			while (l <= r) {
+				int m = (l + r) / 2;
+				int z = get(x, p, f, m, i, b[i]);
+				if (z != -1) {
+					res = max(res, z);
+					l = m + 1;
+				}
+				else {
+					r = m - 1;
+				}
+			}
+			cout << res << ' ';
+		}
+		cout << endl;
 	}
 }

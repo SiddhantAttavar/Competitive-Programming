@@ -1,129 +1,138 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp> 
-#include <ext/pb_ds/tree_policy.hpp> 
+#include <bits/extc++.h>
 using namespace std;
 using namespace __gnu_pbds; 
-template<typename T> inline void input(T& inVar) {cin >> inVar;}
-template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
-template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
-template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
-#define int long long
-#define range(it, start, end) for (auto it = start; it < end; it++)
-#define arrPut(var) for (auto &inVar : var) {cin >> inVar;}
-#define arrPrint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+template<typename T> inline void input(T& x) {cin >> x;}
+template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
+template<typename T> inline void print(T x) {cout << x << '\n';}
+template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
+#define rep(i, a, b) for (auto i = (a); i < (b); i++)
+#define arrput(l) for (auto &i : l) {cin >> i;}
+#define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-const int MOD = (int) 1e9 + 7;
+const int MOD = (int) 1e9 + 7; //998244353;
+
+bool debug = false;
+int K = 300;
+vector<int> path;
 
 bool query(int u) {
+	assert(K);
+	K--;
 	print('?', u + 1);
 	cout.flush();
-	bool res;
-	input(res);
-	return res;
-}
-
-void dfs(int u, vector<set<int>> &graph, vector<int> &d, vector<int> &s, vector<int> &l) {
-	for (int v : graph[u]) {
-		// print(u, v);
-		// cout.flush();
-		d[v] = d[u] + 1;
-		dfs(v, graph, d, s, l);
-		s[u] += s[v];
-		l[u] += l[v];
+	if (debug) {
+		if (find(path.begin(), path.end(), u) == path.end()) {
+			if (path.size() > 1) {
+				path.pop_back();
+			}
+			return false;
+		}
+		return true;
 	}
-	l[u] += s[u] == 1;
+	int x;
+	input(x);
+	return x;
 }
 
-void dfs2(int u, vector<set<int>> &graph, vector<int> &p) {
+void dfs(int u, vector<vector<int>> &graph, vector<int> &p, vector<int> &s, vector<int> &l) {
+	l[u] += graph[u].empty();
 	for (int v : graph[u]) {
-		graph[v].erase(u);
-		p[v] = u;
-		dfs2(v, graph, p);
+		if (v != p[u]) {
+			p[v] = u;
+			dfs(v, graph, p, s, l);
+			s[u] += s[v];
+			l[u] += l[v];
+		}
 	}
 }
 
 int32_t main() {
-	int tc; input(tc); while (tc--) {
+	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
+		K = 300;
 
-		vector<set<int>> graph(n);
-		range(i, 0, n - 1) {
+		vector<vector<int>> graph(n);
+		rep(i, 0, n - 1) {
 			int u, v;
 			input(u, v);
 
-			graph[u - 1].insert(v - 1);
-			graph[v - 1].insert(u - 1);
+			graph[u - 1].push_back(v - 1);
+			graph[v - 1].push_back(u - 1);
 		}
 
-		if (n == 1) {
-			print('!', 1);
-			cout.flush();
-			continue;
+		vector<int> par(n, -1), s(n, 1), l(n, 0);
+		dfs(0, graph, par, s, l);
+		rep(i, 1, n) {
+			graph[i].erase(find(graph[i].begin(), graph[i].end(), par[i]));
 		}
 
-		vector<int> p(n, -1);
-		dfs2(0, graph, p);
+		if (debug) {
+			int u;
+			input(u);
+			u--;
 
-		int u = 0;
-		int x = n;
-		int y = 0;
-		while (true) {
-			vector<int> s(n, 1), d(n, -1), l(n, 0);
-			d[u] = 0;
-			dfs(u, graph, d, s, l);
+			path.clear();
+			while (u != -1) {
+				path.push_back(u);
+				u = par[u];
+			}
+			reverse(path.begin(), path.end());
+		}
 
-			// arrPrint(d);
-			// arrPrint(s);
-			// arrPrint(l);
-			// cout.flush();
+		int r = 0, c = 0;
+		while (!graph[r].empty()) {
+			vector<int> p(n, -1), s(n, 1), l(n, 0);
+			dfs(r, graph, p, s, l);
 
-			if (s[u] == 1) {
-				break;
+			pair<int, int> u = {n + 1, r};
+			rep(v, 0, n) {
+				if (l[v] and v != r) {
+					u = min(u, {max(s[v], s[r] - s[v] - l[r] + l[v]), v});
+				}
 			}
 
-			int v = -1;
-			range(i, 0, n) {
-				if (d[i] == -1 or u == i) {
-					continue;
-				}
-				int y = (s[u] - s[i]) - (l[u] - l[i]) - s[i];
-				if (y < 0) {
-					continue;
-				}
-
-				if (v == -1) {
-					v = i;
-					continue;
-				}
-
-				int x = (s[u] - s[v]) - (l[u] - l[v]) - s[v];
-				if (y <= x) {
-					v = i;
-				}
-			}
-			assert(v != -1);
-
-			assert(y < 300);
-			y++;
+			int v = u.second;
 			if (query(v)) {
-				u = v;
+				graph[par[v]].erase(find(graph[par[v]].begin(), graph[par[v]].end(), v));
+				r = v;
 				continue;
 			}
 
-			range(i, 0, n) {
-				if (d[i] != -1 and s[i] == 1) {
-					graph[p[i]].erase(i);
+			graph[p[v]].erase(find(graph[p[v]].begin(), graph[p[v]].end(), v));
+			if (par[r] != -1) {
+				graph[par[r]].push_back(r);
+				r = par[r];
+			}
+			if (par[r] != -1) {
+				vector<int>::iterator j = find(graph[par[r]].begin(), graph[par[r]].end(), r);
+				if (j != graph[par[r]].end()) {
+					graph[par[r]].erase(j);
 				}
 			}
 
-			if (graph[p[v]].count(v)) {
-				graph[p[v]].erase(v);
+			p.assign(n, -1);
+			s.assign(n, 1);
+			l.assign(n, 0);
+			dfs(r, graph, p, s, l);
+			rep(i, 0, n) {
+				if (l[i] == 1 and graph[i].empty() and par[i] != -1) {
+					assert(find(graph[par[i]].begin(), graph[par[i]].end(), i) != graph[par[i]].end());
+					graph[par[i]].erase(find(graph[par[i]].begin(), graph[par[i]].end(), i));
+				}
 			}
+			c++;
 		}
-
-		print('!', u + 1);
+		print('!', r + 1);
 		cout.flush();
+		assert(c <= 160);
+
+		if (debug) {
+			assert(r == path.back());
+		}
 	}
 }

@@ -16,36 +16,19 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	const int N = 1e6;
-	vector<bool> seive(N + 1, true);
-	vector<vector<pair<int, int>>> l(N + 1);
-	rep(i, 2, N + 1) {
-		if (!seive[i]) {
-			continue;
-		}
-		for (int j = i, x = 1; j <= N; j += i, x++) {
-			seive[j] = false;
-			l[j].push_back({i, x});
-		}
-	}
-
-	vector<int> res(N + 1, 0);
-	int x = 0;
-	rep(i, 2, N + 1) {
-		for (auto [p, y] : l[i]) {
-			x = (x - (y - 1) * (p - 1) % p + MOD) % MOD;
-			x = (x + y * (p - 1) % p) % MOD;
-		}
-		if (i % 4 == 0) {
-			x = (x - (i / 4 - 1) * 2 % 4 + MOD) % MOD;
-			x = (x + (i / 4) * 2 % 4) % MOD;
-		}
-		res[i] = (res[i - 1] + x) % MOD;
-	}
-
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
-		print(res[n]);
+		string s;
+		input(s);
+
+		int x = 0, res = s.size();
+		rep(i, 0, s.size()) {
+			if (s[i] == '0') {
+				x++;
+			}
+			else {
+				res = min(res, (int) s.size() - x - 1);
+			}
+		}
+		print(res);
 	}
 }

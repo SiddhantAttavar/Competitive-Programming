@@ -16,36 +16,63 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	const int N = 1e6;
-	vector<bool> seive(N + 1, true);
-	vector<vector<pair<int, int>>> l(N + 1);
-	rep(i, 2, N + 1) {
-		if (!seive[i]) {
-			continue;
-		}
-		for (int j = i, x = 1; j <= N; j += i, x++) {
-			seive[j] = false;
-			l[j].push_back({i, x});
-		}
-	}
-
-	vector<int> res(N + 1, 0);
-	int x = 0;
-	rep(i, 2, N + 1) {
-		for (auto [p, y] : l[i]) {
-			x = (x - (y - 1) * (p - 1) % p + MOD) % MOD;
-			x = (x + y * (p - 1) % p) % MOD;
-		}
-		if (i % 4 == 0) {
-			x = (x - (i / 4 - 1) * 2 % 4 + MOD) % MOD;
-			x = (x + (i / 4) * 2 % 4) % MOD;
-		}
-		res[i] = (res[i - 1] + x) % MOD;
-	}
-
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
-		print(res[n]);
+		int n, l, r;
+		input(n, l, r);
+
+		vector<int> a(n);
+		arrput(a);
+
+		vector<int> b;
+		int x = 0, y = 0, p = 0, q = 0;
+		for (int i : a) {
+			if (i < l) {
+				x++;
+				p += i;
+			}
+			else if (i > r) {
+				y++;
+				q += i;
+			}
+			else {
+				b.push_back(i);
+			}
+		}
+
+		sort(b.begin(), b.end());
+		int s = 0, t = b.size() - 1;
+		while (s <= t) {
+			if (x > y) {
+				y++;
+				q += b[t];
+				t--;
+			}
+			else if (x < y) {
+				x++;
+				p += b[s];
+				s++;
+			}
+			else if (s < t) {
+				x++;
+				p += b[s];
+				s++;
+
+				y++;
+				q += b[t];
+				t--;
+			}
+			else {
+				break;
+			}
+		}
+		while (x > y) {
+			y++;
+			q += l;
+		}
+		while (x < y) {
+			x++;
+			p += r;
+		}
+		print(q - p);
 	}
 }

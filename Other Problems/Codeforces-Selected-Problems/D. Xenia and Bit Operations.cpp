@@ -15,24 +15,35 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-template<typename T> struct SegTree { // cmb(ID,b) = b
-	T ID; T (*cmb)(T a, T b);
-	int n; vector<T> seg;
-	SegTree(int _n, T id, T _cmb(T, T)) {
-		ID = id; cmb = _cmb;
-		for (n = 1; n < _n; ) n *= 2; 
-		seg.assign(2*n,ID); 
+template<typename T, int SZ> struct SparseSegmentTree {
+	vector<pair<int, int>> tree;
+	vector<T> seg; T id; int n;
+	T (*cmb) (T, T);
+	SparseSegmentTree(T _id, T _cmb(T, T), int q = 0):id(_id),
+		cmb(_cmb),n(1),tree({{-1, -1}}),seg({{id}}) {
+		int k = 2 * q * __lg(SZ);
+		tree.reserve(k); seg.reserve(k);
 	}
-	void pull(int p) { seg[p] = cmb(seg[2*p],seg[2*p+1]); }
-	void upd(int p, T val) { // set val at position p
-		seg[p += n] = val; for (p /= 2; p; p /= 2) pull(p); }
-	T query(int l, int r) {	// zero-indexed, inclusive
-		T ra = ID, rb = ID;
-		for (l += n, r += n+1; l < r; l /= 2, r /= 2) {
-			if (l&1) ra = cmb(ra,seg[l++]);
-			if (r&1) rb = cmb(seg[--r],rb);
-		}
-		return cmb(ra,rb);
+	void add(int c, int l, int r) {
+		if (tree[c].first != -1 or l == r) return;
+		tree[c] = {n, n + 1}; n += 2;
+		tree.push_back({-1, -1}); tree.push_back({-1, -1});
+		seg.push_back(id); seg.push_back(id);
+	}
+	T query(int l, int r, int s=0, int e=SZ-1, int c=0) {
+		if (l > e || r < s) return id;
+		if (l <= s && r >= e) return seg[c];
+		int mid = (s + e) / 2; add(c, s, e);
+		return cmb(query(l,r, s, mid, tree[c].first),
+			query(l, r, mid + 1, e, tree[c].second));
+	}
+	void upd(int i, T x, int s=0, int e=SZ-1, int c=0) {
+		if (s > i || e < i) return;
+		if (s == e) {seg[c] = x; return;}
+		int mid = (s + e) / 2; add(c, s, e);
+		upd(i, x, s, mid, tree[c].first);
+		upd(i, x, mid + 1, e, tree[c].second);
+		seg[c] = cmb(seg[tree[c].first], seg[tree[c].second]);
 	}
 };
 
@@ -41,7 +52,7 @@ int32_t main() {
 	int n, m;
 	input(n, m);
 
-	SegTree<pair<int, bool>> s(1 << n, {0ll, true}, [](pair<int, bool> a, pair<int, bool> b) -> pair<int, bool> {
+	SparseSegmentTree<pair<int, bool>, 1ll << 17> s({0ll, true}, [](pair<int, bool> a, pair<int, bool> b) -> pair<int, bool> {
 		if (a.second) {
 			return {a.first | b.first, false};
 		}

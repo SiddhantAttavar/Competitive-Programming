@@ -15,37 +15,46 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+int solve(vector<int> &x, vector<int> &y, int k) {
+	int c = 0, res = 0, n = x.size() + y.size();
+	while (c < n) {
+		int i = lower_bound(x.begin(), x.end(), c) - x.begin();
+		if (i + k - 1 >= x.size()) {
+			break;
+		}
+		c = x[i + k - 1];
+		i = lower_bound(y.begin(), y.end(), c) - y.begin();
+		if (i + k - 1 >= y.size()) {
+			break;
+		}
+		c = y[i + k - 1];
+		res += 2 * k;
+	}
+	return res;
+}
+
 int32_t main() {
-	const int N = 1e6;
-	vector<bool> seive(N + 1, true);
-	vector<vector<pair<int, int>>> l(N + 1);
-	rep(i, 2, N + 1) {
-		if (!seive[i]) {
-			continue;
-		}
-		for (int j = i, x = 1; j <= N; j += i, x++) {
-			seive[j] = false;
-			l[j].push_back({i, x});
-		}
-	}
-
-	vector<int> res(N + 1, 0);
-	int x = 0;
-	rep(i, 2, N + 1) {
-		for (auto [p, y] : l[i]) {
-			x = (x - (y - 1) * (p - 1) % p + MOD) % MOD;
-			x = (x + y * (p - 1) % p) % MOD;
-		}
-		if (i % 4 == 0) {
-			x = (x - (i / 4 - 1) * 2 % 4 + MOD) % MOD;
-			x = (x + (i / 4) * 2 % 4) % MOD;
-		}
-		res[i] = (res[i - 1] + x) % MOD;
-	}
-
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
-		print(res[n]);
+
+		string s;
+		input(s);
+
+		vector<int> x, y;
+		rep(i, 0, n) {
+			if (s[i] == 'S') {
+				x.push_back(i);
+			}
+			else {
+				y.push_back(i);
+			}
+		}
+
+		int res = 0;
+		rep(k, 1, n / 2 + 1) {
+			res= max({res, solve(x, y, k), solve(y, x, k)});
+		}
+		print(res);
 	}
 }

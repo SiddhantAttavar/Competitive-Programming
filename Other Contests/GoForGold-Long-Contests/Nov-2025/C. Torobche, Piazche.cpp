@@ -16,36 +16,33 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	const int N = 1e6;
-	vector<bool> seive(N + 1, true);
-	vector<vector<pair<int, int>>> l(N + 1);
-	rep(i, 2, N + 1) {
-		if (!seive[i]) {
-			continue;
-		}
-		for (int j = i, x = 1; j <= N; j += i, x++) {
-			seive[j] = false;
-			l[j].push_back({i, x});
-		}
-	}
-
-	vector<int> res(N + 1, 0);
-	int x = 0;
-	rep(i, 2, N + 1) {
-		for (auto [p, y] : l[i]) {
-			x = (x - (y - 1) * (p - 1) % p + MOD) % MOD;
-			x = (x + y * (p - 1) % p) % MOD;
-		}
-		if (i % 4 == 0) {
-			x = (x - (i / 4 - 1) * 2 % 4 + MOD) % MOD;
-			x = (x + (i / 4) * 2 % 4) % MOD;
-		}
-		res[i] = (res[i - 1] + x) % MOD;
-	}
-
+	const int N = 2e5;
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
-		print(res[n]);
+
+		vector<int> a(n);
+		arrput(a);
+
+		vector<int> f(N + 1, 0);
+		for (int i : a) {
+			f[i]++;
+		}
+
+		vector<int> p(N + 2, 0);
+		rep(i, 0, N + 1) {
+			p[i + 1] = p[i] + f[i];
+		}
+
+		int res = 0;
+		rep(x, 1, N + 1) {
+			int c = 0;
+			for (int l = x; l <= N; l += x) {
+				c++;
+				int r = min(N, l + x - 1);
+				res += c * f[x] * (p[r + 1] - p[l]);
+			}
+		}
+		print(res);
 	}
 }
