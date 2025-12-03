@@ -16,17 +16,17 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 const int MOD = (int) 1e9 + 7; //998244353;
 
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-bool debug = true;
+bool debug = false;
 vector<int> z;
-int k = 0, x;
+int k = 0;
 
 bool query(vector<int> &v, int x) {
+	if (v.empty()) {
+		return false;
+	}
+	assert(k);
+	k--;
 	if (debug) {
-		if (v.empty()) {
-			return false;
-		}
-		k++;
-		assert(k <= 925);
 		for (int i : v) {
 			if (z[i] == x) {
 				return true;
@@ -34,10 +34,7 @@ bool query(vector<int> &v, int x) {
 		}
 		return false;
 	}
-	if (v.empty()) {
-		return false;
-	}
-	cout << "? " << x << ' ' << v.size() << ' ';
+	cout << "? " << x + 1 << ' ' << v.size() << ' ';
 	for (int i : v) {
 		cout << i + 1 << ' ';
 	}
@@ -48,56 +45,79 @@ bool query(vector<int> &v, int x) {
 	return res;
 }
 
-bool check(int n, int x) {
-	vector<int> a;
-	rep(i, 0, 2 * n - 1) {
-		a.push_back(i);
-	}
-	shuffle(a.begin(), a.end(), rng);
-	vector<int> b;
-	while (a.size() > b.size()) {
-		b.push_back(a.back());
-		a.pop_back();
-	}
-	return query(a, x) and query(b, x);
-}
-
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
+		k = 925;
 		if (debug) {
 			z.resize(2 * n - 1);
 			arrput(z);
-
-			int x = 4 * n;
-			k = 0;
+			rep(i, 0, 2 * n - 1) {
+				z[i]--;
+			}
 		}
 
-		int res = 1;
+		vector<int> a(2 * n - 1);
+		iota(a.begin(), a.end(), 0);
+		shuffle(a.begin(), a.end(), rng);
+
+		vector<int> s, t;
+		int x = 0, y = 0;
+		vector<int> p(a.begin(), a.begin() + n), q(a.begin() + n, a.end());
 		rep(i, 0, n) {
-			bool flag = false;
-			rep(j, 0, 10) {
-				if (check(n, i + 1)) {
-					flag = true;
-					break;
-				}
+			if (!query(p, i)) {
+				t.push_back(i);
+				y += 2;
 			}
-			if (!flag) {
-				res = i;
-				break;
+			else if (!query(q, i)) {
+				s.push_back(i);
+				x += 2;
+			}
+			else {
+				x++;
+				y++;
 			}
 		}
 
-		if (debug) {
-			print(x, res + 1);
-			cout.flush();
-			assert(x == res + 1);
+		vector<array<int, 3>> v;
+		if (x > n) {
+			for (int i : s) {
+				v.push_back({0, n - 1, i});
+			}
 		}
 		else {
-			print('!', res + 1);
-			cout.flush();
+			for (int i : t) {
+				v.push_back({n, 2 * n - 2, i});
+			}
+		}
+
+		while (v.size() > 1) {
+			vector<array<int, 3>> nv;
+			for (auto [l, r, i] : v) {
+				int m = (l + r) / 2;
+				vector<int> p(a.begin() + l, a.begin() + m + 1);
+				vector<int> q(a.begin() + m + 1, a.begin() + r + 1);
+				if (!query(p, i)) {
+					nv.push_back({m + 1, r, i});
+				}
+				else if (!query(q, i)) {
+					nv.push_back({l, m, i});
+				}
+			}
+			v = nv;
+		}
+
+		print('!', v[0][2] + 1);
+		cout.flush();
+
+		if (debug) {
+			vector<int> c(n, 0);
+			for (int i : z) {
+				c[i]++;
+			}
+			assert(find(c.begin(), c.end(), 1) - c.begin() == v[0][2]);
 		}
 	}
 }
