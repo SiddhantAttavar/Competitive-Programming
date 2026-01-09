@@ -12,15 +12,15 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
-#define all(x) x.begin(), x.end()
-#define vi vector<int>
-#define pii pair<int, int>
-#define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
-	}
+	int l, r;
+	input(l, r);
+
+	vector<int> res = {1, 2, 3, 4, 5, 6, 7, 8, 9, 153, 370, 371, 407, 1634, 8208, 9474, 54748, 92727, 93084, 548834, 1741725, 4210818, 9800817, 9926315, 24678050, 24678051, 88593477};
+	print(max(0ll, (int) (upper_bound(res.begin(), res.end(), r) - lower_bound(res.begin(), res.end(), l))));
 }

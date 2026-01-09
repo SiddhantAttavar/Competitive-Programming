@@ -63,16 +63,72 @@ int32_t main() {
 		vector<int> p(n, -1), d(n, 0);
 		dfs(0, graph, p, d);
 
-		vector<vector<int>> v(n);
+		vector<vector<int>> v(n + 1);
 		rep(i, 0, n) {
 			v[d[i]].push_back(i);
 		}
-
-		vector<
+		int z = 0;
 		rep(i, 0, n) {
-			for (int j : graph[i]) {
-
+			z = max(z, (int) v[i].size());
+		}
+		rep(i, 0, n) {
+			if (graph[i].size() - (p[i] != -1) == z) {
+				z++;
+				break;
 			}
 		}
+
+		vector<int> c(n, -1);
+		vector<set<int>> t(n);
+		for (int i = n - 1; i >= 0; i--) {
+			for (int u : v[i]) {
+				for (int j : graph[u]) {
+					if (j != p[u]) {
+						t[u].insert(c[j]);
+					}
+				}
+			}
+			sort(v[i].begin(), v[i].end(), [&](int a, int b) {
+				if (t[a].empty()) {
+					return false;
+				}
+				if (t[b].empty()) {
+					return true;
+				}
+				return *t[a].begin() > *t[b].begin();
+			});
+			set<int> s;
+			rep(j, 0, v[i].size() + v[i + 1].size() + 1) {
+				s.insert(j);
+			}
+			for (int u : v[i]) {
+				for (int i : s) {
+					if (!t[u].count(i)) {
+						c[u] = i;
+						break;
+					}
+				}
+				s.erase(c[u]);
+			}
+		}
+		// arrprint(c);
+
+		int k = *max_element(c.begin(), c.end()) + 1;
+		print(k);
+		// print(z);
+		// cout.flush();
+		// assert(k == z);
+		vector<vector<int>> res(k);
+		rep(i, 0, n) {
+			res[c[i]].push_back(i);
+		}
+		rep(i, 0, k) {
+			cout << res[i].size();
+			for (int j : res[i]) {
+				cout << ' ' << j + 1;
+			}
+			cout << endl;
+		}
+		// assert(check(res, p, d));
 	}
 }

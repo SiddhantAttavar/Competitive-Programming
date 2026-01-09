@@ -34,8 +34,9 @@ void dfs(int v, int p = -1) {
 			} else {
 				dfs(to, v);
 				low[v] = min(low[v], low[to]);
-				if (low[to] > tin[v]) // CUT EDGE
+				if (low[to] > tin[v]) {// CUT EDGE
 					IS_BRIDGE(v, to);
+				}
 			}
 		}
 	if(p == -1 && children > 1) // CUT VERTICE
@@ -62,14 +63,15 @@ void find_bridges() { // CUT EDGE
 	}
 }
 
-void dfs(int u, int p, vector<vector<int>> &graph, vector<pair<int, int>> &res, vector<bool> &vis) {
+void dfs(int u, int p, vector<vector<int>> &graph, vector<pair<int, int>> &res, vector<bool> &vis, set<pair<int, int>> &s) {
 	vis[u] = true;
 	for (int v : graph[u]) {
-		if (v != p) {
-			res.push_back({u, v});
+		if (!s.count({u, v}) and !s.count({v, u})) {
+			res.push_back({v, u});
+			s.insert({u, v});
 		}
 		if (!vis[v]) {
-			dfs(v, u, graph, res, vis);
+			dfs(v, u, graph, res, vis, s);
 		}
 	}
 }
@@ -77,7 +79,7 @@ void dfs(int u, int p, vector<vector<int>> &graph, vector<pair<int, int>> &res, 
 int32_t main() {
 	setup();
 
-	int n, m;
+	int m;
 	input(n, m);
 
 	vector<vector<int>> graph(n);
@@ -91,7 +93,6 @@ int32_t main() {
 	adj = graph;
 	find_bridges();
 
-	bridges = false;
 	if (bridges) {
 		print("IMPOSSIBLE");
 		return 0;
@@ -99,7 +100,8 @@ int32_t main() {
 
 	vector<pair<int, int>> res;
 	vector<bool> vis(n, false);
-	dfs(0, -1, graph, res, vis);
+	set<pair<int, int>> s;
+	dfs(0, -1, graph, res, vis, s);
 
 	rep(i, 1, n) {
 		if (!vis[i]) {

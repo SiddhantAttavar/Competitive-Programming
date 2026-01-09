@@ -15,20 +15,27 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-const int N = 2e5;
-int seg[4 * N], x[N], v[N], a[N], b[N], res[N], c[N];
+int check(vector<int> &a) {
+	ordered_set o;
+	int res = 0;
+	for (int i : a) {
+		res += o.size() - o.order_of_key(i);
+		o.insert(i);
+	}
+	return res;
+}
 
 template<typename T> struct SegTree { // cmb(ID,b) = b
-	T ID; T (*cmb)(T a, T b); int n;
+	T ID; T (*cmb)(T a, T b);
+	int n; vector<T> seg;
 	SegTree(int _n, T id, T _cmb(T, T)) {
 		ID = id; cmb = _cmb;
 		for (n = 1; n < _n; ) n *= 2; 
+		seg.assign(2*n,ID); 
 	}
 	void pull(int p) { seg[p] = cmb(seg[2*p],seg[2*p+1]); }
 	void upd(int p, T val) { // set val at position p
-		seg[p += n] = val;
-		for (p /= 2; p; p /= 2) pull(p);
-	}
+		seg[p += n] = val; for (p /= 2; p; p /= 2) pull(p); }
 	T query(int l, int r) {	// zero-indexed, inclusive
 		T ra = ID, rb = ID;
 		for (l += n, r += n+1; l < r; l /= 2, r /= 2) {
@@ -37,55 +44,43 @@ template<typename T> struct SegTree { // cmb(ID,b) = b
 		}
 		return cmb(ra,rb);
 	}
+	int get(int k, int c = -1, int l = -1, int r = -1) {
+		if (c == -1) {
+			return get(k, 1, 0, n - 1);
+		}
+		if (l == r) {
+			return l;
+		}
+		int m = (l + r) / 2;
+		if (k < seg[2 * c]) {
+			return get(k, 2 * c, l, m);
+		}
+		return get(k - seg[2 * c], 2 * c + 1, m + 1, r);
+	}
 };
 
 int32_t main() {
 	setup();
 
-	int n, q;
-	input(n, q);
+	int n, k;
+	input(n, k);
 
-	rep(i, 0, n) {
-		input(x[i]);
-	}
-
+	vector<int> res(n);
 	SegTree<int> s(n, 0, [](int a, int b) {
 		return a + b;
 	});
-
-	iota(v, v + n, 0);
-	sort(v, v + n, [&](int a, int b) {
-		return x[a] < x[b];
-	});
-
-	std::priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-	rep(i, 0, q) {
-		input(a[i], b[i]);
-		a[i]--;
-		b[i]--;
-		pq.push({1, i});
+	rep(i, 0, n) {
+		s.seg[s.n + i] = 1;
 	}
-
-	int l = 0;
-	while (!pq.empty()) {
-		auto [z, i] = pq.top();
-		pq.pop();
-
-		while (l < n and x[v[l]] <= z) {
-			s.upd(v[l], x[v[l]]);
-			l++;
-		}
-
-		int y = s.query(a[i], b[i]);
-		res[i] = y + 1;
-		if (y >= z) {
-			res[i] = z;
-		}
-		else {
-			pq.push({y + 1, i});
-		}
+	for (int i = s.n - 1; i >= 0; i--) {
+		s.pull(i);
 	}
-	rep(i, 0, q) {
-		print(res[i]);
+	for (int i = n - 1; i >= 0; i--) {
+		int t = min(i, k);
+		int j = s.get(i - t);
+		s.upd(j, 0);
+		res[j] = i + 1;
+		k -= t;
 	}
+	arrprint(res);
 }

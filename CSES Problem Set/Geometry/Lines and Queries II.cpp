@@ -77,8 +77,8 @@ const int N = 1e5;
 int32_t main() {
 	setup();
 
-	int n, m;
-	input(n, m);
+	int n;
+	input(n);
 
 	SegTree<LineContainer> s(N + 1, {}, [](LineContainer a, LineContainer b) {
 		LineContainer c = a;
@@ -87,22 +87,25 @@ int32_t main() {
 		}
 		return c;
 	});
-
 	rep(i, 0, n) {
-		int x1, y1, x2, y2;
-		input(x1, y1, x2, y2);
-		int k = (y2 - y1) / (x2 - x1);
-		s.add(x1, x2, k, y1 - x1 * k);
-	}
+		int o;
+		input(o);
 
-	rep(x, 0, m + 1) {
-		int res = s.query(x);
-		if (res == -1e18) {
-			cout << -1 << ' ';
+		if (o == 1) {
+			int a, b, l, r;
+			input(a, b, l, r);
+			s.add(l, r, a, b);
 		}
 		else {
-			cout << res << ' ';
+			int x;
+			input(x);
+			int res = s.query(x);
+			if (res == -1e18) {
+				print("NO");
+			}
+			else {
+				print(res);
+			}
 		}
 	}
-	cout << endl;
 }

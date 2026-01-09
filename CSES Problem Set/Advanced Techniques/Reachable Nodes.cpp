@@ -12,15 +12,51 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
-#define all(x) x.begin(), x.end()
-#define vi vector<int>
-#define pii pair<int, int>
-#define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
-int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-
+void dfs(int u, vector<vector<int>> &graph, vector<bool> &vis, vector<int> &l) {
+	vis[u] = true;
+	for (int v : graph[u]) {
+		if (!vis[v]) {
+			dfs(v, graph, vis, l);
+		}
 	}
+	l.push_back(u);
+}
+
+const int N = 5e4;
+
+int32_t main() {
+	setup();
+
+	int n, m;
+	input(n, m);
+
+	vector<vector<int>> graph(n);
+	rep(i, 0, m) {
+		int u, v;
+		input(u, v);
+		graph[u - 1].push_back(v - 1);
+	}
+
+	vector<bool> vis(n, false);
+	vector<int> l;
+	rep(i, 0, n) {
+		if (!vis[i]) {
+			dfs(i, graph, vis, l);
+		}
+	}
+
+	vector<bitset<N>> dp(n);
+	for (int u : l) {
+		dp[u][u] = true;
+		for (int v : graph[u]) {
+			dp[u] |= dp[v];
+		}
+	}
+	rep(i, 0, n) {
+		cout << dp[i].count() << ' ';
+	}
+	cout << endl;
 }

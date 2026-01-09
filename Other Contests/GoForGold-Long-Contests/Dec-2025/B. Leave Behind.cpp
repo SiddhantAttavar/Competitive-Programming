@@ -19,8 +19,42 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 const int MOD = (int) 1e9 + 7; //998244353;
 
+void dfs(int u, vector<vi> &graph, vector<vi> &l, vi &s) {
+	l[u] = {1};
+	for (int v : graph[u]) {
+		dfs(v, graph, l, s);
+		if (s[v] > s[u]) {
+			swap(l[u], l[v]);
+			swap(s[u], s[v]);
+		}
+		s[u] += s[v];
+		l[u].resize(s[u] + 1, 0);
+		for (int i = s[u]; i >= 0; i--) {
+			rep(j, 1, min(i, s[v]) + 1) {
+				l[u][i] = (l[u][i] + l[u][i - j] * l[v][j]) % MOD;
+			}
+		}
+	}
+	s[u]++;
+	l[u].insert(l[u].begin(), 1);
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vector<vi> graph(n);
+		rep(i, 1, n) {
+			int p;
+			input(p);
+			graph[p - 1].push_back(i);
+		}
+
+		vector<vi> l(n);
+		vi s(n, 0);
+		dfs(0, graph, l, s);
+		l[0].erase(l[0].begin());
+		arrprint(l[0]);
 	}
 }

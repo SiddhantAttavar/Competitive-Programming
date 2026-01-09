@@ -21,6 +21,47 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vi c(n);
+		arrput(c);
+
+		if (n == 1) {
+			print(c[0]);
+			continue;
+		}
+
+		if (n == 2) {
+			print(min(c[0], c[1]));
+			continue;
+		}
+
+		vector<vector<int>> dp(n, vector<int>(8, 0));
+		rep(i, 0, 3) {
+			rep(j, 0, 8) {
+				rep(k, 0, 3) {
+					if (i == k or j >> k & 1) {
+						dp[i][j] += c[k];
+					}
+				}
+			}
+		}
+
+		rep(i, 3, n) {
+			rep(j, 0, 8) {
+				dp[i][j] = min({dp[i - 1][j], dp[i - 2][j], dp[i - 3][j]}) + c[i];
+			}
+		}
+
+		int res = 1e18;
+		rep(i, n - 3, n) {
+			rep(j, 0, 8) {
+				if (j & ((1 << (i - n + 4)) - 1)) {
+					res = min(res, dp[i][j]);
+				}
+			}
+		}
+		print(res);
 	}
 }

@@ -17,29 +17,6 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 #define ll long long
 
-template<typename T> struct SegTree { // cmb(ID,b) = b
-	T ID; T (*cmb)(T a, T b);
-	int n; vector<T> seg;
-	SegTree(int _n, T id, T _cmb(T, T)) {
-		ID = id; cmb = _cmb;
-		for (n = 1; n < _n; ) n *= 2; 
-		seg.assign(2*n,ID); 
-	}
-	void pull(int p) { seg[p] = cmb(seg[2*p],seg[2*p+1]); }
-	int query(int x) { // set val at position p
-		int p = x;
-		int res = seg[p += n].query(x);
-		for (p /= 2; p; p /= 2) res = max(res, seg[p].query(x));
-		return res;
-	}
-	void add(int l, int r, int a, int b) {	// zero-indexed, inclusive
-		for (l += n, r += n+1; l < r; l /= 2, r /= 2) {
-			if (l&1) seg[l++].add(a, b);
-			if (r&1) seg[--r].add(a, b);
-		}
-	}
-};
-
 struct Line {
 	mutable ll k, m, p;
 	bool operator<(const Line& o) const { return k < o.k; }
@@ -65,44 +42,32 @@ struct LineContainer : multiset<Line, less<>> {
 			isect(x, erase(y));
 	}
 	ll query(ll x) {
-		if (empty()) return -1e18;
 		assert(!empty());
 		auto l = *lower_bound(x);
 		return l.k * x + l.m;
 	}
 };
 
-const int N = 1e5;
-
 int32_t main() {
 	setup();
 
-	int n, m;
-	input(n, m);
+	int n;
+	input(n);
 
-	SegTree<LineContainer> s(N + 1, {}, [](LineContainer a, LineContainer b) {
-		LineContainer c = a;
-		for (Line l : b) {
-			c.add(l.k, l.m);
-		}
-		return c;
-	});
-
+	LineContainer l;
 	rep(i, 0, n) {
-		int x1, y1, x2, y2;
-		input(x1, y1, x2, y2);
-		int k = (y2 - y1) / (x2 - x1);
-		s.add(x1, x2, k, y1 - x1 * k);
-	}
+		int o;
+		input(o);
 
-	rep(x, 0, m + 1) {
-		int res = s.query(x);
-		if (res == -1e18) {
-			cout << -1 << ' ';
+		if (o == 1) {
+			int a, b;
+			input(a, b);
+			l.add(a, b);
 		}
 		else {
-			cout << res << ' ';
+			int x;
+			input(x);
+			print(l.query(x));
 		}
 	}
-	cout << endl;
 }
