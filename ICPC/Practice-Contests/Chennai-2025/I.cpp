@@ -17,7 +17,7 @@ int solve(int l, int r, int n, int k, vector<pii> &res) {
     if (l == r) {
         return l;
     }
-
+W
     int x = r - l + 1;
     rep(j, 1, x) {
         int z = k - min(j, x - j);
