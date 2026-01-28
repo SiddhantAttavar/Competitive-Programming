@@ -21,51 +21,6 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		string p, q;
-		input(p, q);
 
-		int a = stoll(p), b = stoll(q);
-		int g = gcd(a, b);
-		a /= g;
-		b /= g;
-
-		int res = stoll(p), n = sz(p);
-		rep(i, 1, 1 << n) {
-			string t, r;
-			rep(j, 0, n) {
-				if (i >> j & 1) {
-					t += p[j];
-				}
-				else {
-					r += p[j];
-				}
-			}
-			int c = stoll(t);
-			if (c == 0 or c % a or c >= res) {
-				continue;
-			}
-			sort(all(r));
-
-			int d = c / a * b, l = 0;
-			t = to_string(d);
-			t = string(max(0ll, sz(q) - sz(r) - sz(t)), '0') + t;
-			string s;
-			rep(j, 0, sz(q)) {
-				if (l < sz(t) and q[j] == t[l]) {
-					l++;
-				}
-				else {
-					s += q[j];
-				}
-			}
-			if (l < sz(t)) {
-				continue;
-			}
-			sort(all(s));
-			if (r == s) {
-				res = min(res, c);
-			}
-		}
-		print(res, res / a * b);
 	}
 }
