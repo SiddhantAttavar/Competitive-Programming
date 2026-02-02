@@ -19,7 +19,30 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n, k;
+	input(n, k);
+
+	vi p(k);
+	arrput(p);
+
+	vector<bool> dp(n + 1, false);
+	dp[0] = false;
+	rep(i, 1, n + 1) {
+		for (int j : p) {
+			if (i >= j) {
+				dp[i] = dp[i] or !dp[i - j];
+			}
+		}
 	}
+	rep(i, 1, n + 1) {
+		if (dp[i]) {
+			cout << 'W';
+		}
+		else {
+			cout << 'L';
+		}
+	}
+	cout << endl;
 }

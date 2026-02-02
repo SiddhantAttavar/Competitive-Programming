@@ -1,49 +1,64 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp> 
-#include <ext/pb_ds/tree_policy.hpp> 
+#include <bits/extc++.h>
 using namespace std;
 using namespace __gnu_pbds; 
-template<typename T> inline void input(T& inVar) {cin >> inVar;}
-template<typename T, typename... S> inline void input(T& inVar, S&... args) {cin >> inVar; input(args ...);}
-template<typename T> inline void print(T outVar) {cout << outVar << '\n';}
-template<typename T, typename... S> inline void print(T outVar, S... args) {cout << outVar << ' '; print(args ...);}
-#define int long long
-#define rep(it, start, end) for (auto it = start; it < end; it++)
-#define arrput(var) for (auto &inVar : var) {cin >> inVar;}
-#define arrprint(var) for (auto outVar : var) {cout << outVar << ' ';} cout << '\n'
+template<typename T> inline void input(T& x) {cin >> x;}
+template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
+template<typename T> inline void print(T x) {cout << x << '\n';}
+template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
+#define rep(i, a, b) for (auto i = (a); i < (b); i++)
+#define arrput(l) for (auto &i : l) {cin >> i;}
+#define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
+#define all(x) x.begin(), x.end()
+#define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
-#define vi vector<int>
-vector<vi> decomp;
-vector<vi> adj; vi siz;
-vector<bool> vis;
-void find_size(int v, int p) {
-	siz[v] = 1;
-	for(auto nx : adj[v]) if(nx != p && !vis[nx]) {
-		find_size(nx, v);
-		siz[v] += siz[nx];
+int dfs(int u, int p, int k, vector<vi> &graph, vector<map<int, int>> &m, vi &d) {
+	int res = 0;
+	for (int v : graph[u]) {
+		if (v == p) {
+			continue;
+		}
+
+		d[v] = d[u] + 1;
+		res += dfs(v, u, k, graph, m, d);
+
+		if (sz(m[v]) > sz(m[u])) {
+			swap(m[v], m[u]);
+		}
+		for (auto [x, v] : m[v]) {
+			res += v * m[u][k + 2 * d[u] - x];
+		}
+		for (auto [x, v] : m[v]) {
+			m[u][x] += v;
+		}
 	}
-}
-int centroid(int v, int p, int n) {
-	for(auto nx : adj[v]) if(nx != p && !vis[nx] && siz[nx] > n/2) {
-		return centroid(nx, v, n);
-	}
-	return v;
-}
-void process(int v) {}
-int solve(int v, int p) {
-	find_size(v, p);
-	int c = centroid(v, p, siz[v]);
-	process(c);
-	vis[c] = true;
-	for(auto nx : adj[c]) if(!vis[nx]) decomp[c].push_back(solve(nx, c));
-	return c;
+	res += m[u][k + d[u]];
+	m[u][d[u]]++;
+	return res;
 }
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		
+	setup();
+
+	int n, k;
+	input(n, k);
+
+	vector<vi> graph(n);
+	rep(i, 0, n - 1) {
+		int u, v;
+		input(u, v);
+
+		graph[u - 1].push_back(v - 1);
+		graph[v - 1].push_back(u - 1);
 	}
+
+	vector<map<int, int>> m(n);
+	vi d(n);
+	print(dfs(0, -1, k, graph, m, d));
 }

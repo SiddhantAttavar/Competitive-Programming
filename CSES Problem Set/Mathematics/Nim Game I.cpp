@@ -20,6 +20,21 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vi a(n);
+		arrput(a);
+
+		int x = 0;
+		for (int i : a) {
+			x ^= i;
+		}
+		if (x == 0) {
+			print("second");
+		}
+		else {
+			print("first");
+		}
 	}
 }
