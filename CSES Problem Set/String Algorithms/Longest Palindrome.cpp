@@ -18,75 +18,35 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
-vi Z(const string& S) {
-	vi z(sz(S));
-	int l = -1, r = -1;
-	rep(i,1,sz(S)) {
-		z[i] = i >= r ? 0 : min(r - i, z[i - l]);
-		while (i + z[i] < sz(S) && S[i + z[i]] == S[z[i]])
-			z[i]++;
-		if (i + z[i] > r)
-			l = i, r = i + z[i];
+array<vi, 2> manacher(const string& s) {
+	int n = sz(s);
+	array<vi,2> p = {vi(n+1), vi(n)};
+	rep(z,0,2) for (int i=0,l=0,r=0; i < n; i++) {
+		int t = r-i+!z;
+		if (i<r) p[z][i] = min(t, p[z][l+t]);
+		int L = i-p[z][i], R = i+p[z][i]-!z;
+		while (L>=1 && R+1<n && s[L-1] == s[R+1])
+			p[z][i]++, L--, R++;
+		if (R>r) l=L, r=R;
 	}
-	return z;
+	return p;
 }
 
 int32_t main() {
 	setup();
 
-	int n;
-	input(n);
-
 	string s;
 	input(s);
 
-	int m = sz(s);
-	vector<array<int, 26>> graph(m + 1);
-	rep(i, 0, m + 1) {
-		rep(j, 0, 26) {
-			string t = s + "$" + s.substr(0, i);
-			t += j + 'A';
-			vi z = Z(t);
-			graph[i][j] = 0;
-			for (int k = sz(t); k > 0; k--) {
-				if (z[sz(t) - k] == k) {
-					graph[i][j] = k;
-					break;
-				}
-			}
-		}
+	auto [p, q] = manacher(s);
+	pii res = {-1, -1};
+	rep(i, 0, sz(s)) {
+		res = max({res, {p[i], -i}, {q[i], i}});
 	}
-
-	vi dp1(m + 1, 0);
-	dp1[0] = 1;
-	rep(i, 0, n) {
-		vi ndp1(m + 1, 0);
-		rep(u, 0, m + 1) {
-			rep(j, 0, 26) {
-				ndp1[graph[u][j]] = (ndp1[graph[u][j]] + dp1[u]) % MOD;
-			}
-		}
-		dp1 = ndp1;
+	if (res.second >= 0) {
+		print(s.substr(res.second - res.first, res.first * 2 + 1));
 	}
-	vi dp2(m + 1, 0);
-	dp2[0] = 1;
-	rep(i, 0, n) {
-		vi ndp2(m + 1, 0);
-		rep(u, 0, m + 1) {
-			rep(j, 0, 26) {
-				ndp2[graph[u][j]] = (ndp2[graph[u][j]] + dp2[u]) % MOD;
-			}
-		}
-		ndp2[m] = 0;
-		dp2 = ndp2;
+	else {
+		print(s.substr(-res.second - res.first, res.first * 2));
 	}
-
-	int res = 0;
-	for (int i : dp1) {
-		res = (res + i) % MOD;
-	}
-	for (int i : dp2) {
-		res = (res - i + MOD) % MOD;
-	}
-	print(res);
 }

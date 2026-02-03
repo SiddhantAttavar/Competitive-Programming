@@ -34,59 +34,14 @@ vi Z(const string& S) {
 int32_t main() {
 	setup();
 
-	int n;
-	input(n);
-
 	string s;
 	input(s);
 
-	int m = sz(s);
-	vector<array<int, 26>> graph(m + 1);
-	rep(i, 0, m + 1) {
-		rep(j, 0, 26) {
-			string t = s + "$" + s.substr(0, i);
-			t += j + 'A';
-			vi z = Z(t);
-			graph[i][j] = 0;
-			for (int k = sz(t); k > 0; k--) {
-				if (z[sz(t) - k] == k) {
-					graph[i][j] = k;
-					break;
-				}
-			}
+	vi z = Z(s);
+	rep(i, 1, sz(s)) {
+		if (z[sz(s) - i] == i) {
+			cout << i << ' ';
 		}
 	}
-
-	vi dp1(m + 1, 0);
-	dp1[0] = 1;
-	rep(i, 0, n) {
-		vi ndp1(m + 1, 0);
-		rep(u, 0, m + 1) {
-			rep(j, 0, 26) {
-				ndp1[graph[u][j]] = (ndp1[graph[u][j]] + dp1[u]) % MOD;
-			}
-		}
-		dp1 = ndp1;
-	}
-	vi dp2(m + 1, 0);
-	dp2[0] = 1;
-	rep(i, 0, n) {
-		vi ndp2(m + 1, 0);
-		rep(u, 0, m + 1) {
-			rep(j, 0, 26) {
-				ndp2[graph[u][j]] = (ndp2[graph[u][j]] + dp2[u]) % MOD;
-			}
-		}
-		ndp2[m] = 0;
-		dp2 = ndp2;
-	}
-
-	int res = 0;
-	for (int i : dp1) {
-		res = (res + i) % MOD;
-	}
-	for (int i : dp2) {
-		res = (res - i + MOD) % MOD;
-	}
-	print(res);
+	cout << endl;
 }

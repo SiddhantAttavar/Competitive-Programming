@@ -18,75 +18,39 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
-vi Z(const string& S) {
-	vi z(sz(S));
-	int l = -1, r = -1;
-	rep(i,1,sz(S)) {
-		z[i] = i >= r ? 0 : min(r - i, z[i - l]);
-		while (i + z[i] < sz(S) && S[i + z[i]] == S[z[i]])
-			z[i]++;
-		if (i + z[i] > r)
-			l = i, r = i + z[i];
-	}
-	return z;
-}
-
 int32_t main() {
 	setup();
 
-	int n;
-	input(n);
+	const int N = 500;
+	vector<vi> comb(N + 1, vi(N + 1));
+	rep(n, 0, N + 1) {
+		comb[n][0] = 1;
+		comb[n][n] = 1;
+		rep(r, 1, n) {
+			comb[n][r] = (comb[n - 1][r] + comb[n - 1][r - 1]) % MOD;
+		}
+	}
 
 	string s;
 	input(s);
 
-	int m = sz(s);
-	vector<array<int, 26>> graph(m + 1);
-	rep(i, 0, m + 1) {
-		rep(j, 0, 26) {
-			string t = s + "$" + s.substr(0, i);
-			t += j + 'A';
-			vi z = Z(t);
-			graph[i][j] = 0;
-			for (int k = sz(t); k > 0; k--) {
-				if (z[sz(t) - k] == k) {
-					graph[i][j] = k;
-					break;
+	int n = sz(s);
+
+	vector<vi> dp(n, vi(n, 0));
+	for (int l = 2; l <= n; l += 2) {
+		rep(i, 0, n - l + 1) {
+			int j = i + l - 1;
+			for (int k = i + 1; k <= j; k += 2) {
+				if (s[i] != s[k]) {
+					continue;
 				}
-			}
-		}
-	}
 
-	vi dp1(m + 1, 0);
-	dp1[0] = 1;
-	rep(i, 0, n) {
-		vi ndp1(m + 1, 0);
-		rep(u, 0, m + 1) {
-			rep(j, 0, 26) {
-				ndp1[graph[u][j]] = (ndp1[graph[u][j]] + dp1[u]) % MOD;
+				int l = k - i + 1, r = j - k;
+				int x = k == i + 1 ? 1 : dp[i + 1][k - 1];
+				int y = k == j ? 1 : dp[k + 1][j];
+				dp[i][j] = (dp[i][j] + x * y % MOD * comb[(l + r) / 2][l / 2]) % MOD;
 			}
 		}
-		dp1 = ndp1;
 	}
-	vi dp2(m + 1, 0);
-	dp2[0] = 1;
-	rep(i, 0, n) {
-		vi ndp2(m + 1, 0);
-		rep(u, 0, m + 1) {
-			rep(j, 0, 26) {
-				ndp2[graph[u][j]] = (ndp2[graph[u][j]] + dp2[u]) % MOD;
-			}
-		}
-		ndp2[m] = 0;
-		dp2 = ndp2;
-	}
-
-	int res = 0;
-	for (int i : dp1) {
-		res = (res + i) % MOD;
-	}
-	for (int i : dp2) {
-		res = (res - i + MOD) % MOD;
-	}
-	print(res);
+	print(dp[0][n - 1]);
 }
