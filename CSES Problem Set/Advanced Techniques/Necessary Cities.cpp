@@ -18,36 +18,63 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
-struct SuffixArray {
-	vi sa, lcp;
-	SuffixArray(string s, int lim=256) { // or vector<int>
-		s.push_back(0); int n = sz(s), k = 0, a, b;
-		vi x(all(s)), y(n), ws(max(n, lim));
-		sa = lcp = y, iota(all(sa), 0);
-		for (int j = 0, p = 0; p < n; j = max(1ll, j * 2), lim = p) {
-			p = j, iota(all(y), n - j);
-			rep(i,0,n) if (sa[i] >= j) y[p++] = sa[i] - j;
-			fill(all(ws), 0);
-			rep(i,0,n) ws[x[i]]++;
-			rep(i,1,lim) ws[i] += ws[i - 1];
-			for (int i = n; i--;) sa[--ws[x[y[i]]]] = y[i];
-			swap(x, y), p = 1, x[sa[0]] = 0;
-			rep(i,1,n) a = sa[i - 1], b = sa[i], x[b] =
-				(y[a] == y[b] && y[a + j] == y[b + j]) ? p - 1 : p++;
+#define IS_CUTPOINT(x) res.insert(x + 1)
+#define IS_BRIDGE(v, to)
+
+int n; // number of nodes
+vector<vector<int>> adj; // adjacency list of graph
+vector<bool> visited;
+vector<int> tin, low;
+set<int> res;
+int timer;
+void dfs(int v, int p = -1) {
+	visited[v] = true;
+	tin[v] = low[v] = timer++;
+	int children=0;
+	for (int to : adj[v]) {
+		if (to == p) continue;
+		if (visited[to]) {
+			low[v] = min(low[v], tin[to]);
+		} else {
+			dfs(to, v);
+			low[v] = min(low[v], low[to]);
+			if (low[to] > tin[v]) // CUT EDGE
+				IS_BRIDGE(v, to);
+			if (low[to] >= tin[v] and p != -1)
+				IS_CUTPOINT(v);
+			++children;
 		}
-		for (int i = 0, j; i < n - 1; lcp[x[i++]] = k)
-			for (k && k--, j = sa[x[i] - 1];
-					s[i + k] == s[j + k]; k++);
 	}
-};
+	if(p == -1 && children > 1)
+		IS_CUTPOINT(v);
+}
+void find_cutpoints_and_bridges() {
+	timer = 0;
+	visited.assign(n, false);
+	tin.assign(n, -1);
+	low.assign(n, -1);
+	for (int i = 0; i < n; ++i) {
+		if (!visited[i])
+			dfs (i);
+	}
+}
 
 int32_t main() {
 	setup();
 
-	string s;
-	input(s);
+	int m;
+	input(n, m);
 
-	SuffixArray a(s);
-	int i = max_element(all(a.lcp)) - a.lcp.begin();
-	print(a.lcp[i] ? s.substr(a.sa[i], a.lcp[i]) : "-1");
+	adj.resize(n);
+	rep(i, 0, m) {
+		int u, v;
+		input(u, v);
+		adj[u - 1].push_back(v - 1);
+		adj[v - 1].push_back(u - 1);
+	}
+
+	find_cutpoints_and_bridges();
+
+	print(sz(res));
+	arrprint(res);
 }

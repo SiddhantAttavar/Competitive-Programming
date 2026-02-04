@@ -18,36 +18,41 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
-struct SuffixArray {
-	vi sa, lcp;
-	SuffixArray(string s, int lim=256) { // or vector<int>
-		s.push_back(0); int n = sz(s), k = 0, a, b;
-		vi x(all(s)), y(n), ws(max(n, lim));
-		sa = lcp = y, iota(all(sa), 0);
-		for (int j = 0, p = 0; p < n; j = max(1ll, j * 2), lim = p) {
-			p = j, iota(all(y), n - j);
-			rep(i,0,n) if (sa[i] >= j) y[p++] = sa[i] - j;
-			fill(all(ws), 0);
-			rep(i,0,n) ws[x[i]]++;
-			rep(i,1,lim) ws[i] += ws[i - 1];
-			for (int i = n; i--;) sa[--ws[x[y[i]]]] = y[i];
-			swap(x, y), p = 1, x[sa[0]] = 0;
-			rep(i,1,n) a = sa[i - 1], b = sa[i], x[b] =
-				(y[a] == y[b] && y[a + j] == y[b + j]) ? p - 1 : p++;
-		}
-		for (int i = 0, j; i < n - 1; lcp[x[i++]] = k)
-			for (k && k--, j = sa[x[i] - 1];
-					s[i + k] == s[j + k]; k++);
+vi Z(const string& S) {
+	vi z(sz(S));
+	int l = -1, r = -1;
+	rep(i,1,sz(S)) {
+		z[i] = i >= r ? 0 : min(r - i, z[i - l]);
+		while (i + z[i] < sz(S) && S[i + z[i]] == S[z[i]])
+			z[i]++;
+		if (i + z[i] > r)
+			l = i, r = i + z[i];
 	}
-};
+	return z;
+}
+
+vi pi(const string& s) {
+	vi p(sz(s));
+	rep(i,1,sz(s)) {
+		int g = p[i-1];
+		while (g && s[i] != s[g]) g = p[g-1];
+		p[i] = g + (s[i] == s[g]);
+	}
+	return p;
+}
+
+vi match(const string& s, const string& pat) {
+	vi p = pi(pat + '\0' + s), res;
+	rep(i,sz(p)-sz(s),sz(p))
+		if (p[i] == sz(pat)) res.push_back(i - 2 * sz(pat));
+	return res;
+}
 
 int32_t main() {
 	setup();
 
 	string s;
 	input(s);
-
-	SuffixArray a(s);
-	int i = max_element(all(a.lcp)) - a.lcp.begin();
-	print(a.lcp[i] ? s.substr(a.sa[i], a.lcp[i]) : "-1");
+	arrprint(Z(s));
+	arrprint(pi(s));
 }
