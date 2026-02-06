@@ -20,6 +20,33 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 #define ll long long
 
+vi val, comp, z, cont;
+int Time, ncomps;
+template<class G, class F> int dfs(int j, G& g, F& f) {
+	int low = val[j] = ++Time, x; z.push_back(j);
+	for (auto e : g[j]) if (comp[e] < 0)
+		low = min(low, val[e] ?: dfs(e,g,f));
+
+	if (low == val[j]) {
+		do {
+			x = z.back(); z.pop_back();
+			comp[x] = ncomps;
+			cont.push_back(x);
+		} while (x != j);
+		f(cont); cont.clear();
+		ncomps++;
+	}
+	return val[j] = low;
+}
+template<class G, class F> void scc(G& g, F f) {
+	int n = sz(g);
+	val.assign(n, 0); comp.assign(n, -1);
+	Time = ncomps = 0;
+	rep(i,0,n) if (comp[i] < 0) dfs(i, g, f);
+}
+
+// #include <bits/extc++.h> /// include-line, keep-include
+
 const ll INF = numeric_limits<ll>::max() / 4;
 
 struct MCMF {
@@ -106,23 +133,51 @@ int32_t main() {
 		vi a(n);
 		arrput(a);
 
-		MCMF f(n + 2);
+		vector<vi> graph(n);
 		rep(i, 0, m) {
 			int u, v;
 			input(u, v);
-			f.addEdge(u - 1, v - 1, n, 0);
+			graph[u - 1].push_back(v - 1);
 		}
+		scc(graph, [](vi &v) {});
+
+		vi b(ncomps, 0);
+		set<pii> e;
 		rep(i, 0, n) {
-			f.addEdge(n, i, a[i], 1);
-			f.addEdge(i, n + 1, 1, 1);
+			b[comp[i]] += a[i];
+			for (int j : graph[i]) {
+				e.insert({comp[i], comp[j]});
+			}
+		}
+		n = ncomps;
+
+		MCMF f(3 * n + 4);
+		int p = 3 * n, q = 3 * n + 1, s = 3 * n + 2, t = 3 * n + 3;
+		f.addEdge(q, p, INF, 0);
+		rep(i, 0, n) {
+			int x = 3 * i, y = 3 * i + 1, z = 3 * i + 2;
+			f.addEdge(z, x, 1, 1);
+			f.addEdge(z, y, b[i], 0);
+			f.addEdge(x, y, INF, 0);
+
+			f.addEdge(p, z, b[i], 0);
+			f.addEdge(y, q, INF, 0);
+
+			f.addEdge(s, y, 1, 0);
+			f.addEdge(x, t, 1, 0);
 		}
 
-		auto [x, c] = f.maxflow(n, n + 1);
-		if (x < n) {
+		for (auto [u, v] : e) {
+			if (u != v) {
+				f.addEdge(3 * u + 1, 3 * v, INF, 0);
+			}
+		}
+		pii res = f.maxflow(s, t);
+		if (res.first < n) {
 			print(-1);
 		}
 		else {
-			print(c);
+			print(res.second);
 		}
 	}
 }
