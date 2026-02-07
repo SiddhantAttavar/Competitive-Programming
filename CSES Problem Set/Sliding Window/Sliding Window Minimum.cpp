@@ -19,7 +19,36 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n, k;
+	input(n, k);
+
+	vi x(n);
+	int a, b, c;
+	input(x[0], a, b, c);
+	rep(i, 1, n) {
+		x[i] = (a * x[i - 1] + b) % c;
 	}
+
+	deque<int> d;
+	rep(i, 0, k) {
+		while (!d.empty() and x[d.back()] >= x[i]) {
+			d.pop_back();
+		}
+		d.push_back(i);
+	}
+
+	int res = x[d.front()];
+	rep(i, k, n) {
+		if (d.front() == i - k) {
+			d.pop_front();
+		}
+		while (!d.empty() and x[d.back()] >= x[i]) {
+			d.pop_back();
+		}
+		d.push_back(i);
+		res ^= x[d.front()];
+	}
+	print(res);
 }

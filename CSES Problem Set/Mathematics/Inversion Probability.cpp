@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <bits/extc++.h>
+#include <cmath>
 using namespace std;
 using namespace __gnu_pbds; 
 template<typename T> inline void input(T& x) {cin >> x;}
@@ -19,7 +20,24 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n;
+	input(n);
+
+	vi r(n);
+	arrput(r);
+
+	long double res = 0;
+	rep(i, 0, n) {
+		rep(j, 0, i) {
+			int c = 0;
+			rep(x, 1, r[i] + 1) {
+				c += max(0ll, r[j] - x);
+			}
+			res += (double) c / (r[i] * r[j]);
+		}
 	}
+	cout << fixed << setprecision(6);
+	print(res);
 }

@@ -14,12 +14,33 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define int long long
 #define all(x) x.begin(), x.end()
 #define sz(x) ((int) (x.size()))
-#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+#define ordered_set tree<pii, null_type, less<pii>, rb_tree_tag, tree_order_statistics_node_update> 
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n, k;
+	input(n, k);
+
+	vi x(n);
+	arrput(x);
+
+	int c = 0;
+	ordered_set o;
+	rep(i, 0, k) {
+		c += sz(o) - o.order_of_key({x[i], n});
+		o.insert({x[i], i});
 	}
+
+	cout << c;
+	rep(i, k, n) {
+		c += sz(o) - o.order_of_key({x[i], n});
+		o.insert({x[i], i});
+		c -= o.order_of_key({x[i - k], -1});
+		o.erase({x[i - k], i - k});
+		cout << ' ' << c;
+	}
+	cout << endl;
 }

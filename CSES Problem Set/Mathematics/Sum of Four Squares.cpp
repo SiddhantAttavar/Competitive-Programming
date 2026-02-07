@@ -19,7 +19,23 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	const int N = 1e7;
+	vector<pii> v(N + 1, {-1, -1});
+	for (int i = 0; i * i <= N; i++) {
+		for (int j = 0; i * i + j * j <= N; j++) {
+			v[i * i + j * j] = {i, j};
+		}
+	}
 
+	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
+
+		rep(x, 0, n + 1) {
+			if (v[x].first != -1 and v[n - x].first != -1) {
+				print(v[x].first, v[x].second, v[n - x].first, v[n - x].second);
+				break;
+			}
+		}
 	}
 }

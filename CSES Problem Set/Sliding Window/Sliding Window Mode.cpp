@@ -19,7 +19,37 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n, k;
+	input(n, k);
+
+	vi x(n);
+	arrput(x);
+
+	map<int, int> m;
+	set<pii> f;
+	rep(i, 0, k) {
+		if (m.count(x[i])) {
+			f.erase(f.find({m[x[i]], -x[i]}));
+		}
+		m[x[i]]++;
+		f.insert({m[x[i]], -x[i]});
 	}
+
+	cout << -f.rbegin()->second;
+	rep(i, k, n) {
+		if (m.count(x[i])) {
+			f.erase(f.find({m[x[i]], -x[i]}));
+		}
+		m[x[i]]++;
+		f.insert({m[x[i]], -x[i]});
+
+		f.erase(f.find({m[x[i - k]], -x[i - k]}));
+		m[x[i - k]]--;
+		f.insert({m[x[i - k]], -x[i - k]});
+
+		cout << ' ' << -f.rbegin()->second;
+	}
+	cout << endl;
 }
