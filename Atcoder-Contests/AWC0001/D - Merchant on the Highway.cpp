@@ -13,31 +13,34 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define all(x) x.begin(), x.end()
-#define vi vector<int>
-#define pii pair<int, int>
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n, m;
-		input(n, m);
+	setup();
 
-		vector<vi> graph(n);
-		rep(i, 0, m) {
-			int u, v;
-			input(u, v);
-			graph[u - 1].push_back(v - 1);
-			graph[v - 1].push_back(u - 1);
-		}
+	int n, m, k;
+	input(n, m, k);
 
-		int x = -1;
-		for (int v : graph[n - 1]) {
-			x = max(x, v);
-		}
-
-		vi vis(n, false);
-		dfs(n - 1, graph, vis);
+	vi a(n), b(n);
+	rep(i, 0, n) {
+		input(a[i], b[i]);
 	}
+
+	vector<vi> dp(n, vi(m + 1, 0));
+	rep(i, 0, n) {
+		dp[i][b[i]] = a[i];
+		rep(j, max(0ll, i - k), i) {
+			rep(x, b[i], m + 1) {
+				dp[i][x] = max(dp[i][x], dp[j][x - b[i]] + a[i]);
+			}
+		}
+	}
+	int res = 0;
+	rep(i, 0, n) {
+		res = max(res, *max_element(all(dp[i])));
+	}
+	print(res);
 }

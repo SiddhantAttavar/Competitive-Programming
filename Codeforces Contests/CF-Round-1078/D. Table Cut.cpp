@@ -13,10 +13,9 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define all(x) x.begin(), x.end()
-#define vi vector<int>
-#define pii pair<int, int>
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
@@ -24,20 +23,51 @@ int32_t main() {
 		int n, m;
 		input(n, m);
 
-		vector<vi> graph(n);
-		rep(i, 0, m) {
-			int u, v;
-			input(u, v);
-			graph[u - 1].push_back(v - 1);
-			graph[v - 1].push_back(u - 1);
+		vector<vi> a(n, vi(m));
+		rep(i, 0, n) {
+			arrput(a[i]);
 		}
 
-		int x = -1;
-		for (int v : graph[n - 1]) {
-			x = max(x, v);
+		int c = 0;
+		rep(i, 0, n) {
+			c += accumulate(all(a[i]), 0ll);
 		}
 
-		vi vis(n, false);
-		dfs(n - 1, graph, vis);
+		int x = 0, u = 0, v = m - 1;
+		vector<vi> b(n, vi(m, false));
+		while (2 * (x + 1) <= c) {
+			b[u][v] = true;
+			x += a[u][v];
+			v--;
+			if (v < 0) {
+				v = m - 1;
+				u++;
+			}
+		}
+
+		assert(x * (c - x) == (c / 2) * ((c + 1) / 2));
+		print(x * (c - x));
+
+		u = 0, v = 0;
+		string res;
+		while (u < n or v < m) {
+			if (u == n) {
+				res += 'R';
+				v++;
+			}
+			else if (v == m) {
+				res += 'D';
+				u++;
+			}
+			else if (b[u][v]) {
+				res += 'D';
+				u++;
+			}
+			else {
+				res += 'R';
+				v++;
+			}
+		}
+		print(res);
 	}
 }

@@ -13,31 +13,25 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define all(x) x.begin(), x.end()
-#define vi vector<int>
-#define pii pair<int, int>
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n, m;
-		input(n, m);
+	setup();
 
-		vector<vi> graph(n);
-		rep(i, 0, m) {
-			int u, v;
-			input(u, v);
-			graph[u - 1].push_back(v - 1);
-			graph[v - 1].push_back(u - 1);
+	int n, l, r;
+	input(n, l, r);
+
+	vi p(n);
+	arrput(p);
+
+	int res = -2;
+	rep(i, 0, n) {
+		if (p[i] >= l and p[i] <= r and (res == -2 or p[i] > p[res])) {
+			res = i;
 		}
-
-		int x = -1;
-		for (int v : graph[n - 1]) {
-			x = max(x, v);
-		}
-
-		vi vis(n, false);
-		dfs(n - 1, graph, vis);
 	}
+	print(res + 1);
 }

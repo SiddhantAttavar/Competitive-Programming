@@ -18,77 +18,22 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
-bool check(vi &a, int k, int x) {
-	int n = sz(a), c = lower_bound(all(a), x) - a.begin();
-	if (2 * c > n + k) {
-		return false;
-	}
-
-	vector<pii> p;
-	for (int i : a) {
-		p.push_back({i, 1});
-	}
-
-	int s = 0;
-	vector<pii> q;
-	while (!p.empty()) {
-		vector<pii> np;
-		sort(all(p));
-		int i = 0;
-		while (i < sz(p)) {
-			int j = i, y = p[i].first, c = p[i].second;
-			while (j + 1 < sz(p) and y == p[j + 1].first) {
-				j++;
-				c += p[j].second;
-			}
-			if (y < x) {
-				s += y * c;
-			}
-			else if (y < 2 * x - 1) {
-				q.push_back({y, c});
-			}
-			else if (y % 2 == 0) {
-				np.push_back({y / 2, 2 * c});
-			}
-			else {
-				np.push_back({y / 2, c});
-				np.push_back({y / 2 + 1, c});
-			}
-			i = j + 1;
-		}
-		p = np;
-	}
-
-	sort(all(q));
-	int z = (n + k + 1) / 2;
-	for (auto [y, v] : q) {
-		int t = min(z, v);
-		s += (v - t) * y;
-		z -= t;
-	}
-
-	return !z and s >= (n + k - 1) / 2;
-}
-
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n, k;
-		input(n, k);
+		int n, x, y;
+		input(n, x, y);
 
 		vi a(n);
 		arrput(a);
-		sort(all(a));
 
-		int l = 2, r = 1e9, res = 1;
-		while (l <= r) {
-			int m = (l + r) / 2;
-			if (check(a, k, m)) {
-				res = m;
-				l = m + 1;
-			}
-			else {
-				r = m - 1;
-			}
+		int s = 0;
+		for (int i : a) {
+			s += (i / x) * y;
+		}
+
+		int res = 0;
+		for (int i : a) {
+			res = max(res, s - (i / x) * y + i);
 		}
 		print(res);
 	}
