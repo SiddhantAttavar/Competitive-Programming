@@ -19,69 +19,30 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
+	int N = 60;
+	vector<vi> comb(N + 1, vi(N + 1));
+	rep(i, 0, N + 1) {
+		comb[i][0] = 1;
+		comb[i][i] = 1;
+		rep(j, 1, i) {
+			comb[i][j] = comb[i - 1][j - 1] + comb[i - 1][j];
+		}
+	}
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, k;
+		input(n, k);
 
-		string s;
-		input(s);
-
-		stack<int> x, y;
-		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
-			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
-				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
+		n--;
+		assert(n < comb[N][k]);
+		int res = 0;
+		for (int i = N; i >= 0; i--) {
+			if (n >= comb[i][k]) {
+				res |= 1ll << i;
+				n -= comb[i][k];
+				k--;
 			}
 		}
-
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
-		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
-		}
-
-		string t;
-		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
-			}
-		}
-		assert(sz(t) % 2 == 0);
-
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
-		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
-		}
-
-		print(sz(t) / 2 + (flag and u % 2));
+		assert(!n and res < (1ll << N));
+		print(res);
 	}
 }

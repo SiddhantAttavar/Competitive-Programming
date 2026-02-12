@@ -20,68 +20,25 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, s, m;
+		input(n, s, m);
 
-		string s;
-		input(s);
-
-		stack<int> x, y;
+		vi l(n), r(n);
 		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
-			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
-				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
-			}
+			input(l[i], r[i]);
 		}
 
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
-		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
-		}
-
-		string t;
-		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
+		bool flag = l[0] >= s or m - r.back() >= s;
+		rep(i, 1, n) {
+			if (l[i] - r[i - 1] >= s) {
+				flag = true;
 			}
 		}
-		assert(sz(t) % 2 == 0);
-
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
+		if (flag) {
+			print("YES");
 		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
+		else {
+			print("NO");
 		}
-
-		print(sz(t) / 2 + (flag and u % 2));
 	}
 }

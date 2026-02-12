@@ -20,68 +20,37 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int k, m;
+		input(k, m);
 
-		string s;
-		input(s);
-
-		stack<int> x, y;
-		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
+		vector<vi> res;
+		vi a(k);
+		rep(i, 0, k) {
+			a[i] = 1ll << i;
+		}
+		bool flag = false;
+		rep(i, 0, k) {
+			if (m >> i & 1) {
+				vi b = a;
+				b.erase(b.begin() + i);
+				res.push_back(b);
 			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
+			rep(j, 0, i) {
+				if ((m >> j & 1) == (m >> i & 1) or flag) {
+					continue;
 				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
+				flag = true;
+				vi c = a;
+				c[j] |= c[i];
+				c.erase(c.begin() + i);
+				res.push_back(c);
 			}
 		}
 
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
+		print(sz(res));
+		for (vi v : res) {
+			cout << sz(v) << ' ';
+			arrprint(v);
 		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
-		}
-
-		string t;
-		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
-			}
-		}
-		assert(sz(t) % 2 == 0);
-
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
-		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
-		}
-
-		print(sz(t) / 2 + (flag and u % 2));
 	}
 }

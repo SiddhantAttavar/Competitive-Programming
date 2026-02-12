@@ -13,75 +13,30 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
 #define all(x) x.begin(), x.end()
+#define vi vector<int>
+#define pii pair<int, int>
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
-typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+	setup();
 
-		string s;
-		input(s);
+	int k, q;
+	input(k, q);
 
-		stack<int> x, y;
-		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
-			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
-				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
-			}
-		}
+	vi p(k);
+	arrput(p);
 
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
-		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
-		}
+	while (q--) {
+		int x, t;
+		input(x, t);
 
-		string t;
-		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
-			}
+		int res = 0;
+		for (int i : p) {
+			int y = t - abs(i - x);
+			res ^= y >= 0 and ((2 * t) & y) == y;
 		}
-		assert(sz(t) % 2 == 0);
-
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
-		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
-		}
-
-		print(sz(t) / 2 + (flag and u % 2));
+		print(res);
 	}
 }

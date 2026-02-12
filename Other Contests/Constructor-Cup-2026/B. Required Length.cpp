@@ -18,70 +18,29 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
+int p(int x) {
+	return pow(10, x);
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int x, y, z;
+		input(x, y, z);
 
-		string s;
-		input(s);
-
-		stack<int> x, y;
-		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
-			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
-				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
-			}
+		if (z < max(x, y)) {
+			print(0, 0);
 		}
-
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
+		else if (z > max(x, y) + 1) {
+			print(0, 0);
 		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
+		else if (z == max(x, y)) {
+			print(p(x - 1), p(y - 1));
 		}
-
-		string t;
-		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
-			}
+		else if (x > y) {
+			print(p(x) - 1, p(y - 1));
 		}
-		assert(sz(t) % 2 == 0);
-
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
+		else {
+			print(p(x - 1), p(y) - 1);
 		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
-		}
-
-		print(sz(t) / 2 + (flag and u % 2));
 	}
 }

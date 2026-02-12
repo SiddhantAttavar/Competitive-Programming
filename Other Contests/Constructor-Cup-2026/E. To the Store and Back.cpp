@@ -18,70 +18,59 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
+vi get(int u, vector<vi> &graph) {
+	vi d(sz(graph), 1e18);
+	d[u] = 0;
+	queue<int> q;
+	q.push(u);
+	while (!q.empty()) {
+		int u = q.front();
+		q.pop();
+
+		for (int v : graph[u]) {
+			if (d[v] == 1e18) {
+				d[v] = d[u] + 1;
+				q.push(v);
+			}
+		}
+	}
+	return d;
+}
+
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+	setup();
 
-		string s;
-		input(s);
+	int n, m;
+	input(n, m);
 
-		stack<int> x, y;
-		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
-			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
-				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
-			}
-		}
+	vi x(m), y(m);
+	arrput(x);
+	arrput(y);
 
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
-		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
-		}
+	vector<vi> graph(n), rev_graph(n);
+	rep(i, 0, m) {
+		graph[x[i] - 1].push_back(y[i] - 1);
+		rev_graph[y[i] - 1].push_back(x[i] - 1);
+	}
 
-		string t;
-		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
-			}
-		}
-		assert(sz(t) % 2 == 0);
+	string s;
+	input(s);
 
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
-		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
-		}
+	int u;
+	input(u);
+	u--;
 
-		print(sz(t) / 2 + (flag and u % 2));
+	vi p = get(u, graph), q = get(u, rev_graph);
+	int res = 1e18;
+	rep(i, 0, n) {
+		if (s[i] == '1') {
+			res = min(res, p[i] + q[i]);
+		}
+	}
+	if (res == 1e18) {
+		print(-1);
+	}
+	else {
+		print(res);
 	}
 }

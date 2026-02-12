@@ -23,65 +23,17 @@ int32_t main() {
 		int n;
 		input(n);
 
-		string s;
-		input(s);
-
-		stack<int> x, y;
+		vi a(n);
+		arrput(a);
+		
+		int res = 0, p = 0, x = 0, y = n;
 		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
-			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
-				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
-			}
+			p += a[i];
+			x = max(x, a[i]);
+			y = min(y, a[i]);
+			res += n * i - (p - y);
+			res += (p - x) - i;
 		}
-
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
-		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
-		}
-
-		string t;
-		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
-			}
-		}
-		assert(sz(t) % 2 == 0);
-
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
-		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
-		}
-
-		print(sz(t) / 2 + (flag and u % 2));
+		print(res);
 	}
 }

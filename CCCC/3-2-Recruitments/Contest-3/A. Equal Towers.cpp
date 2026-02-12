@@ -19,69 +19,18 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+	setup();
+	int n;
+	input(n);
 
-		string s;
-		input(s);
+	vi h(n);
+	arrput(h);
 
-		stack<int> x, y;
-		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
-			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
-				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
-			}
-		}
-
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
-		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
-		}
-
-		string t;
-		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
-			}
-		}
-		assert(sz(t) % 2 == 0);
-
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
-		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
-		}
-
-		print(sz(t) / 2 + (flag and u % 2));
+	int res = 0;
+	while (*min_element(all(h)) < *max_element(all(h))) {
+		int i = min_element(all(h)) - h.begin();
+		h[i]++;
+		res++;
 	}
+	print(res);
 }

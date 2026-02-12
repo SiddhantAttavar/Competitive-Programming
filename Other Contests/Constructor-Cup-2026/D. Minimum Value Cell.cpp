@@ -18,70 +18,36 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
+int get(int x, vi &a) {
+	int i = lower_bound(all(a), x) - a.begin();
+	if (i == 0) {
+		return a[i] - x;
+	}
+	if (i == sz(a)) {
+		return x - a[i - 1];
+	}
+	return min(a[i] - x, x - a[i - 1]);
+}
+
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+	setup();
 
-		string s;
-		input(s);
+	int n, q;
+	input(n, q);
 
-		stack<int> x, y;
-		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
-			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
-				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
-			}
-		}
+	vi a(n), b(n);
+	arrput(a);
+	arrput(b);
 
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
-		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
-		}
+	vi s = a, t = b;
+	sort(all(s));
+	sort(all(t));
 
-		string t;
-		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
-			}
-		}
-		assert(sz(t) % 2 == 0);
+	vi x(q), y(q);
+	arrput(x);
+	arrput(y);
 
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
-		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
-		}
-
-		print(sz(t) / 2 + (flag and u % 2));
+	rep(i, 0, q) {
+		print(min(get(a[x[i] - 1], t), get(b[y[i] - 1], s)));
 	}
 }

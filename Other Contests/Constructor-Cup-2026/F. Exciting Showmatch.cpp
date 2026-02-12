@@ -16,72 +16,51 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 typedef vector<int> vi; typedef pair<int, int> pii;
-const int MOD = (int) 1e9 + 7; //998244353;
+const int MOD = 998244353;
+
+int mpow(int a, int b) {
+	int res = 1;
+	while (b) {
+		if (b & 1) {
+			res = res * a % MOD;
+		}
+		a = a * a % MOD;
+		b >>= 1;
+	}
+	return res;
+}
+
+int mdiv(int a, int b) {
+	return a * mpow(b, MOD - 2) % MOD;
+}
 
 int32_t main() {
+	const int N = 3e5;
+	vi fact(N + 1, 1), pow2(N + 1, 1);
+	rep(i, 1, N + 1) {
+		pow2[i] = pow2[i - 1] * 2 % MOD;
+		fact[i] = fact[i - 1] * i % MOD;
+	}
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		string s;
-		input(s);
+		vi a(2 * n);
+		arrput(a);
 
-		stack<int> x, y;
-		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
+		vi l = {1};
+		rep(i, 1, 2 * n) {
+			if (a[i] > a[i - 1] + 1) {
+				l.push_back(0);
 			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
-				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
-			}
+			l.back()++;
 		}
 
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
+		int e = 0, o = 0;
+		for (int z : l) {
+			e += z % 2 == 0;
+			o += z % 2 == 1;
 		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
-		}
-
-		string t;
-		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
-			}
-		}
-		assert(sz(t) % 2 == 0);
-
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
-		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
-		}
-
-		print(sz(t) / 2 + (flag and u % 2));
+		print(2 * n - sz(l), pow2[e] * mdiv(fact[o], fact[o / 2] * fact[o / 2] % MOD) % MOD);
 	}
 }

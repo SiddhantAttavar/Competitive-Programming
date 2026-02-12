@@ -23,65 +23,27 @@ int32_t main() {
 		int n;
 		input(n);
 
-		string s;
-		input(s);
+		vi p(n), a(n);
+		arrput(p);
+		arrput(a);
 
-		stack<int> x, y;
-		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
-			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
-				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
+		vi l = {a[0]};
+		rep(i, 1, n) {
+			if (a[i] != a[i - 1]) {
+				l.push_back(a[i]);
 			}
 		}
-
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
-		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
-		}
-
-		string t;
-		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
+		int j = 0;
+		for (int i : p) {
+			if (j < sz(l) and l[j] == i) {
+				j++;
 			}
 		}
-		assert(sz(t) % 2 == 0);
-
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
+		if (j == sz(l)) {
+			print("YES");
 		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
+		else {
+			print("NO");
 		}
-
-		print(sz(t) / 2 + (flag and u % 2));
 	}
 }

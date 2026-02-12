@@ -26,62 +26,30 @@ int32_t main() {
 		string s;
 		input(s);
 
-		stack<int> x, y;
+		vi p(n + 1, 0), q(n + 1, 0);
 		rep(i, 0, n) {
-			if (s[i] == '(') {
-				x.push(i);
-			}
-			else if (s[i] == ')') {
-				if (x.empty() or s[x.top()] == ')') {
-					x.push(i);
-				}
-				else {
-					x.pop();
-				}
-			}
-			else if (s[i] == '[') {
-				y.push(i);
-			}
-			else if (s[i] == ']') {
-				if (y.empty() or s[y.top()] == ']') {
-					y.push(i);
-				}
-				else {
-					y.pop();
-				}
-			}
+			p[i + 1] = p[i] + (s[i] == '0');
+			q[i + 1] = q[i] + (s[i] == '1');
 		}
 
-		vi b(n, false);
-		while (!x.empty()) {
-			b[x.top()] = true;
-			x.pop();
-		}
-		while (!y.empty()) {
-			b[y.top()] = true;
-			y.pop();
-		}
-
-		string t;
+		int res = max(p[n], q[n]);
+		vi a(n), b(n);
 		rep(i, 0, n) {
-			if (b[i]) {
-				t += s[i];
-			}
+			a[i] = max(p[i + 1], q[i + 1]) - p[i + 1];
+			b[i] = max(p[i + 1], q[i + 1]) - q[i + 1];
 		}
-		assert(sz(t) % 2 == 0);
+		rep(i, 1, n) {
+			a[i] = max(a[i], a[i - 1]);
+			b[i] = max(b[i], b[i - 1]);
+		}
+		res = max({res, a[n - 1] + p[n], b[n - 1] + q[n]});
 
-		int u = 0;
-		while (u < sz(t) and (t[u] == ')' or t[u] == ']')) {
-			u++;
+		int x = 0, y = 0;
+		for (int i = n - 1; i > 0; i--) {
+			x += s[i] == '0';
+			y += s[i] == '1';
+			res = max({res, a[i - 1] + p[i] + max(x, y), b[i - 1] + q[i] + max(x, y)});
 		}
-		bool flag = true;
-		rep(i, u, sz(t)) {
-			if (t[i] == ')' or t[i] == ']') {
-				flag = false;
-				break;
-			}
-		}
-
-		print(sz(t) / 2 + (flag and u % 2));
+		print(res);
 	}
 }
