@@ -16,67 +16,74 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 typedef vector<int> vi; typedef pair<int, int> pii;
-const int MOD = (int) 1e9 + 7; //998244353;
+const int MOD = 998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+	setup();
 
-		vi a(n);
-		arrput(a);
+	const int N = 1000;
+	vi pow2(N + 1, 1);
+	vector<vi> comb(N + 1, vi(N + 1, 0));
+	comb[0][0] = 1;
+	rep(i, 1, N + 1) {
+		pow2[i] = pow2[i - 1] * 2 % MOD;
+		comb[i][0] = 1;
+		comb[i][i] = 1;
+		rep(j, 1, i) {
+			comb[i][j] = (comb[i - 1][j - 1] + comb[i - 1][j]) % MOD;
+		}
+	}
 
-		if (*min_element(all(a))) {
-			print("NO");
+	int n, q;
+	input(n, q);
+
+	vi c(n);
+	arrput(c);
+
+	vi f(61, 0);
+	rep(i, 0, n) {
+		f[c[i]]++;
+	}
+
+	while (q--) {
+		int o, x;
+		input(o, x);
+
+		if (o == 1) {
+			f[x]++;
+			continue;
+		}
+		else if (o == 2) {
+			f[x]--;
 			continue;
 		}
 
-		std::priority_queue<pii> pq;
-		int k = *max_element(all(a));
-		rep(i, 0, n) {
-			// if (a[i] != k) {
-			// 	continue;
-			// }
-			if (i and a[i] == a[i - 1] + 1) {
-				pq.push({a[i], i});
-			}
-			else if (i < n - 1 and a[i] == a[i + 1] + 1) {
-				pq.push({a[i], i});
-			}
-		}
-
-		set<int> s;
-		rep(i, 0, n) {
-			s.insert(i);
-		}
-		while (!pq.empty()) {
-			auto [x, i] = pq.top();
-			pq.pop();
-
-			if (!s.count(i)) {
-				continue;
+		vi v;
+		rep(s, 0, 60) {
+			if (!x) {
+				break;
 			}
 
-			set<int>::iterator j = s.find(i);
-			if (j == s.begin() or next(j) == s.end()) {
-				s.erase(i);
-				continue;
-			}
-			int p = *prev(j), q = *next(j);
-			if (a[p] == a[q] + 1) {
-				pq.push({a[p], p});
-			}
-			else if (a[q] == a[p] + 1) {
-				pq.push({a[q], q});
-			}
-			s.erase(i);
+			int i = 63 - __builtin_clzll(x);
+			v.push_back(i + s);
+			x ^= 1ll << i;
 		}
+		reverse(all(v));
 
-		if (sz(s) == 1) {
-			print("YES");
+		int res = 0, c = 1, y = accumulate(all(f), 0ll);
+		for (int i = 60; i >= 0; i--) {
+			y -= f[i];
+			int x = 0;
+			while (!v.empty() and v.back() == i) {
+				x++;
+				v.pop_back();
+			}
+			rep(j, x + 1, f[i] + 1) {
+				res = (res + c * comb[f[i]][j] % MOD * pow2[y]) % MOD;
+			}
+			c = c * comb[f[i]][x] % MOD;
 		}
-		else {
-			print("NO");
-		}
+		res = (res + c) % MOD;
+		print(res);
 	}
 }

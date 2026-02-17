@@ -20,63 +20,21 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int a, b;
+		cin >> a >> b;
 
-		vi a(n);
-		arrput(a);
-
-		if (*min_element(all(a))) {
-			print("NO");
-			continue;
-		}
-
-		std::priority_queue<pii> pq;
-		int k = *max_element(all(a));
-		rep(i, 0, n) {
-			// if (a[i] != k) {
-			// 	continue;
-			// }
-			if (i and a[i] == a[i - 1] + 1) {
-				pq.push({a[i], i});
+		int x = 0, y = 0;
+		rep(i, 0, 30) {
+			if (i % 2) {
+				x |= 1 << i;
 			}
-			else if (i < n - 1 and a[i] == a[i + 1] + 1) {
-				pq.push({a[i], i});
+			else {
+				y |= 1 << i;
 			}
-		}
-
-		set<int> s;
-		rep(i, 0, n) {
-			s.insert(i);
-		}
-		while (!pq.empty()) {
-			auto [x, i] = pq.top();
-			pq.pop();
-
-			if (!s.count(i)) {
-				continue;
+			if (min(x, y) > min(a, b) or max(x, y) > max(a, b)) {
+				print(i);
+				break;
 			}
-
-			set<int>::iterator j = s.find(i);
-			if (j == s.begin() or next(j) == s.end()) {
-				s.erase(i);
-				continue;
-			}
-			int p = *prev(j), q = *next(j);
-			if (a[p] == a[q] + 1) {
-				pq.push({a[p], p});
-			}
-			else if (a[q] == a[p] + 1) {
-				pq.push({a[q], q});
-			}
-			s.erase(i);
-		}
-
-		if (sz(s) == 1) {
-			print("YES");
-		}
-		else {
-			print("NO");
 		}
 	}
 }

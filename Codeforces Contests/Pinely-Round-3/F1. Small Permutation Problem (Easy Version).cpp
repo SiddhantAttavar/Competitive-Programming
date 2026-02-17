@@ -16,7 +16,7 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 typedef vector<int> vi; typedef pair<int, int> pii;
-const int MOD = (int) 1e9 + 7; //998244353;
+const int MOD = 998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
@@ -26,57 +26,26 @@ int32_t main() {
 		vi a(n);
 		arrput(a);
 
-		if (*min_element(all(a))) {
-			print("NO");
-			continue;
-		}
-
-		std::priority_queue<pii> pq;
-		int k = *max_element(all(a));
+		int res = 1, p = 0;
 		rep(i, 0, n) {
-			// if (a[i] != k) {
-			// 	continue;
-			// }
-			if (i and a[i] == a[i - 1] + 1) {
-				pq.push({a[i], i});
+			if (a[i] == p + 1) {
+				res = res * (2 * (i - a[i]) + 3)  % MOD;
 			}
-			else if (i < n - 1 and a[i] == a[i + 1] + 1) {
-				pq.push({a[i], i});
+			else if (a[i] == p + 2) {
+				res = res * (i - a[i] + 2) * (i - a[i] + 2) % MOD;
 			}
+			else if (a[i] != p) {
+				res = 0;
+				break;
+			}
+			p = a[i];
 		}
 
-		set<int> s;
-		rep(i, 0, n) {
-			s.insert(i);
-		}
-		while (!pq.empty()) {
-			auto [x, i] = pq.top();
-			pq.pop();
-
-			if (!s.count(i)) {
-				continue;
-			}
-
-			set<int>::iterator j = s.find(i);
-			if (j == s.begin() or next(j) == s.end()) {
-				s.erase(i);
-				continue;
-			}
-			int p = *prev(j), q = *next(j);
-			if (a[p] == a[q] + 1) {
-				pq.push({a[p], p});
-			}
-			else if (a[q] == a[p] + 1) {
-				pq.push({a[q], q});
-			}
-			s.erase(i);
-		}
-
-		if (sz(s) == 1) {
-			print("YES");
+		if (p != n) {
+			print(0);
 		}
 		else {
-			print("NO");
+			print(res);
 		}
 	}
 }

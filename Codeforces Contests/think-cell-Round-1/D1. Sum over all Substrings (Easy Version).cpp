@@ -18,65 +18,36 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
+int f(string s) {
+	int res = 0;
+	rep(i, 0, sz(s)) {
+		if (s[i] == '1') {
+			res++;
+			i += 2;
+		}
+	}
+	return res;
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		vi a(n);
-		arrput(a);
+		string s;
+		input(s);
 
-		if (*min_element(all(a))) {
-			print("NO");
-			continue;
-		}
-
-		std::priority_queue<pii> pq;
-		int k = *max_element(all(a));
+		vi p(n + 1, 0);
 		rep(i, 0, n) {
-			// if (a[i] != k) {
-			// 	continue;
-			// }
-			if (i and a[i] == a[i - 1] + 1) {
-				pq.push({a[i], i});
-			}
-			else if (i < n - 1 and a[i] == a[i + 1] + 1) {
-				pq.push({a[i], i});
-			}
+			p[i + 1] = p[i] + (s[i] == '1');
 		}
 
-		set<int> s;
+		int res = 0;
 		rep(i, 0, n) {
-			s.insert(i);
-		}
-		while (!pq.empty()) {
-			auto [x, i] = pq.top();
-			pq.pop();
-
-			if (!s.count(i)) {
-				continue;
+			rep(j, i, n) {
+				res += f(s.substr(i, j - i + 1));
 			}
-
-			set<int>::iterator j = s.find(i);
-			if (j == s.begin() or next(j) == s.end()) {
-				s.erase(i);
-				continue;
-			}
-			int p = *prev(j), q = *next(j);
-			if (a[p] == a[q] + 1) {
-				pq.push({a[p], p});
-			}
-			else if (a[q] == a[p] + 1) {
-				pq.push({a[q], q});
-			}
-			s.erase(i);
 		}
-
-		if (sz(s) == 1) {
-			print("YES");
-		}
-		else {
-			print("NO");
-		}
+		print(res);
 	}
 }

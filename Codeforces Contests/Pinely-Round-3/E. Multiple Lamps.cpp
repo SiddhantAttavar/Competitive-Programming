@@ -18,65 +18,92 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
+const int N = 20;
+
+void dfs(int u, vector<vi> &graph, int &c) {
+	c |= 1 << u;
+	for (int v : graph[u]) {
+		if (!(c >> v & 1)) {
+			dfs(v, graph, c);
+		}
+	}
+}
+
 int32_t main() {
+	vector<vi> dp(N);
+	rep(n, 1, N) {
+		rep(i, 1, 1 << n) {
+			int b = 0;
+			rep(j, 0, n) {
+				if (!(i >> j & 1)) {
+					continue;
+				}
+				for (int k = j + 1; k <= n; k += j + 1) {
+					b ^= 1 << k;
+				}
+			}
+			if (__builtin_popcountll(b) <= n / 5) {
+				dp[n].push_back(i);
+			}
+		}
+	}
+
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, m;
+		input(n, m);
 
-		vi a(n);
-		arrput(a);
+		vector<vi> graph(n);
+		rep(i, 0, m) {
+			int u, v;
+			input(u, v);
+			graph[u - 1].push_back(v - 1);
+		}
 
-		if (*min_element(all(a))) {
-			print("NO");
+		if (n >= N) {
+			print(n);
+			rep(i, 0, n) {
+				cout << i + 1 << ' ';
+			}
+			cout << endl;
 			continue;
 		}
 
-		std::priority_queue<pii> pq;
-		int k = *max_element(all(a));
+		if (n < 5) {
+			print(-1);
+			continue;
+		}
+
+		vi v(n, 0);
 		rep(i, 0, n) {
-			// if (a[i] != k) {
-			// 	continue;
-			// }
-			if (i and a[i] == a[i - 1] + 1) {
-				pq.push({a[i], i});
+			dfs(i, graph, v[i]);
+		}
+
+		int res = -1;
+		for (int i : dp[n]) {
+			int x = 0;
+			rep(j, 0, n) {
+				if (i >> j & 1) {
+					x |= v[j];
+				}
 			}
-			else if (i < n - 1 and a[i] == a[i + 1] + 1) {
-				pq.push({a[i], i});
+			if (x == i) {
+				res = i;
+				break;
 			}
 		}
 
-		set<int> s;
+		if (res == -1) {
+			print(res);
+			continue;
+		}
+ 
+		vi l;
 		rep(i, 0, n) {
-			s.insert(i);
-		}
-		while (!pq.empty()) {
-			auto [x, i] = pq.top();
-			pq.pop();
-
-			if (!s.count(i)) {
-				continue;
+			if (res >> i & 1) {
+				l.push_back(i + 1);
 			}
-
-			set<int>::iterator j = s.find(i);
-			if (j == s.begin() or next(j) == s.end()) {
-				s.erase(i);
-				continue;
-			}
-			int p = *prev(j), q = *next(j);
-			if (a[p] == a[q] + 1) {
-				pq.push({a[p], p});
-			}
-			else if (a[q] == a[p] + 1) {
-				pq.push({a[q], q});
-			}
-			s.erase(i);
 		}
-
-		if (sz(s) == 1) {
-			print("YES");
-		}
-		else {
-			print("NO");
-		}
+		print(sz(l));
+		arrprint(l);
 	}
 }

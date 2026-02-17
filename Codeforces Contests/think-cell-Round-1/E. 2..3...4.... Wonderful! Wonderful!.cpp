@@ -16,67 +16,55 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 typedef vector<int> vi; typedef pair<int, int> pii;
-const int MOD = (int) 1e9 + 7; //998244353;
+const int MOD = 998244353;
+
+const int N = 1e6;
+vi fact(N + 1, 1), inv_fact(N + 1, 1);
+
+int mpow(int a, int b) {
+	int res = 1;
+	while (b) {
+		if (b & 1) {
+			res = res * a % MOD;
+		}
+		a = a * a % MOD;
+		b >>= 1;
+	}
+	return res;
+}
+
+int mdiv(int a, int b) {
+	return a * mpow(b, MOD - 2) % MOD;
+}
+
+int comb(int n, int r) {
+	if (n < r or r < 0) {
+		return 0;
+	}
+	return fact[n] * inv_fact[r] % MOD * inv_fact[n - r] % MOD;
+}
 
 int32_t main() {
+	rep(i, 1, N + 1) {
+		fact[i] = fact[i - 1] * i % MOD;
+	}
+	inv_fact[N] = mdiv(1, fact[N]) % MOD;
+	for (int i = N - 1; i >= 0; i--) {
+		inv_fact[i] = inv_fact[i + 1] * (i + 1) % MOD;
+	}
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		vi a(n);
-		arrput(a);
-
-		if (*min_element(all(a))) {
-			print("NO");
-			continue;
-		}
-
-		std::priority_queue<pii> pq;
-		int k = *max_element(all(a));
-		rep(i, 0, n) {
-			// if (a[i] != k) {
-			// 	continue;
-			// }
-			if (i and a[i] == a[i - 1] + 1) {
-				pq.push({a[i], i});
+		rep(k, 1, (n - 1) / 2 + 1) {
+			int res = 1;
+			for (int x = 1; 2 * k * x < n; x++) {
+				int z = (comb(n, 2 * k * x) - comb(n - 2 * k * x + 2 * k - 1, 2 * k - 1) + MOD) % MOD;
+				// int z = (comb(n, 2 * k * x) - comb(n - x, 2 * k * x - x)) % MOD;
+				res = (res + z) % MOD;
 			}
-			else if (i < n - 1 and a[i] == a[i + 1] + 1) {
-				pq.push({a[i], i});
-			}
+			cout << res << ' ';
 		}
-
-		set<int> s;
-		rep(i, 0, n) {
-			s.insert(i);
-		}
-		while (!pq.empty()) {
-			auto [x, i] = pq.top();
-			pq.pop();
-
-			if (!s.count(i)) {
-				continue;
-			}
-
-			set<int>::iterator j = s.find(i);
-			if (j == s.begin() or next(j) == s.end()) {
-				s.erase(i);
-				continue;
-			}
-			int p = *prev(j), q = *next(j);
-			if (a[p] == a[q] + 1) {
-				pq.push({a[p], p});
-			}
-			else if (a[q] == a[p] + 1) {
-				pq.push({a[q], q});
-			}
-			s.erase(i);
-		}
-
-		if (sz(s) == 1) {
-			print("YES");
-		}
-		else {
-			print("NO");
-		}
+		cout << endl;
 	}
 }

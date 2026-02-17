@@ -20,63 +20,31 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, k;
+		input(n, k);
 
 		vi a(n);
 		arrput(a);
 
-		if (*min_element(all(a))) {
-			print("NO");
+		int p = *min_element(all(a)), q = *max_element(all(a));
+		if (p == k and q == k) {
+			print(0);
+			continue;
+		}
+		if (p <= k and q >= k) {
+			print(-1);
 			continue;
 		}
 
-		std::priority_queue<pii> pq;
-		int k = *max_element(all(a));
-		rep(i, 0, n) {
-			// if (a[i] != k) {
-			// 	continue;
-			// }
-			if (i and a[i] == a[i - 1] + 1) {
-				pq.push({a[i], i});
-			}
-			else if (i < n - 1 and a[i] == a[i + 1] + 1) {
-				pq.push({a[i], i});
-			}
+		int g = 0;
+		for (int i : a) {
+			g = gcd(g, abs(i - k));
 		}
 
-		set<int> s;
-		rep(i, 0, n) {
-			s.insert(i);
+		int res = 0;
+		for (int i : a) {
+			res += abs(i - k) / g - 1;
 		}
-		while (!pq.empty()) {
-			auto [x, i] = pq.top();
-			pq.pop();
-
-			if (!s.count(i)) {
-				continue;
-			}
-
-			set<int>::iterator j = s.find(i);
-			if (j == s.begin() or next(j) == s.end()) {
-				s.erase(i);
-				continue;
-			}
-			int p = *prev(j), q = *next(j);
-			if (a[p] == a[q] + 1) {
-				pq.push({a[p], p});
-			}
-			else if (a[q] == a[p] + 1) {
-				pq.push({a[q], q});
-			}
-			s.erase(i);
-		}
-
-		if (sz(s) == 1) {
-			print("YES");
-		}
-		else {
-			print("NO");
-		}
+		print(res);
 	}
 }

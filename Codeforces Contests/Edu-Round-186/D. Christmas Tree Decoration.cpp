@@ -16,67 +16,50 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 typedef vector<int> vi; typedef pair<int, int> pii;
-const int MOD = (int) 1e9 + 7; //998244353;
+const int MOD = 998244353;
+
+int mpow(int a, int b) {
+	int res = 1;
+	while (b) {
+		if (b & 1) {
+			res = res * a % MOD;
+		}
+		a = a * a % MOD;
+		b >>= 1;
+	}
+	return res;
+}
+
+int mdiv(int a, int b) {
+	return a * mpow(b, MOD - 2) % MOD;
+}
 
 int32_t main() {
+	const int N = 50;
+	vi fact(N + 1, 1);
+	rep(i, 1, N + 1) {
+		fact[i] = fact[i - 1] * i % MOD;
+	}
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		vi a(n);
+		vi a(n + 1);
 		arrput(a);
 
-		if (*min_element(all(a))) {
-			print("NO");
+		int k = accumulate(all(a), 0ll) / n;
+		rep(i, 0, n) {
+			int t = min(a[i + 1], k);
+			a[i + 1] -= t;
+			a[0] -= k - t;
+		}
+
+		int z = count(all(a), 0) - (a[0] == 0);
+		if (a[0] < 0 or *max_element(a.begin() + 1, a.end()) > 1 or a[0] > z) {
+			print(0);
 			continue;
 		}
 
-		std::priority_queue<pii> pq;
-		int k = *max_element(all(a));
-		rep(i, 0, n) {
-			// if (a[i] != k) {
-			// 	continue;
-			// }
-			if (i and a[i] == a[i - 1] + 1) {
-				pq.push({a[i], i});
-			}
-			else if (i < n - 1 and a[i] == a[i + 1] + 1) {
-				pq.push({a[i], i});
-			}
-		}
-
-		set<int> s;
-		rep(i, 0, n) {
-			s.insert(i);
-		}
-		while (!pq.empty()) {
-			auto [x, i] = pq.top();
-			pq.pop();
-
-			if (!s.count(i)) {
-				continue;
-			}
-
-			set<int>::iterator j = s.find(i);
-			if (j == s.begin() or next(j) == s.end()) {
-				s.erase(i);
-				continue;
-			}
-			int p = *prev(j), q = *next(j);
-			if (a[p] == a[q] + 1) {
-				pq.push({a[p], p});
-			}
-			else if (a[q] == a[p] + 1) {
-				pq.push({a[q], q});
-			}
-			s.erase(i);
-		}
-
-		if (sz(s) == 1) {
-			print("YES");
-		}
-		else {
-			print("NO");
-		}
+		print(mdiv(fact[z] * fact[n - z + a[0]] % MOD, fact[a[0]]));
 	}
 }

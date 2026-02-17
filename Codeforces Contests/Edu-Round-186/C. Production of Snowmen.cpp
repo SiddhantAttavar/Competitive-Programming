@@ -23,60 +23,22 @@ int32_t main() {
 		int n;
 		input(n);
 
-		vi a(n);
+		vi a(n), b(n), c(n);
 		arrput(a);
+		arrput(b);
+		arrput(c);
 
-		if (*min_element(all(a))) {
-			print("NO");
-			continue;
-		}
-
-		std::priority_queue<pii> pq;
-		int k = *max_element(all(a));
+		vector<bool> x(n, true), y(n, true);
 		rep(i, 0, n) {
-			// if (a[i] != k) {
-			// 	continue;
-			// }
-			if (i and a[i] == a[i - 1] + 1) {
-				pq.push({a[i], i});
-			}
-			else if (i < n - 1 and a[i] == a[i + 1] + 1) {
-				pq.push({a[i], i});
+			rep(j, 0, n) {
+				if (a[i] >= b[j]) {
+					x[(j - i + n) % n] = false;
+				}
+				if (b[i] >= c[j]) {
+					y[(j - i + n) % n] = false;
+				}
 			}
 		}
-
-		set<int> s;
-		rep(i, 0, n) {
-			s.insert(i);
-		}
-		while (!pq.empty()) {
-			auto [x, i] = pq.top();
-			pq.pop();
-
-			if (!s.count(i)) {
-				continue;
-			}
-
-			set<int>::iterator j = s.find(i);
-			if (j == s.begin() or next(j) == s.end()) {
-				s.erase(i);
-				continue;
-			}
-			int p = *prev(j), q = *next(j);
-			if (a[p] == a[q] + 1) {
-				pq.push({a[p], p});
-			}
-			else if (a[q] == a[p] + 1) {
-				pq.push({a[q], q});
-			}
-			s.erase(i);
-		}
-
-		if (sz(s) == 1) {
-			print("YES");
-		}
-		else {
-			print("NO");
-		}
+		print(n * accumulate(all(x), 0ll) * accumulate(all(y), 0ll));
 	}
 }

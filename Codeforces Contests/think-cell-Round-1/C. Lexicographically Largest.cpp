@@ -26,57 +26,37 @@ int32_t main() {
 		vi a(n);
 		arrput(a);
 
-		if (*min_element(all(a))) {
-			print("NO");
-			continue;
-		}
-
-		std::priority_queue<pii> pq;
-		int k = *max_element(all(a));
+		map<int, vi> m;
 		rep(i, 0, n) {
-			// if (a[i] != k) {
-			// 	continue;
-			// }
-			if (i and a[i] == a[i - 1] + 1) {
-				pq.push({a[i], i});
-			}
-			else if (i < n - 1 and a[i] == a[i + 1] + 1) {
-				pq.push({a[i], i});
-			}
+			m[a[i] + i + 1].push_back(a[i] + 1);
 		}
 
 		set<int> s;
-		rep(i, 0, n) {
-			s.insert(i);
-		}
-		while (!pq.empty()) {
-			auto [x, i] = pq.top();
-			pq.pop();
-
-			if (!s.count(i)) {
-				continue;
+		std::priority_queue<int> pq;
+		int r = *max_element(all(a)) + n;
+		while (true) {
+			while (!pq.empty() and pq.top() > r) {
+				pq.pop();
 			}
-
-			set<int>::iterator j = s.find(i);
-			if (j == s.begin() or next(j) == s.end()) {
-				s.erase(i);
-				continue;
+			for (int l : m[r]) {
+				pq.push(l);
 			}
-			int p = *prev(j), q = *next(j);
-			if (a[p] == a[q] + 1) {
-				pq.push({a[p], p});
+			m.erase(r);
+			if (!pq.empty()) {
+				s.insert(r);
+				pq.pop();
+				r--;
 			}
-			else if (a[q] == a[p] + 1) {
-				pq.push({a[q], q});
+			else if (!m.empty()) {
+				r = m.rbegin()->first;
 			}
-			s.erase(i);
+			else {
+				break;
+			}
 		}
 
-		if (sz(s) == 1) {
-			print("YES");
-		}
-		else {
-			print("NO");
-		}
+		vi l(all(s));
+		reverse(all(l));
+		arrprint(l);
 	}
 }
