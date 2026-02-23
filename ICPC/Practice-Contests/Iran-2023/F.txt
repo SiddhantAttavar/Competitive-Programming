@@ -1,0 +1,18 @@
++-------------------------------------------------+
+|  +-------------------+                          |
+|  |Algorithm Design   |   +-------------------+  |
+|  |  Programming      |   |PROGRAMMING        |  |
+|  |Discrete Structures|   |   Web Prgramming  |  |
+|  |   Data Structures |   |                   |  |
+|  +-------------------+   | DatabaseDesign    |  |
+|                          |Software Test      |  |
+|     +--------------+     |     Patterns      |  |
+|     |    Python    |     +-------------------+  |
+|     +--------------+                            |
+|          +------------------------+             |
+|          |Programming             |             |
+|          |          AI            |             |
+|          |    Algorithm     design|             |
+|          |Database Design         |             |
+|          +------------------------+             |
++-------------------------------------------------+
