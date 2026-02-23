@@ -26,21 +26,26 @@ int32_t main() {
 		string s;
 		input(s);
 
-		vi f(26, 0);
-		for (char c : s) {
-			f[tolower(c) - 'a']++;
+		vi a, b;
+		rep(i, 0, n) {
+			if (s[i] == '1') {
+				a.push_back(i + 1);
+			}
+			else {
+				b.push_back(i + 1);
+			}
 		}
 
-		int p = 0, q = 0;
-		for (int i : f) {
-			if (i > p) {
-				q = p;
-				p = i;
-			}
-			else if (i > q) {
-				q = i;
-			}
+		if (sz(a) % 2 == 0) {
+			print(sz(a));
+			arrprint(a);
+			continue;
 		}
-		print(p + q);
+		if (sz(b) % 2 == 1) {
+			print(sz(b));
+			arrprint(b);
+			continue;
+		}
+		print(-1);
 	}
 }

@@ -26,21 +26,28 @@ int32_t main() {
 		string s;
 		input(s);
 
-		vi f(26, 0);
-		for (char c : s) {
-			f[tolower(c) - 'a']++;
+		if (n == 1) {
+			print(1);
+			continue;
 		}
 
-		int p = 0, q = 0;
-		for (int i : f) {
-			if (i > p) {
-				q = p;
-				p = i;
+		int x = 0, p = -1;
+		rep(i, 0, n) {
+			if (s[i] != p) {
+				x++;
 			}
-			else if (i > q) {
-				q = i;
-			}
+			p = s[i];
 		}
-		print(p + q);
+
+		if (s[0] == s[n - 1]) {
+			print(x);
+			continue;
+		}
+
+		bool flag = false;
+		rep(i, 1, n) {
+			flag = flag or s[i] == s[i - 1];
+		}
+		print(x + flag);
 	}
 }

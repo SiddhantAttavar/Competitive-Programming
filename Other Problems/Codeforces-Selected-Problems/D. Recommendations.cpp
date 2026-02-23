@@ -18,29 +18,55 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
+vi get(vector<pii> &a) {
+	vi z;
+	for (auto [l, r] : a) {
+		z.push_back(l);
+		z.push_back(r);
+	}
+	sort(all(z));
+	z.erase(unique(all(z)), z.end());
+
+	int n = sz(a), m = sz(z);
+	vector<vi> p(m), q(m);
+	rep(i, 0, n) {
+		p[lower_bound(all(z), a[i].first) - z.begin()].push_back(i);
+		q[lower_bound(all(z), a[i].second) - z.begin()].push_back(i);
+	}
+	multiset<int> s;
+	vi res(n, 0);
+	rep(i, 0, m) {
+		for (int j : p[i]) {
+			s.insert(a[j].first);
+		}
+		for (int j : q[i]) {
+			multiset<int>::iterator u = prev(s.upper_bound(a[j].first));
+			if (u != s.begin()) {
+				res[j] = a[j].first - *prev(u);
+			}
+		}
+		for (int j : q[i]) {
+			s.erase(s.find(a[j].first));
+		}
+	}
+	return res;
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
 		int n;
 		input(n);
 
-		string s;
-		input(s);
-
-		vi f(26, 0);
-		for (char c : s) {
-			f[tolower(c) - 'a']++;
+		vector<pii> a(n), b(n);
+		rep(i, 0, n) {
+			int l, r;
+			input(l, r);
+			a[i] = {l, r};
+			b[i] = {-r, -l};
 		}
-
-		int p = 0, q = 0;
-		for (int i : f) {
-			if (i > p) {
-				q = p;
-				p = i;
-			}
-			else if (i > q) {
-				q = i;
-			}
+		vi x = get(a), y = get(b);
+		rep(i, 0, n) {
+			print(x[i] + y[i]);
 		}
-		print(p + q);
 	}
 }

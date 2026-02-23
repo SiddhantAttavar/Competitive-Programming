@@ -18,29 +18,42 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
+int get(vi &a, int i) {
+	if (i == sz(a) - 1) {
+		return accumulate(all(a), 0ll);
+	}
+	int x = accumulate(a.begin(), a.begin() + i + 1, 0ll);
+	int l = *min_element(a.begin(), a.begin() + i + 1);
+	int r = *max_element(a.begin() + i + 1, a.end());
+	return x + max(0ll, r - l);
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		int n;
-		input(n);
+		int n, h, k;
+		input(n, h, k);
 
-		string s;
-		input(s);
+		vi a(n);
+		arrput(a);
 
-		vi f(26, 0);
-		for (char c : s) {
-			f[tolower(c) - 'a']++;
+		int s = accumulate(all(a), 0ll);
+		int t = h / s;
+		if (h % s == 0) {
+			print(t * n + (t - 1) * k);
+			continue;
 		}
 
-		int p = 0, q = 0;
-		for (int i : f) {
-			if (i > p) {
-				q = p;
-				p = i;
+		int l = 0, r = n - 1, u = n;
+		while (l <= r) {
+			int m = (l + r) / 2;
+			if (get(a, m) >= h % s) {
+				u = m + 1;
+				r = m - 1;
 			}
-			else if (i > q) {
-				q = i;
+			else {
+				l = m + 1;
 			}
 		}
-		print(p + q);
+		print(t * (n + k) + u);
 	}
 }

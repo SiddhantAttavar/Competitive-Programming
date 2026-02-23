@@ -20,6 +20,22 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vi a(n);
+		arrput(a);
+
+		int res = 0, x = 0;
+		for (int i : a) {
+			if (i == 0) {
+				res = max(res, x);
+				x = 0;
+			}
+			else {
+				x++;
+			}
+		}
+		print(max(res, x));
 	}
 }
