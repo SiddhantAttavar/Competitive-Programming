@@ -1,0 +1,89 @@
+#include <bits/stdc++.h>
+#include <bits/extc++.h>
+using namespace std;
+using namespace __gnu_pbds; 
+template<typename T> inline void input(T& x) {cin >> x;}
+template<typename T, typename... S> inline void input(T& x, S&... args) {cin >> x; input(args ...);}
+template<typename T> inline void print(T x) {cout << x << '\n';}
+template<typename T, typename... S> inline void print(T x, S... args) {cout << x << ' '; print(args ...);}
+#define debug(...) cout << #__VA_ARGS__ << ": "; print(__VA_ARGS__);
+#define rep(i, a, b) for (auto i = (a); i < (b); i++)
+#define arrput(l) for (auto &i : l) {cin >> i;}
+#define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
+#define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
+#define int long long
+#define all(x) x.begin(), x.end()
+#define sz(x) ((int) (x.size()))
+#define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
+typedef vector<int> vi; typedef pair<int, int> pii;
+const int MOD = (int) 1e9 + 7; //998244353;
+
+int32_t main() {
+	setup();
+
+	string s;
+	input(s);
+
+	int n = sz(s), m;
+	input(m);
+
+	vi a(n + 1, 1);
+	rep(i, 1, n) {
+		a[i] = s[i] != s[i - 1];
+	}
+
+	multiset<int> x, y;
+	int p = -1;
+	rep(i, 0, n + 1) {
+		if (a[i]) {
+			x.insert(i);
+			if (p != -1) {
+				y.insert(i - p);
+			}
+			p = i;
+		}
+	}
+
+	while (m--) {
+		int i;
+		input(i);
+		i--;
+
+		if (i) {
+			if (a[i]) {
+				multiset<int>::iterator j = x.find(i);
+				y.insert(*next(j) - *prev(j));
+				y.erase(y.find(i - *prev(j)));
+				y.erase(y.find(*next(j) - i));
+				x.erase(j);
+			}
+			else {
+				x.insert(i);
+				multiset<int>::iterator j = x.find(i);
+				y.erase(y.find(*next(j) - *prev(j)));
+				y.insert(i - *prev(j));
+				y.insert(*next(j) - i);
+			}
+			a[i] = !a[i];
+		}
+		if (i < n - 1) {
+			if (a[i + 1]) {
+				multiset<int>::iterator j = x.find(i + 1);
+				y.insert(*next(j) - *prev(j));
+				y.erase(y.find((i + 1) - *prev(j)));
+				y.erase(y.find(*next(j) - (i + 1)));
+				x.erase(j);
+			}
+			else {
+				x.insert(i + 1);
+				multiset<int>::iterator j = x.find(i + 1);
+				y.erase(y.find(*next(j) - *prev(j)));
+				y.insert((i + 1) - *prev(j));
+				y.insert(*next(j) - (i + 1));
+			}
+			a[i + 1] = !a[i + 1];
+		}
+		cout << *y.rbegin() << ' ';
+	}
+	cout << endl;
+}

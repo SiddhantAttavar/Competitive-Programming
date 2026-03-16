@@ -12,15 +12,44 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
-#define endl '\n'
 #define all(x) x.begin(), x.end()
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
-int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+bool query(int n) {
+	print(n);
+	cout.flush();
+	int x = 0;
+	input(x);
+	return x;
+}
 
+int32_t main() {
+	int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
+
+		vi a(n - 1);
+		iota(all(a), 1);
+		reverse(all(a));
+		a.pop_back();
+
+		vi b(2 * n - 2);
+		iota(all(b), 1);
+		reverse(all(b));
+		b.pop_back();
+		a.insert(a.end(), all(b));
+
+		if (n == 3) {
+			a = {2, 4, 3, 2};
+		}
+
+		for (int x : a) {
+			if (query(x)) {
+				break;
+			}
+		}
 	}
 }

@@ -21,6 +21,27 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vi a(n);
+		arrput(a);
+
+		vector<vi> v(n);
+		rep(i, 0, n) {
+			v[a[i] - 1].push_back(i);
+		}
+
+		int res = 0, r = n;
+		for (int i = n - 1; i >= 0; i--) {
+			reverse(all(v[i]));
+			for (int j : v[i]) {
+				if (j < r) {
+					res++;
+					r = j;
+				}
+			}
+		}
+		print(res);
 	}
 }

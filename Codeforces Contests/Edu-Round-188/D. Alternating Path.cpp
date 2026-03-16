@@ -19,8 +19,48 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
+array<int, 3> dfs(int u, vector<vi> &graph, vi &c) {
+	int p = c[u], q = 1 - c[u], flag = true;
+	for (int v : graph[u]) {
+		if (c[v] == -1) {
+			c[v] = 1 - c[u];
+			auto [s, t, b] = dfs(v, graph, c);
+			p += s;
+			q += t;
+			flag &= b;
+		}
+		else if (c[u] == c[v]) {
+			flag = false;
+		}
+	}
+	return {p, q, flag};
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n, m;
+		input(n, m);
 
+		vector<vi> graph(n);
+		rep(i, 0, m) {
+			int u, v;
+			input(u, v);
+			graph[u - 1].push_back(v - 1);
+			graph[v - 1].push_back(u - 1);
+		}
+
+		vi c(n, -1);
+		int res = 0;
+		rep(i, 0, n) {
+			if (c[i] != -1) {
+				continue;
+			}
+			c[i] = 0;
+			auto [p, q, flag] = dfs(i, graph, c);
+			if (flag) {
+				res += max(p, q);
+			}
+		}
+		print(res);
 	}
 }

@@ -21,6 +21,16 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int a, b, c, m;
+		input(a, b, c, m);
 
+		int xa = m / a, xb = m / b, xc = m / c;
+		int yab = m / lcm(a, b), ybc = m / lcm(b, c), yca = m / lcm(c, a);
+		int zabc = m / lcm(lcm(a, b), c);
+		print(
+			(6 * (xa - yab - yca + zabc) + 3 * (yab + yca - 2 * zabc) + 2 * zabc),
+			(6 * (xb - ybc - yab + zabc) + 3 * (ybc + yab - 2 * zabc) + 2 * zabc),
+			(6 * (xc - yca - ybc + zabc) + 3 * (yca + ybc - 2 * zabc) + 2 * zabc)
+		);
 	}
 }

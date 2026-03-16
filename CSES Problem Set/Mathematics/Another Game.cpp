@@ -12,7 +12,6 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define arrprint(l) for (auto i : l) {cout << i << ' ';} cout << '\n'
 #define setup() ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define int long long
-#define endl '\n'
 #define all(x) x.begin(), x.end()
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
@@ -21,6 +20,21 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vi a(n);
+		arrput(a);
+
+		bool flag = false;
+		for (int i : a) {
+			flag |= i % 2;
+		}
+		if (flag) {
+			print("first");
+		}
+		else {
+			print("second");
+		}
 	}
 }
