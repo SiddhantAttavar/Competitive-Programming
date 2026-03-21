@@ -19,8 +19,59 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
+bool debug = false;
+vi A;
+int K = -1;
+
+bool query(int i, int j) {
+	assert(K--);
+	if (debug) {
+		return A[i - 1] == A[j - 1];
+	}
+
+	print('?', i, j);
+	cout.flush();
+	int x;
+	input(x);
+	return x;
+}
+
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
-		        
+	int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
+
+		K = n + 1;
+		if (debug) {
+			A.resize(2 * n);
+			arrput(A);
+		}
+
+		int res = -1;
+		while (n > 2) {
+			if (query(2 * n - 1, 2 * n)) {
+				res = 2 * n;
+				break;
+			}
+			n--;
+		}
+
+		if (res == -1) {
+			if (query(1, 2) or query(1, 3)) {
+				res = 1;
+			}
+			else if (query(2, 3)) {
+				res = 2;
+			}
+			else {
+				res = 4;
+			}
+		}
+
+		print('!', res);
+		cout.flush();
+		if (debug) {
+			assert(A[res - 1] == 0);
+		}
 	}
 }

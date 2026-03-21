@@ -19,8 +19,47 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
+vi Z(const string& S) {
+	vi z(sz(S));
+	int l = -1, r = -1;
+	rep(i,1,sz(S)) {
+		z[i] = i >= r ? 0 : min(r - i, z[i - l]);
+		while (i + z[i] < sz(S) && S[i + z[i]] == S[z[i]])
+			z[i]++;
+		if (i + z[i] > r)
+			l = i, r = i + z[i];
+	}
+	return z;
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		        
+		int n, q;
+		input(n, q);
+
+		string s;
+		input(s);
+
+		while (q--) {
+			int l, r;
+			input(l, r);
+
+			l--;
+			r--;
+
+			string t = s.substr(l, r - l + 1);
+			vi z = Z(t);
+			z[0] = sz(t);
+			int res = 0;
+			stack<int> v;
+			rep(i, 0, sz(t)) {
+				v.push(i + z[i]);
+				while (v.top() <= i) {
+					v.pop();
+				}
+				res += sz(v);
+			}
+			print(res);
+		}
 	}
 }

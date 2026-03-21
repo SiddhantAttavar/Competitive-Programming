@@ -21,6 +21,20 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		        
+		int n;
+		input(n);
+
+		vi a(n);
+		arrput(a);
+
+		rep(i, 0, n) {
+			int x = 0, y = 0;
+			rep(j, i + 1, n) {
+				x += a[j] > a[i];
+				y += a[j] < a[i];
+			}
+			cout << max(x, y) << ' ';
+		}
+		cout << endl;
 	}
 }

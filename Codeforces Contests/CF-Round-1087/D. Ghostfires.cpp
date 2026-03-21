@@ -19,8 +19,91 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
+bool can(string &s, char c) {
+	if (s.empty()) {
+		return true;
+	}
+	if (c == s.back()) {
+		return false;
+	}
+	if (sz(s) < 3) {
+		return true;
+	}
+	return c != s[sz(s) - 3];
+}
+
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
-		        
+		int a, b, c;
+		input(a, b, c);
+
+		string res;
+		char x = 'R', y = 'G', z = 'B';
+
+		auto adda = [&]() {
+			assert(can(res, x) and a);
+			res += x;
+			a--;
+		};
+		auto addb = [&]() {
+			assert(can(res, y) and b);
+			res += y;
+			b--;
+		};
+		auto addc = [&]() {
+			assert(can(res, z) and c);
+			res += z;
+			c--;
+		};
+
+		while (true) {
+			if (a > b) {
+				swap(a, b);
+				swap(x, y);
+			}
+			if (b > c) {
+				swap(b, c);
+				swap(y, z);
+			}
+			if (a > b) {
+				swap(a, b);
+				swap(x, y);
+			}
+
+			if (c == 0) {
+				break;
+			}
+
+			if (b == 0) {
+				if (can(res, z)) {
+					addc();
+				}
+				break;
+			}
+
+			if (a == 0) {
+				if (can(res, z)) {
+					addc();
+				}
+				else if (can(res, y)) {
+					addb();
+				}
+				else {
+					break;
+				}
+				continue;
+			}
+
+			if (can(res, z) and c) {
+				addc();
+			}
+			else if (can(res, y) and b) {
+				addb();
+			}
+			else {
+				adda();
+			}
+		}
+		print(res);
 	}
 }
