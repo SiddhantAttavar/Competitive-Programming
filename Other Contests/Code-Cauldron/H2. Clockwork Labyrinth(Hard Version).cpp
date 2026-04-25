@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 #include <bits/extc++.h>
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 using namespace std;
 using namespace __gnu_pbds; 
 template<typename T> inline void input(T& x) {cin >> x;}
@@ -19,6 +21,11 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = 998244353;
 
+const int N = 300, K = 1000, E = 1000;
+vi graph[K][N];
+int dp[N][N], ndp[N][N];
+int x[N][N], y[N][N], z[N][N];
+
 int mpow(int a, int b) {
 	int res = 1;
 	while (b) {
@@ -35,52 +42,36 @@ int mdiv(int a, int b) {
 	return a * mpow(b, MOD - 2) % MOD;
 }
 
-vector<vi> matmul(vector<vi> &a, vector<vi> &b) {
-	int n = sz(a);
-	vector<vi> res(n, vi(n, 0));
-	rep(j, 0, n) {
-		rep(i, 0, n) {
+void matmul(int a[N][N], int b[N][N], int c[N][N], int n) {
+	int res[N][N];
+	rep(i, 0, n) {
+		fill(res[i], res[i] + n, 0);
+	}
+	rep(i, 0, n) {
+		rep(j, 0, n) {
 			rep(k, 0, n) {
-				res[i][j] = (res[i][j] + a[i][k] * b[k][j]) % MOD;
+				res[i][k] = (res[i][k] + a[i][j] * b[j][k]) % MOD;
 			}
 		}
 	}
-	return res;
+	rep(i, 0, n) {
+		copy(res[i], res[i] + n, c[i]);
+	}
 }
 
-vector<vi> matpow(vector<vi> &a, int b) {
-	int n = sz(a);
-	vector<vi> res(n, vi(n, 0));
+void matpow(int a[N][N], int c[N][N], int n, int b) {
 	rep(i, 0, n) {
-		res[i][i] = 1;
+		rep(j, 0, n) {
+			c[i][j] = i == j;
+		}
 	}
 	while (b) {
 		if (b & 1) {
-			res = matmul(res, a);
+			matmul(c, a, c, n);
 		}
-		a = matmul(a, a);
+		matmul(a, a, a, n);
 		b >>= 1;
 	}
-	return res;
-}
-
-vector<vi> get(int n, int k, vector<tuple<int, int, string>> &q, vector<vi> &d) {
-	vector<vi> dp(n, vi(n, 0));
-	rep(i, 0, n) {
-		dp[i][i] = 1;
-	}
-	rep(t, 0, k) {
-		vector<vi> ndp(n, vi(n, 0));
-		rep(i, 0, n) {
-			for (auto &[u, v, w] : q) {
-				if (w[t] == '1') {
-					ndp[i][v] = (ndp[i][v] + dp[i][u] * d[u][t]) % MOD;
-				}
-			}
-		}
-		dp = ndp;
-	}
-	return dp;
 }
 
 int32_t main() {
@@ -91,8 +82,6 @@ int32_t main() {
 	int e;
 	input(e);
 
-	vector<tuple<int, int, string>> q(e);
-	vector<vi> d(n, vi(k));
 	rep(i, 0, e) {
 		int s, t;
 		input(s, t);
@@ -101,19 +90,40 @@ int32_t main() {
 
 		s--;
 		t--;
-		q[i] = {s, t, w};
 		rep(j, 0, k) {
-			d[s][j] += w[j] == '1';
-		}
-	}
-	rep(i, 0, n) {
-		rep(j, 0, k) {
-			d[i][j] = mdiv(1, d[i][j]);
+			if (w[j] == '1') {
+				graph[j][s].push_back(t);
+			}
 		}
 	}
 
-	vector<vi> x = get(n, k, q, d), y = get(n, m % k, q, d);
-	vector<vi> z = matpow(x, m / k);
-	vi res = matmul(z, y)[0];
-	arrprint(res);
+	rep(i, 0, n) {
+		rep(j, 0, n) {
+			dp[i][j] = i == j;
+		}
+	}
+	rep(t, 0, k) {
+		rep(i, 0, n) {
+			if (t == m % k) {
+				copy(dp[i], dp[i] + n, y[i]);
+			}
+			fill(ndp[i], ndp[i] + n, 0);
+		}
+		rep(u, 0, n) {
+			int c = mdiv(1, sz(graph[t][u]));
+			for (int v : graph[t][u]) {
+				rep(i, 0, n) {
+					ndp[i][v] = (ndp[i][v] + dp[i][u] * c) % MOD;
+				}
+			}
+		}
+		swap(dp, ndp);
+	}
+
+	matpow(dp, x, n, m / k);
+	matmul(x, y, z, n);
+	rep(i, 0, n) {
+		cout << z[0][i] << ' ';
+	}
+	cout << endl;
 }
