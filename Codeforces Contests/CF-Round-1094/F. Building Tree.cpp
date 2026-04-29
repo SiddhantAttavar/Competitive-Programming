@@ -19,22 +19,74 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
-struct UF {
-	vi e, f;
-	UF(int n) : e(n, -1), f(n, false) {}
-	void set(int x) {f[x] = true;}
-	bool sameSet(int a, int b) { return find(a) == find(b); }
+void insert(int c, int l, int r, int s, int e, int x, vector<vi> &seg) {
+	if (l > e or r < s) {
+		return;
+	}
+	if (s <= l and r <= e) {
+		seg[c].push_back(x);
+		return;
+	}
+	int m = (l + r) / 2;
+	insert(2 * c + 1, l, m, s, e, x, seg);
+	insert(2 * c + 2, m + 1, r, s, e, x, seg);
+}
+
+struct RollbackUF {
+	vi e; vi d; vector<pair<int*, int>> st;
+	RollbackUF(int n) : e(n, -1), d(n, -1) {}
 	int size(int x) { return -e[find(x)]; }
-	int find(int x) { return e[x] < 0 ? x : e[x] = find(e[x]); }
+	int find(int x) { return e[x] < 0 ? x : find(e[x]); }
+	int time() { return sz(st); }
+	void rollback(int t) {
+		for (int i = time(); i --> t;)
+			*st[i].first = st[i].second;
+		st.resize(t);
+	}
 	bool join(int a, int b) {
 		a = find(a), b = find(b);
 		if (a == b) return false;
 		if (e[a] > e[b]) swap(a, b);
+		st.push_back({&e[a], e[a]});
+		st.push_back({&e[b], e[b]});
+		st.push_back({&d[a], d[a]});
 		e[a] += e[b]; e[b] = a;
-		f[a] |= f[b];
+		if (d[a] == -1) d[a] = d[b];
 		return true;
 	}
 };
+
+int dfs(int c, int l, int r, vector<pii> &p, vector<vector<pii>> &edges, vector<vi> &seg, RollbackUF &d, RollbackUF &e) {
+	int t = d.time(), res = 0;
+	for (int i : seg[c]) {
+		for (auto [u, v] : edges[i]) {
+			u = d.find(u);
+			v = d.find(v);
+			if (d.d[u] != -1 and d.d[v] != -1 and u != v) {
+				p.push_back({d.d[u], d.d[v]});
+			}
+			d.join(u, v);
+		}
+	}
+
+	if (l < r) {
+		int m = (l + r) / 2;
+		res += dfs(2 * c + 1, l, m, p, edges, seg, d, e);
+		res += dfs(2 * c + 2, m + 1, r, p, edges, seg, d, e);
+	}
+	else {
+		for (auto [u, v] : p) {
+			if (e.find(u) != e.find(v)) {
+				res += l;
+			}
+			e.join(u, v);
+		}
+		p.clear();
+	}
+
+	d.rollback(t);
+	return res;
+}
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
@@ -48,42 +100,46 @@ int32_t main() {
 			edges[w].push_back({u - 1, v - 1});
 		}
 
-		UF d(n), e(n);
-		vi c(q);
-		arrput(c);
-		rep(i, 0, q) {
-			d.set(c[i] - 1);
-		}
-		rep(i, 1, m + 1) {
-			for (auto [u, v] : edges[i]) {
-				if (d.f[u] and d.f[v]) {
-					d.join(u, v);
-				}
-			}
+		vi b(n, false);
+		while (q--) {
+			int x;
+			input(x);
+			b[x - 1] = true;
 		}
 
-		int res = 0;
+		vector<vi> seg(4 * (m + 1));
 		rep(i, 0, m + 1) {
-			for (auto [u, v] : edges[i]) {
-				if (d.f[u] and d.f[v] and !e.sameSet(u, v)) {
-					res += i + 1;
-					d.join(u, v);
-				}
+			if (i) {
+				insert(0, 0, m, 0, i - 1, i, seg);
+			}
+			if (i < m) {
+				insert(0, 0, m, i + 1, m, i, seg);
 			}
 		}
 
-		bool flag = true;
-		rep(i, 1, n) {
-			if (d.f[i] and !d.sameSet(i, c[0] - 1)) {
-				flag = false;
+		RollbackUF d(n), e(n);
+		rep(i, 0, n) {
+			if (b[i]) {
+				d.d[i] = i;
+			}
+		}
+
+		vector<pii> p;
+		int res = dfs(0, 0, m, p, edges, seg, d, e);
+
+		int x = -1;
+		rep(i, 0, n) {
+			if (!b[i]) {
+				continue;
+			}
+			if (x == -1) {
+				x = e.find(i);
+			}
+			else if (e.find(i) != x) {
+				res = -1;
 				break;
 			}
 		}
-		if (flag) {
-			print(res);
-		}
-		else {
-			print(-1);
-		}
+		print(res);
 	}
 }
