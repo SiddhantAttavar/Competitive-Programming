@@ -20,7 +20,10 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
-	}
+	int n, k;
+	input(n, k);
+
+	print(max(0ll, n / 2 + 1 - k));
 }

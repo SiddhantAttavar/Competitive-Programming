@@ -20,7 +20,38 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n, m, q;
+	input(n, m, q);
+
+	int h = 20;
+	vector<vi> p(n, vi(h, n + 1));
+	rep(i, 0, m) {
+		int a, b;
+		input(a, b);
+		p[a - 1][0] = min(p[a - 1][0], b);
+	}
+	for (int i = n - 2; i >= 0; i--) {
+		p[i][0] = min(p[i][0], p[i + 1][0]);
+		rep(j, 1, h) {
+			if (p[i][j - 1] < n) {
+				p[i][j] = p[p[i][j - 1]][j - 1];
+			}
+		}
+	}
+
+	while (q--) {
+		int l, r;
+		input(l, r);
+
+		int u = l - 1, res = 0;
+		for (int i = h - 1; i >= 0; i--) {
+			if (u < n and p[u][i] <= r) {
+				res += 1 << i;
+				u = p[u][i];
+			}
+		}
+		print(res);
 	}
 }

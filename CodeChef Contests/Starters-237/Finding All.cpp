@@ -21,6 +21,22 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vi a(n);
+		arrput(a);
+
+		int x = count(all(a), -1), y = count(all(a), 1);
+		if (y >= 2 or (!x and y == 1)) {
+			cout << -1 << ' ';
+		}
+		if ((x and y) or (!x and !y)) {
+			cout << 0 << ' ';
+		}
+		if (x >= 2 or (!y and x == 1)) {
+			cout << 1 << ' ';
+		}
+		cout << endl;
 	}
 }

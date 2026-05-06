@@ -21,6 +21,35 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n, x;
+		input(n, x);
 
+		vi a(n);
+		arrput(a);
+
+		string s;
+		input(s);
+
+		vi b;
+		rep(i, 0, n) {
+			if (s[i] == '1') {
+				b.push_back(a[i]);
+			}
+		}
+		sort(all(b));
+
+		int z = *max_element(all(a));
+		if (b.empty()) {
+			print(max(0ll, z * z - x));
+			continue;
+		}
+		int y = b.back();
+
+		int res = 0;
+		rep(i, 0, sz(b)) {
+			res = max({res, b[i] * y - i * x, b[i] * z - (i + 1) * x});
+		}
+		res = max(res, z * z - (sz(b) + 1) * x);
+		print(res);
 	}
 }

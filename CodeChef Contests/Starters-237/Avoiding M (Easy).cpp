@@ -17,10 +17,33 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define sz(x) ((int) (x.size()))
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 typedef vector<int> vi; typedef pair<int, int> pii;
-const int MOD = (int) 1e9 + 7; //998244353;
+const int MOD = 998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n, m;
+		input(n, m);
 
+		vi dp(n + 1, 0);
+		dp[0] = 1;
+		rep(i, 1, n + 1) {
+			dp[i] = dp[i - 1] * (n - m) % MOD;
+		}
+		rep(j, 1, m) {
+			vi ndp(n + 1, 0);
+			ndp[0] = 1;
+			rep(i, 1, n + 1) {
+				ndp[i] = (ndp[i - 1] * (n - j) + dp[i - 1] * j) % MOD;
+			}
+			dp = ndp;
+		}
+
+		vi f = dp;
+		rep(x, 0, n + 1) {
+			rep(y, 0, x) {
+				f[x] = (f[x] + dp[y] * f[x - y - 1]) % MOD;
+			}
+		}
+		print(f[n]);
 	}
 }

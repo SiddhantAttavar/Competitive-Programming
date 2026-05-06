@@ -21,6 +21,9 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int x, y, z;
+		input(x, y, z);
 
+		print(max(0ll, 2 * max({x, y, z}) - x - y - z + 1));
 	}
 }

@@ -20,7 +20,44 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n;
+	input(n);
+
+	vector<string> s(n);
+	arrput(s);
+
+	vector<vi> dp1(n, vi(n)), dp2(n, vi(n));
+	dp1[0][0] = 0;
+	dp2[0][0] = 0;
+	rep(i, 1, n) {
+		dp1[i][0] = dp1[i - 1][0] + (s[i][0] == '@');
+		dp2[i][0] = dp2[i - 1][0] + (s[i][0] == '@');
+	}
+	rep(j, 1, n) {
+		dp1[0][j] = dp1[0][j - 1] + (s[0][j] == '@');
+		dp2[0][j] = dp2[0][j - 1] + (s[0][j] == '@');
+	}
+	rep(i, 1, n) {
+		rep(j, 1, n) {
+			dp1[i][j] = min(dp1[i - 1][j], dp1[i][j - 1]) + (s[i][j] == '@');
+			dp2[i][j] = max(dp2[i - 1][j], dp2[i][j - 1]) + (s[i][j] == '@');
+		}
+	}
+
+	vi res(2 * n, 0);
+	rep(i, 0, n) {
+		rep(j, 0, n) {
+			res[dp1[i][j]]++;
+			res[dp2[i][j] + 1]--;
+		}
+	}
+	rep(i, 1, 2 * n) {
+		res[i] += res[i - 1];
+	}
+	res.pop_back();
+	for (int i : res) {
+		print(i);
 	}
 }

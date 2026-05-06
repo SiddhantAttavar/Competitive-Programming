@@ -21,6 +21,20 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		string n;
+		input(n);
+		reverse(all(n));
+		n += '0';
 
+		int k = sz(n);
+		vi dp1(k, 0), dp2(k, 0);
+		dp1[0] = n[0] - '0';
+		dp2[0] = 10 - (n[0] - '0');
+		rep(i, 1, k) {
+			int c = n[i] - '0';
+			dp1[i] = min(dp1[i - 1] + c, dp2[i - 1] + c + 1);
+			dp2[i] = min(dp2[i - 1] + 9 - c, dp1[i - 1] + 10 - c);
+		}
+		print(dp1[k - 1]);
 	}
 }

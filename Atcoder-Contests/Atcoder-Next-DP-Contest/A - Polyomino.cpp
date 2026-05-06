@@ -20,7 +20,22 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	int n;
+	input(n);
+
+	vi dp1(n + 1, 0), dp2(n + 1, 0);
+	dp1[0] = 1;
+	rep(i, 1, n + 1) {
+		dp1[i] = dp1[i - 1] + dp2[i - 1];
+		if (i >= 2) {
+			dp1[i] += dp1[i - 2];
+		}
+		dp2[i] = dp2[i - 1];
+		if (i >= 2) {
+			dp2[i] += 2 * dp1[i - 2];
+		}
 	}
+	print(dp1[n]);
 }

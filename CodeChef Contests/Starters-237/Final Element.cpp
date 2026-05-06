@@ -21,6 +21,18 @@ const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
+		int n;
+		input(n);
 
+		vi a(n);
+		arrput(a);
+
+		int res = 0;
+		rep(i, 0, n) {
+			if ((i & (n - 1)) == i) {
+				res ^= a[i];
+			}
+		}
+		print(res);
 	}
 }
