@@ -20,7 +20,41 @@ typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
 
 int32_t main() {
-	setup(); int tc; input(tc); while (tc--) {
+	setup();
 
+	const int N = 2e6;
+
+	int n;
+	input(n);
+
+	vi a(n);
+	arrput(a);
+
+	map<int, int> f;
+	for (int x : a) {
+		f[x] += 2;
 	}
+
+	for (auto [k, v] : f) {
+		while (v >= 3) {
+			int t = v / 3;
+			f[2 * k] += t;
+			f[k] -= 2 * t;
+			v -= 2 * t;
+		}
+	}
+
+	bitset<2 * N + 1> dp = 0;
+	dp[0] = true;
+	for (auto [k, v] : f) {
+		if (v == 1) {
+			dp |= dp << k;
+		}
+		else {
+			assert(v == 2);
+			dp |= (dp << k) | (dp << (2 * k));
+		}
+	}
+
+	print((dp.count() + 1) / 2);
 }
