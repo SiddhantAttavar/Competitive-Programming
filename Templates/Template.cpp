@@ -18,6 +18,8 @@ template<typename T, typename... S> inline void print(T x, S... args) {cout << x
 #define ordered_set tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> 
 typedef vector<int> vi; typedef pair<int, int> pii;
 const int MOD = (int) 1e9 + 7; //998244353;
+inline int mpow(int a, int b) {int x = 1; for (; b; a = a * a % MOD, b >>= 1) {if (b & 1) {x = x * a % MOD;}} return x;};
+inline int mdiv(int a, int b) {return a * mpow(b, MOD - 2) % MOD;};
 
 int32_t main() {
 	setup(); int tc; input(tc); while (tc--) {
