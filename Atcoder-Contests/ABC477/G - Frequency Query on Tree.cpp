@@ -40,36 +40,78 @@ template<typename T> struct SegTree { // cmb(ID,b) = b
 		}
 		return cmb(ra,rb);
 	}
-	/// int first_at_least(int lo, int val, int ind, int l, int r) { // if seg stores max across range
-	/// 	if (r < lo || val > seg[ind]) return -1;
-	/// 	if (l == r) return l;
-	/// 	int m = (l+r)/2;
-	/// 	int res = first_at_least(lo,val,2*ind,l,m); if (res != -1) return res;
-	/// 	return first_at_least(lo,val,2*ind+1,m+1,r);
-	/// }
 };
 
-const int N = 2e5;
-vi x(N), f(N + 1, 0), y(N + 1, false);
-SegTree<int> s(N + 1, 0, [](int a, int b) {
-	return a + b;
-});
-
-void flip(int u) {
-	s.upd(f[u], -1);
-	f[x[u]] += y[u] ? -1 : 1;
-	y[u] = !y[u];
-	s.upd(f[u], 1);
-}
-
-void dfs(int u, int p, vector<vi> &tree, vi &a, vi &b, int &t, vi &l) {
-	a[u] = t++;
-	for (int v : tree[u]) {
+void dfs(int u, int p, vector<vi> &graph, vi &a, vi &b, vi &l, vi &d, vector<vi> &q) {
+	a[u] = sz(l);
+	l.push_back(u);
+	for (int v : graph[u]) {
 		if (v != p) {
-			dfs(v, u, tree, a, b, t);
+			d[v] = d[u] + 1;
+			q[v][0] = u;
+			rep(j, 1, 20) {
+				if (q[v][j - 1] != -1) {
+					q[v][j] = q[q[v][j - 1]][j - 1];
+				}
+			}
+			dfs(v, u, graph, a, b, l, d, q);
 		}
 	}
-	b[u] = t++;
+	b[u] = sz(l);
+	l.push_back(u);
+}
+
+int lca(int u, int v, vector<vi> &p, vi &d) {
+	if (d[u] < d[v]) {
+		swap(u, v);
+	}
+
+	for (int i = 19; i >= 0; i--) {
+		if (d[u] - (1 << i) >= d[v]) {
+			u = p[u][i];
+		}
+	}
+
+	if (u == v) {
+		return u;
+	}
+
+	for (int i = 19; i >= 0; i--) {
+		if (p[u][i] != p[v][i]) {
+			u = p[u][i];
+			v = p[v][i];
+		}
+	}
+
+	return p[u][0];
+}
+
+void flip(int u, vi &x, vi &f, vi &c, vi &z) {
+	assert(u < sz(x));
+	if (c[u]) {
+		z[f[x[u]]]--;
+		f[x[u]]--;
+	}
+	else {
+		f[x[u]]++;
+		z[f[x[u]]]++;
+	}
+	c[u] = !c[u];
+}
+
+uint64_t hilbertorder(uint64_t x, uint64_t y) {
+    const uint64_t logn = __lg(max(x, y) * 2 + 1) | 1;
+    const uint64_t maxn = (1ull << logn) - 1;
+    uint64_t res = 0;
+    for (uint64_t s = 1ull << (logn - 1); s; s >>= 1) {
+        bool rx = x & s, ry = y & s;
+        res = (res << 2) | (rx ? ry ? 2 : 1 : ry ? 3 : 0);
+        if (!rx) {
+            if (ry) x ^= maxn, y ^= maxn;
+            swap(x, y);
+        }
+    }
+    return res;
 }
 
 int32_t main() {
@@ -78,17 +120,80 @@ int32_t main() {
 	int n, q;
 	input(n, q);
 
-	x.resize(n);
+	vi x(n);
+	arrput(x);
+	rep(i, 0, n) {
+		x[i]--;
+	}
 
-	vector<vi> tree(n);
+	vector<vi> graph(n);
 	rep(i, 0, n - 1) {
 		int u, v;
 		input(u, v);
-		tree[u - 1].push_back(v - 1);
-		tree[v - 1].push_back(u - 1);
+		graph[u - 1].push_back(v - 1);
+		graph[v - 1].push_back(u - 1);
 	}
 
-	vi a(n), b(n), l;
-	int t = 0;
-	dfs(0, -1, tree, a, b, t, l);
+	vi a(n), b(n), t, d(n, 0);
+	vector<vi> p(n, vi(20, -1));
+	dfs(0, -1, graph, a, b, t, d, p);
+
+	vector<array<int, 6>> v(q);
+	rep(i, 0, q) {
+		int s, t, f, g;
+		input(s, t, f, g);
+
+		s--;
+		t--;
+
+		if (a[s] > a[t]) {
+			swap(s, t);
+		}
+
+		int u = lca(s, t, p, d);
+		if (u == s) {
+			v[i] = {a[s], a[t], -1, f, g, i};
+		}
+		else {
+			v[i] = {b[s], a[t], a[u], f, g, i};
+		}
+	}
+
+	sort(all(v), [](array<int, 6> a, array<int, 6> b) {
+		return hilbertorder(a[0], a[1]) < hilbertorder(b[0], b[1]);
+	});
+
+	vi c(n, 0), h(n, 0), z(n + 2, 0), res(q);
+	z[0] = n;
+	int s = 0, e = -1;
+	for (auto [l, r, u, f, g, i] : v) {
+		while (s > l) {
+			s--;
+			flip(t[s], x, h, c, z);
+		}
+		while (e < r) {
+			e++;
+			flip(t[e], x, h, c, z);
+		}
+		while (s < l) {
+			flip(t[s], x, h, c, z);
+			s++;
+		}
+		while (e > r) {
+			flip(t[e], x, h, c, z);
+			e--;
+		}
+
+		if (u != -1) {
+			flip(t[u], x, h, c, z);
+		}
+		res[i] = z[f] - z[g + 1];
+		if (u != -1) {
+			flip(t[u], x, h, c, z);
+		}
+	}
+
+	for (int i : res) {
+		print(i);
+	}
 }
